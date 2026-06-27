@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 
 const frameCount = 240;
 const currentFrame = (index: number) =>
-  `https://hwyilzbmlscpaqftlfif.supabase.co/storage/v1/object/public/frames/frame_${index.toString().padStart(4, '0')}.png`;
+  `https://hwyilzbmlscpaqftlfif.supabase.co/storage/v1/object/public/frames/frame_${index.toString().padStart(4, '0')}.webp`;
 
 export default function HeroScrollAnimation() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
