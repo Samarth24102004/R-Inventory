@@ -3,11 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { Lock, Github, CheckCircle, ArrowLeft } from 'lucide-react';
+import { Lock, Code, CheckCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import AuthModal from '@/components/AuthModal';
 
-export default function ProjectDetailPage({ params }: { params: { slug: string } }) {
+export default function ProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = React.use(params);
   const router = useRouter();
   const [project, setProject] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -37,7 +38,7 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
     const { data: projectData, error: projectError } = await supabase
       .from('projects')
       .select('*')
-      .eq('slug', params.slug)
+      .eq('slug', resolvedParams.slug)
       .single();
 
     if (projectError || !projectData) {
@@ -70,7 +71,7 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
 
   useEffect(() => {
     fetchData();
-  }, [params.slug]);
+  }, [resolvedParams.slug]);
 
   const handleBuy = async () => {
     if (!user) {
@@ -127,7 +128,7 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
             setHasPurchased(true);
             alert("Payment Successful! You now have full access.");
           } else {
-            alert("Payment Verification Failed.");
+            alert(`Payment Verification Failed: ${verifyData.error || 'Unknown error'}`);
           }
         },
         prefill: {
@@ -216,10 +217,27 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
               ))}
             </div>
 
+            {project.circuit_diagram_url && (
+              <div className="bg-[#0a0a0a] border border-white/10 p-8 rounded-xl mb-8">
+                <h3 className="text-xl font-semibold mb-4 flex items-center">
+                  <CheckCircle className="w-6 h-6 mr-3" /> Circuit Diagram
+                </h3>
+                <p className="text-gray-400 mb-6">Hardware wiring and architecture reference.</p>
+                <div className="rounded-lg overflow-hidden border border-white/10 bg-black/50 p-2">
+                  <img 
+                    src={project.circuit_diagram_url} 
+                    alt="Circuit Diagram" 
+                    className="w-full h-auto object-contain rounded-md"
+                    style={{ maxHeight: '600px' }}
+                  />
+                </div>
+              </div>
+            )}
+
             {project.github_link && (
               <div className="bg-[#0a0a0a] border border-white/10 p-8 rounded-xl">
                 <h3 className="text-xl font-semibold mb-4 flex items-center">
-                  <Github className="w-6 h-6 mr-3" /> Source Code Repository
+                  <Code className="w-6 h-6 mr-3" /> Source Code Repository
                 </h3>
                 <p className="text-gray-400 mb-6">You have full access to the source code for this project.</p>
                 <a 

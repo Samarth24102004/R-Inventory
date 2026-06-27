@@ -5,9 +5,10 @@ import { createClient } from '@supabase/supabase-js';
 export async function POST(req: Request) {
   try {
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Unauthorized: Missing or invalid Authorization header' }, { status: 401 });
     }
+    const token = authHeader.split(' ')[1];
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -17,10 +18,11 @@ export async function POST(req: Request) {
       }
     );
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      console.error('Verify Auth Error:', authError);
+      return NextResponse.json({ error: `Unauthorized: ${authError?.message || 'No user found'}` }, { status: 401 });
     }
 
     const body = await req.json();
@@ -41,14 +43,23 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid Payment Signature' }, { status: 400 });
     }
 
+    // Fetch project to get the price
+    const { data: projectData, error: projectError } = await supabase
+      .from('projects')
+      .select('price')
+      .eq('id', projectId)
+      .single();
+
+    if (projectError || !projectData) {
+      return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+    }
+
     // Insert purchase record into Supabase
-    // We assume the purchases table has: user_id, project_id, razorpay_order_id, razorpay_payment_id
     const { error: dbError } = await supabase.from('purchases').insert([
       {
         user_id: user.id,
         project_id: projectId,
-        razorpay_order_id,
-        razorpay_payment_id,
+        amount: projectData.price
       }
     ]);
 
@@ -58,7 +69,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ success: true, message: 'Already purchased' });
       }
       console.error('Database Error:', dbError);
-      return NextResponse.json({ error: 'Failed to record purchase' }, { status: 500 });
+      return NextResponse.json({ error: `DB Error: ${dbError.message || dbError.code}` }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });

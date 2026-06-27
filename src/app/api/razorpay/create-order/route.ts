@@ -10,9 +10,10 @@ const razorpay = new Razorpay({
 export async function POST(req: Request) {
   try {
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Unauthorized: Missing or invalid Authorization header' }, { status: 401 });
     }
+    const token = authHeader.split(' ')[1];
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -22,10 +23,11 @@ export async function POST(req: Request) {
       }
     );
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      console.error('Create Order Auth Error:', authError);
+      return NextResponse.json({ error: `Unauthorized: ${authError?.message || 'No user found'}` }, { status: 401 });
     }
 
     const { projectId } = await req.json();

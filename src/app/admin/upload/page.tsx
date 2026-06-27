@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Upload, Plus, CircuitBoard, Lightbulb, CheckCircle2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
@@ -9,6 +9,8 @@ export default function AdminUploadPage() {
   const [price, setPrice] = useState('0');
   const [githubLink, setGithubLink] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [circuitFile, setCircuitFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [ideas, setIdeas] = useState<any[]>([]);
   const [loadingIdeas, setLoadingIdeas] = useState(true);
 
@@ -53,6 +55,28 @@ export default function AdminUploadPage() {
     
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
+    let circuit_diagram_url = null;
+    if (circuitFile) {
+      const fileExt = circuitFile.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+      
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('diagrams')
+        .upload(fileName, circuitFile);
+        
+      if (uploadError) {
+        alert(`Failed to upload diagram: ${uploadError.message}`);
+        setIsSubmitting(false);
+        return;
+      }
+      
+      const { data: urlData } = supabase.storage
+        .from('diagrams')
+        .getPublicUrl(fileName);
+        
+      circuit_diagram_url = urlData.publicUrl;
+    }
+
     const { error } = await supabase.from('projects').insert([
       {
         title: title,
@@ -61,6 +85,7 @@ export default function AdminUploadPage() {
         short_description: description.length > 100 ? description.substring(0, 100) + '...' : description,
         price: parseFloat(price) || 0,
         github_link: githubLink,
+        circuit_diagram_url: circuit_diagram_url,
         category: 'Uncategorized',
         difficulty: 'Beginner',
         ros_version: 'ROS Humble',
@@ -79,17 +104,23 @@ export default function AdminUploadPage() {
       setDescription('');
       setPrice('0');
       setGithubLink('');
+      setCircuitFile(null);
     }
   };
 
   return (
     <div className="min-h-screen bg-black text-white pt-32 pb-20 px-[5%] font-sans">
       <div className="max-w-4xl mx-auto bg-[#0a0a0a] p-10 rounded-xl border border-white/10 shadow-lg">
-        <div className="flex items-center space-x-4 mb-8 border-b border-white/10 pb-6">
-          <Upload className="text-white w-8 h-8" strokeWidth={1.5} />
-          <h1 className="text-3xl font-semibold text-white tracking-tight">
-            Upload Project
-          </h1>
+        <div className="flex items-center justify-between mb-8 border-b border-white/10 pb-6">
+          <div className="flex items-center space-x-4">
+            <Upload className="text-white w-8 h-8" strokeWidth={1.5} />
+            <h1 className="text-3xl font-semibold text-white tracking-tight">
+              Upload Project
+            </h1>
+          </div>
+          <a href="/admin/projects" className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-md text-sm font-medium transition-colors">
+            Manage Projects
+          </a>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
@@ -147,9 +178,33 @@ export default function AdminUploadPage() {
             </div>
             <p className="text-sm text-gray-400">Upload wiring or circuit diagrams for hardware integration.</p>
             
-            <div className="border border-dashed border-white/20 rounded-md p-8 text-center hover:border-white transition-colors cursor-pointer group">
-              <Plus className="w-6 h-6 text-gray-400 mx-auto mb-2 group-hover:text-white transition-colors" strokeWidth={1.5} />
-              <p className="text-sm text-gray-400 group-hover:text-white transition-colors">Click to upload image or drag & drop</p>
+            <div 
+              className="border border-dashed border-white/20 rounded-md p-8 text-center hover:border-white transition-colors cursor-pointer group"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                className="hidden" 
+                accept="image/*,.pdf"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    setCircuitFile(e.target.files[0]);
+                  }
+                }}
+              />
+              {circuitFile ? (
+                <div className="text-white flex flex-col items-center">
+                  <CheckCircle2 className="w-6 h-6 text-green-500 mb-2" />
+                  <p className="text-sm">{circuitFile.name}</p>
+                  <p className="text-xs text-gray-400 mt-1">Click to change file</p>
+                </div>
+              ) : (
+                <>
+                  <Plus className="w-6 h-6 text-gray-400 mx-auto mb-2 group-hover:text-white transition-colors" strokeWidth={1.5} />
+                  <p className="text-sm text-gray-400 group-hover:text-white transition-colors">Click to upload image or drag & drop</p>
+                </>
+              )}
             </div>
           </div>
 
