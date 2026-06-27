@@ -2,6 +2,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
+import Script from 'next/script';
+
+
+
 const frameCount = 240;
 const currentFrame = (index: number) =>
   `https://hwyilzbmlscpaqftlfif.supabase.co/storage/v1/object/public/frames/frame_${index.toString().padStart(4, '0')}.webp`;
@@ -18,20 +22,37 @@ export default function HeroScrollAnimation() {
     const loadedImages: HTMLImageElement[] = [];
     let loadedCount = 0;
 
+    let timerFinished = false;
+    let imagesFinished = false;
+
+    const checkDone = () => {
+      if (timerFinished && imagesFinished) {
+        setIsLoaded(true);
+      }
+    };
+
+    // Enforce a minimum loading time of 1.5 seconds so the animation can be seen
+    setTimeout(() => {
+      timerFinished = true;
+      checkDone();
+    }, 1500);
+
     for (let i = 0; i < frameCount; i++) {
       const img = new Image();
       img.src = currentFrame(i);
       img.onload = () => {
         loadedCount++;
         if (loadedCount === frameCount) {
-          setIsLoaded(true);
+          imagesFinished = true;
+          checkDone();
         }
       };
       img.onerror = () => {
         console.error(`Failed to load frame: ${img.src}`);
         loadedCount++; // Increment anyway so it doesn't hang forever
         if (loadedCount === frameCount) {
-          setIsLoaded(true);
+          imagesFinished = true;
+          checkDone();
         }
       };
       loadedImages.push(img);
@@ -95,14 +116,18 @@ export default function HeroScrollAnimation() {
 
   return (
     <div ref={containerRef} className="h-screen sticky top-0 flex justify-center items-center overflow-hidden z-0 bg-black">
+      
       <canvas
         ref={canvasRef}
-        className={`w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+        className={`w-full h-full object-cover object-[40%_center] md:object-center transition-opacity duration-1000 ease-in-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
       />
       {!isLoaded && (
         <div className="absolute flex flex-col items-center justify-center space-y-4">
-          <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-white font-(family-name:--font-orbitron) text-sm tracking-[0.3em]">INITIALIZING...</p>
+          <iframe 
+            src="https://lottie.host/embed/092a0821-d7cf-48c1-bdc9-96f409a15629/VTQyxFR2t2.lottie" 
+            style={{ width: '300px', height: '300px', border: 'none', background: 'transparent' }} 
+            className="brightness-0 invert pointer-events-none"
+          />
         </div>
       )}
       
