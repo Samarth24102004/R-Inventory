@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 
 const frameCount = 240;
 const currentFrame = (index: number) =>
-  `/frames/frame_${index.toString().padStart(4, '0')}.png`;
+  `https://hwyilzbmlscpaqftlfif.supabase.co/storage/v1/object/public/frames/frame_${index.toString().padStart(4, '0')}.png`;
 
 export default function HeroScrollAnimation() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -23,6 +23,13 @@ export default function HeroScrollAnimation() {
       img.src = currentFrame(i);
       img.onload = () => {
         loadedCount++;
+        if (loadedCount === frameCount) {
+          setIsLoaded(true);
+        }
+      };
+      img.onerror = () => {
+        console.error(`Failed to load frame: ${img.src}`);
+        loadedCount++; // Increment anyway so it doesn't hang forever
         if (loadedCount === frameCount) {
           setIsLoaded(true);
         }
