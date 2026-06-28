@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Home, LayoutList, Search, MessageSquare, PlusSquare } from 'lucide-react';
+import { Home, LayoutList, Search, MessageSquare, PlusSquare, Box } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 
@@ -30,6 +30,7 @@ export default function BottomNavbar() {
   const navItems = [
     { name: 'Home', path: '/', icon: Home },
     { name: 'Projects', path: '/#projects', icon: LayoutList },
+    { name: '3D Models', path: '/3d-models', icon: Box },
     { name: 'Search', path: '?search=true', icon: Search },
     { name: 'Idea', path: '?idea=true', icon: MessageSquare, hasBadge: true },
   ];
@@ -50,6 +51,8 @@ export default function BottomNavbar() {
             isActive = pathname === '/' && !isSearch && !isIdea && hash !== '#projects';
           } else if (item.name === 'Projects') {
             isActive = pathname === '/projects' || (hash === '#projects' && !isSearch && !isIdea);
+          } else if (item.name === '3D Models') {
+            isActive = pathname === '/3d-models' && !isSearch && !isIdea;
           } else {
             isActive = pathname === item.path && !isSearch && !isIdea;
           }

@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Upload, Plus, CircuitBoard, Lightbulb, CheckCircle2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import UploadModelModal from '@/components/UploadModelModal';
 
 export default function AdminUploadPage() {
   const [title, setTitle] = useState('');
@@ -13,6 +14,7 @@ export default function AdminUploadPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [ideas, setIdeas] = useState<any[]>([]);
   const [loadingIdeas, setLoadingIdeas] = useState(true);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchIdeas = async () => {
@@ -118,9 +120,17 @@ export default function AdminUploadPage() {
               Upload Project
             </h1>
           </div>
-          <a href="/admin/projects" className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-md text-sm font-medium transition-colors">
-            Manage Projects
-          </a>
+          <div className="flex gap-3">
+            <button 
+              onClick={() => setIsUploadModalOpen(true)}
+              className="px-4 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 rounded-md text-sm font-medium transition-colors"
+            >
+              + 3D Model
+            </button>
+            <a href="/admin/projects" className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-md text-sm font-medium transition-colors">
+              Manage Projects
+            </a>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
@@ -262,6 +272,12 @@ export default function AdminUploadPage() {
           </div>
         )}
       </div>
+
+      <UploadModelModal 
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        onSuccess={() => alert('3D Model uploaded successfully!')}
+      />
     </div>
   );
 }

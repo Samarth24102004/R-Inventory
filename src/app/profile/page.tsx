@@ -160,13 +160,13 @@ export default function ProfilePage() {
                         <Box className="w-6 h-6 text-white" />
                       </div>
                       <span className="text-xs font-mono text-gray-500">
-                        ID: {purchase.project_id.split('-')[0]}
+                        ID: {(purchase.project_id || purchase.model_id || '').split('-')[0]}
                       </span>
                     </div>
 
                     <h3 className="text-xl font-bold text-white mb-2 relative z-10">
                       {/* Fallback names since project_id is usually a UUID, you would normally join this with a projects table */}
-                      Premium Project Unlock
+                      {purchase.model_id ? "3D Model Unlock" : "Premium Project Unlock"}
                     </h3>
 
                     <div className="flex items-center justify-between mt-6 relative z-10">
