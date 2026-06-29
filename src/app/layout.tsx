@@ -25,6 +25,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} min-h-screen bg-black text-white antialiased`}>
+        {/* Header Background */}
+        <div className="fixed top-0 left-0 right-0 h-28 bg-transparent backdrop-blur-[12px] z-40 [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)] pointer-events-none"></div>
+
         <div className="fixed top-8 left-[5%] z-50 pointer-events-none flex flex-col items-center">
           <div className="flex items-center gap-1">
             <span className="text-3xl font-black tracking-tighter text-white drop-shadow-[0_2px_10px_rgba(255,255,255,0.2)]" style={{ fontFamily: 'sans-serif' }}>

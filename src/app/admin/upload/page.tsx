@@ -1,20 +1,29 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
-import { Upload, Plus, CircuitBoard, Lightbulb, CheckCircle2 } from 'lucide-react';
+import { Upload, Plus, CircuitBoard, Lightbulb, CheckCircle2, Box, Image as ImageIcon, FileBox, Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import UploadModelModal from '@/components/UploadModelModal';
 
 export default function AdminUploadPage() {
+  const [uploadType, setUploadType] = useState<'project' | 'model'>('project');
+
+  // Shared States
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('0');
-  const [githubLink, setGithubLink] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Project Specific States
+  const [githubLink, setGithubLink] = useState('');
   const [circuitFile, setCircuitFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Model Specific States
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [stlFile, setStlFile] = useState<File | null>(null);
+
+  // Ideas State
   const [ideas, setIdeas] = useState<any[]>([]);
   const [loadingIdeas, setLoadingIdeas] = useState(true);
-  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchIdeas = async () => {
@@ -49,7 +58,7 @@ export default function AdminUploadPage() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleProjectSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !description) return alert("Please fill title and description");
     
@@ -110,123 +119,308 @@ export default function AdminUploadPage() {
     }
   };
 
+  const handleModelSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      if (!title || !description || !price || !imageFile || !stlFile) {
+        throw new Error("Please fill in all fields and select both files.");
+      }
+
+      const timestamp = Date.now();
+      const imageFileName = `${timestamp}-${imageFile.name}`;
+      const stlFileName = `${timestamp}-${stlFile.name}`;
+
+      // 1. Upload Preview Image
+      const { data: imageData, error: imageError } = await supabase.storage
+        .from('model_images')
+        .upload(imageFileName, imageFile);
+
+      if (imageError) throw new Error(`Image Upload Error: ${imageError.message}`);
+
+      const { data: publicUrlData } = supabase.storage
+        .from('model_images')
+        .getPublicUrl(imageFileName);
+
+      // 2. Upload STL file
+      const { data: stlData, error: stlError } = await supabase.storage
+        .from('stl_files')
+        .upload(stlFileName, stlFile);
+
+      if (stlError) throw new Error(`STL Upload Error: ${stlError.message}`);
+
+      // 3. Insert record
+      const { error: dbError } = await supabase
+        .from('stl_models')
+        .insert([
+          {
+            title,
+            description,
+            price: parseInt(price, 10),
+            image_url: publicUrlData.publicUrl,
+            stl_file_path: stlFileName,
+          }
+        ]);
+
+      if (dbError) throw new Error(`Database Error: ${dbError.message}`);
+
+      alert('3D Model uploaded successfully!');
+      setTitle('');
+      setDescription('');
+      setPrice('0');
+      setImageFile(null);
+      setStlFile(null);
+
+    } catch (err: any) {
+      console.error("Upload process failed:", err);
+      alert(err.message || "An error occurred during upload.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white pt-32 pb-20 px-[5%] font-sans">
       <div className="max-w-4xl mx-auto bg-[#0a0a0a] p-10 rounded-xl border border-white/10 shadow-lg">
-        <div className="flex items-center justify-between mb-8 border-b border-white/10 pb-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 border-b border-white/10 pb-6 gap-6">
           <div className="flex items-center space-x-4">
             <Upload className="text-white w-8 h-8" strokeWidth={1.5} />
             <h1 className="text-3xl font-semibold text-white tracking-tight">
-              Upload Project
+              Upload Content
             </h1>
           </div>
-          <div className="flex gap-3">
-            <button 
-              onClick={() => setIsUploadModalOpen(true)}
-              className="px-4 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 rounded-md text-sm font-medium transition-colors"
-            >
-              + 3D Model
-            </button>
-            <a href="/admin/projects" className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-md text-sm font-medium transition-colors">
-              Manage Projects
+          <div className="flex gap-3 items-center">
+            <div className="flex bg-white/5 rounded-md p-1 border border-white/10">
+              <button 
+                onClick={() => setUploadType('project')}
+                className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors flex items-center gap-2 ${uploadType === 'project' ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white'}`}
+              >
+                <CircuitBoard className="w-4 h-4" />
+                Project
+              </button>
+              <button 
+                onClick={() => setUploadType('model')}
+                className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors flex items-center gap-2 ${uploadType === 'model' ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white'}`}
+              >
+                <Box className="w-4 h-4" />
+                3D Model
+              </button>
+            </div>
+            <a href="/admin/projects" className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-md text-sm font-medium transition-colors">
+              Manage Content
             </a>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {uploadType === 'project' ? (
+          <form onSubmit={handleProjectSubmit} className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">Project Title</label>
+                <input 
+                  type="text" 
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors"
+                  placeholder="e.g. Nav2 Autonomous Rover"
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">Price (INR)</label>
+                <input 
+                  type="number" 
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  min="0"
+                  className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors"
+                  required
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
-              <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">Project Title</label>
+              <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">GitHub Repository Link</label>
               <input 
-                type="text" 
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                type="url" 
+                value={githubLink}
+                onChange={(e) => setGithubLink(e.target.value)}
                 className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors"
-                placeholder="e.g. Nav2 Autonomous Rover"
+                placeholder="https://github.com/username/project"
               />
             </div>
-            
+
             <div className="space-y-2">
-              <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">Price (INR)</label>
-              <input 
-                type="number" 
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors"
-              />
+              <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">Description</label>
+              <textarea 
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={4}
+                className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors resize-none"
+                placeholder="Describe the architecture, capabilities, and setup..."
+                required
+              ></textarea>
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">GitHub Repository Link</label>
-            <input 
-              type="url" 
-              value={githubLink}
-              onChange={(e) => setGithubLink(e.target.value)}
-              className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors"
-              placeholder="https://github.com/username/project"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">Description</label>
-            <textarea 
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={4}
-              className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors resize-none"
-              placeholder="Describe the architecture, capabilities, and setup..."
-            ></textarea>
-          </div>
-
-          {/* Circuit Diagram Section */}
-          <div className="p-6 bg-transparent border border-white/10 rounded-md space-y-4">
-            <div className="flex items-center space-x-3">
-              <CircuitBoard className="text-white w-5 h-5" strokeWidth={1.5} />
-              <h3 className="text-lg font-medium text-white tracking-tight">Circuit Diagrams</h3>
+            {/* Circuit Diagram Section */}
+            <div className="p-6 bg-transparent border border-white/10 rounded-md space-y-4">
+              <div className="flex items-center space-x-3">
+                <CircuitBoard className="text-white w-5 h-5" strokeWidth={1.5} />
+                <h3 className="text-lg font-medium text-white tracking-tight">Circuit Diagrams</h3>
+              </div>
+              <p className="text-sm text-gray-400">Upload wiring or circuit diagrams for hardware integration.</p>
+              
+              <div 
+                className="border border-dashed border-white/20 rounded-md p-8 text-center hover:border-white transition-colors cursor-pointer group"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  className="hidden" 
+                  accept="image/*,.pdf"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      setCircuitFile(e.target.files[0]);
+                    }
+                  }}
+                />
+                {circuitFile ? (
+                  <div className="text-white flex flex-col items-center">
+                    <CheckCircle2 className="w-6 h-6 text-green-500 mb-2" />
+                    <p className="text-sm">{circuitFile.name}</p>
+                    <p className="text-xs text-gray-400 mt-1">Click to change file</p>
+                  </div>
+                ) : (
+                  <>
+                    <Plus className="w-6 h-6 text-gray-400 mx-auto mb-2 group-hover:text-white transition-colors" strokeWidth={1.5} />
+                    <p className="text-sm text-gray-400 group-hover:text-white transition-colors">Click to upload image or drag & drop</p>
+                  </>
+                )}
+              </div>
             </div>
-            <p className="text-sm text-gray-400">Upload wiring or circuit diagrams for hardware integration.</p>
-            
-            <div 
-              className="border border-dashed border-white/20 rounded-md p-8 text-center hover:border-white transition-colors cursor-pointer group"
-              onClick={() => fileInputRef.current?.click()}
+
+            <button 
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full py-4 bg-white hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed text-black rounded-md font-medium transition-colors flex justify-center items-center gap-2"
             >
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                className="hidden" 
-                accept="image/*,.pdf"
-                onChange={(e) => {
-                  if (e.target.files && e.target.files[0]) {
-                    setCircuitFile(e.target.files[0]);
-                  }
-                }}
-              />
-              {circuitFile ? (
-                <div className="text-white flex flex-col items-center">
-                  <CheckCircle2 className="w-6 h-6 text-green-500 mb-2" />
-                  <p className="text-sm">{circuitFile.name}</p>
-                  <p className="text-xs text-gray-400 mt-1">Click to change file</p>
-                </div>
-              ) : (
+              {isSubmitting ? (
                 <>
-                  <Plus className="w-6 h-6 text-gray-400 mx-auto mb-2 group-hover:text-white transition-colors" strokeWidth={1.5} />
-                  <p className="text-sm text-gray-400 group-hover:text-white transition-colors">Click to upload image or drag & drop</p>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Uploading...
                 </>
-              )}
+              ) : 'Publish Project'}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleModelSubmit} className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">Model Title</label>
+                <input 
+                  type="text" 
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors"
+                  placeholder="E.g., Articulated Dragon"
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">Price (INR)</label>
+                <input 
+                  type="number" 
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  min="0"
+                  className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors"
+                  required
+                />
+              </div>
             </div>
-          </div>
 
-          <button 
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full py-4 bg-white hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed text-black rounded-md font-medium transition-colors"
-          >
-            {isSubmitting ? 'Uploading...' : 'Publish Project'}
-          </button>
-          
-        </form>
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">Description</label>
+              <textarea 
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={4}
+                className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors resize-none"
+                placeholder="Describe your 3D model..."
+                required
+              ></textarea>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Image Upload */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">Preview Image</label>
+                <div className="relative group h-full">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    required
+                  />
+                  <div className={`flex items-center gap-4 p-4 h-[72px] rounded-md border border-dashed transition-colors ${imageFile ? 'border-white/50 bg-white/5' : 'border-white/20 bg-transparent group-hover:border-white/40'}`}>
+                    <div className="p-3 bg-white/5 rounded-md text-gray-400 group-hover:text-white transition-colors">
+                      <ImageIcon className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1 overflow-hidden">
+                      <p className="text-sm font-medium text-white truncate">
+                        {imageFile ? imageFile.name : "Select Preview Image"}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-0.5">JPG, PNG (Max 5MB)</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* STL Upload */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">3D File (.STL)</label>
+                <div className="relative group h-full">
+                  <input
+                    type="file"
+                    accept=".stl"
+                    onChange={(e) => setStlFile(e.target.files?.[0] || null)}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    required
+                  />
+                  <div className={`flex items-center gap-4 p-4 h-[72px] rounded-md border border-dashed transition-colors ${stlFile ? 'border-white/50 bg-white/5' : 'border-white/20 bg-transparent group-hover:border-white/40'}`}>
+                    <div className="p-3 bg-white/5 rounded-md text-gray-400 group-hover:text-white transition-colors">
+                      <FileBox className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1 overflow-hidden">
+                      <p className="text-sm font-medium text-white truncate">
+                        {stlFile ? stlFile.name : "Select .STL File"}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-0.5">.STL only</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button 
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full py-4 bg-white hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed text-black rounded-md font-medium transition-colors flex justify-center items-center gap-2"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Uploading Model...
+                </>
+              ) : 'Publish 3D Model'}
+            </button>
+          </form>
+        )}
       </div>
 
       <div className="max-w-4xl mx-auto mt-12 bg-[#0a0a0a] p-10 rounded-xl border border-white/10 shadow-lg">
@@ -272,12 +466,6 @@ export default function AdminUploadPage() {
           </div>
         )}
       </div>
-
-      <UploadModelModal 
-        isOpen={isUploadModalOpen}
-        onClose={() => setIsUploadModalOpen(false)}
-        onSuccess={() => alert('3D Model uploaded successfully!')}
-      />
     </div>
   );
 }

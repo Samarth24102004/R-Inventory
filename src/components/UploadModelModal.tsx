@@ -112,36 +112,36 @@ export default function UploadModelModal({ isOpen, onClose, onSuccess }: UploadM
 
           <form onSubmit={handleUpload} className="flex flex-col gap-5">
             <div>
-              <label className="block text-sm font-medium text-neutral-400 mb-2">Title</label>
+              <label className="text-xs font-medium text-gray-400 tracking-wider uppercase mb-2 block">Title</label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
+                className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors"
                 placeholder="E.g., Articulated Dragon"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-400 mb-2">Description</label>
+              <label className="text-xs font-medium text-gray-400 tracking-wider uppercase mb-2 block">Description</label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors min-h-[100px] resize-none"
+                className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors min-h-[100px] resize-none"
                 placeholder="Describe your model..."
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-400 mb-2">Price (INR)</label>
+              <label className="text-xs font-medium text-gray-400 tracking-wider uppercase mb-2 block">Price (INR)</label>
               <input
                 type="number"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 min="0"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
+                className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors"
                 placeholder="299"
                 required
               />
@@ -157,15 +157,15 @@ export default function UploadModelModal({ isOpen, onClose, onSuccess }: UploadM
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                   required
                 />
-                <div className={`flex items-center gap-4 p-4 rounded-xl border border-dashed transition-colors ${imageFile ? 'border-blue-500/50 bg-blue-500/5' : 'border-white/20 bg-white/5 group-hover:border-white/40'}`}>
-                  <div className="p-3 bg-white/10 rounded-lg text-neutral-300">
-                    <ImageIcon className="w-6 h-6" />
+                <div className={`flex items-center gap-4 p-4 rounded-md border border-dashed transition-colors ${imageFile ? 'border-white/50 bg-white/5' : 'border-white/20 bg-transparent group-hover:border-white/40'}`}>
+                  <div className="p-3 bg-white/5 rounded-md text-gray-400 group-hover:text-white transition-colors">
+                    <ImageIcon className="w-5 h-5" />
                   </div>
                   <div className="flex-1 overflow-hidden">
                     <p className="text-sm font-medium text-white truncate">
                       {imageFile ? imageFile.name : "Select Preview Image"}
                     </p>
-                    <p className="text-xs text-neutral-500 mt-0.5">JPG, PNG (Max 5MB)</p>
+                    <p className="text-xs text-gray-400 mt-0.5">JPG, PNG (Max 5MB)</p>
                   </div>
                 </div>
               </div>
@@ -179,15 +179,15 @@ export default function UploadModelModal({ isOpen, onClose, onSuccess }: UploadM
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                   required
                 />
-                <div className={`flex items-center gap-4 p-4 rounded-xl border border-dashed transition-colors ${stlFile ? 'border-green-500/50 bg-green-500/5' : 'border-white/20 bg-white/5 group-hover:border-white/40'}`}>
-                  <div className="p-3 bg-white/10 rounded-lg text-neutral-300">
-                    <FileBox className="w-6 h-6" />
+                <div className={`flex items-center gap-4 p-4 rounded-md border border-dashed transition-colors ${stlFile ? 'border-white/50 bg-white/5' : 'border-white/20 bg-transparent group-hover:border-white/40'}`}>
+                  <div className="p-3 bg-white/5 rounded-md text-gray-400 group-hover:text-white transition-colors">
+                    <FileBox className="w-5 h-5" />
                   </div>
                   <div className="flex-1 overflow-hidden">
                     <p className="text-sm font-medium text-white truncate">
                       {stlFile ? stlFile.name : "Select .STL File"}
                     </p>
-                    <p className="text-xs text-neutral-500 mt-0.5">.STL only</p>
+                    <p className="text-xs text-gray-400 mt-0.5">.STL only</p>
                   </div>
                 </div>
               </div>
@@ -196,12 +196,12 @@ export default function UploadModelModal({ isOpen, onClose, onSuccess }: UploadM
             <button
               type="submit"
               disabled={loading}
-              className="mt-4 w-full bg-white text-black font-semibold py-4 rounded-xl hover:bg-neutral-200 transition-colors flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="mt-4 w-full py-4 bg-white hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed text-black rounded-md font-medium transition-colors flex justify-center items-center gap-2"
             >
               {loading ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  Uploading securely...
+                  Uploading...
                 </>
               ) : (
                 'Upload Model'

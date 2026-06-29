@@ -60,24 +60,28 @@ export default function BottomNavbar() {
           const Icon = item.icon;
 
           return (
-            <Link
-              key={item.name}
-              href={item.path}
-              className={`flex items-center justify-center transition-all duration-300 rounded-full hover:scale-125 relative p-3 hover:bg-white hover:text-black hover:shadow-md ${
-                isActive
-                  ? 'bg-transparent text-white'
-                  : 'bg-transparent text-white'
-              }`}
-            >
-              <Icon className="w-6 h-6" strokeWidth={isActive ? 2.5 : 2} />
-              {item.hasBadge && (
-                <span
-                  className={`absolute top-[10px] right-[10px] w-2.5 h-2.5 rounded-full border-2 ${
-                    isActive ? 'border-white bg-black' : 'border-[#0a0a0a] bg-white/60'
-                  }`}
-                ></span>
-              )}
-            </Link>
+            <div key={item.name} className="relative group flex items-center justify-center">
+              <div className="absolute -top-12 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 px-3 py-1.5 bg-white text-black text-xs font-bold rounded-md shadow-lg pointer-events-none whitespace-nowrap z-50 transform translate-y-2 group-hover:translate-y-0">
+                {item.name}
+              </div>
+              <Link
+                href={item.path}
+                className={`flex items-center justify-center transition-all duration-300 rounded-full hover:scale-125 relative p-3 hover:bg-white hover:text-black hover:shadow-md ${
+                  isActive
+                    ? 'bg-transparent text-white'
+                    : 'bg-transparent text-white'
+                }`}
+              >
+                <Icon className="w-6 h-6" strokeWidth={isActive ? 2.5 : 2} />
+                {item.hasBadge && (
+                  <span
+                    className={`absolute top-[10px] right-[10px] w-2.5 h-2.5 rounded-full border-2 ${
+                      isActive ? 'border-white bg-black' : 'border-[#0a0a0a] bg-white/60'
+                    }`}
+                  ></span>
+                )}
+              </Link>
+            </div>
           );
         })}
       </nav>
