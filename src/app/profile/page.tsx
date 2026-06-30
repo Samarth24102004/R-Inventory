@@ -92,7 +92,7 @@ export default function ProfilePage() {
                 </div>
 
                 <h2 className="text-2xl font-bold text-white mb-1">
-                  {profile?.username || "Vault User"}
+                  {profile?.username || "RoS User"}
                 </h2>
                 <div className="flex items-center text-sm text-gray-400 mb-8">
                   <Mail className="w-4 h-4 mr-2" />
@@ -140,7 +140,7 @@ export default function ProfilePage() {
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">No purchases yet</h3>
                 <p className="text-gray-400 mb-8 max-w-md mx-auto">
-                  You haven't added any premium projects to your vault yet. Explore the marketplace to find your next tool.
+                  You haven't added any premium projects to your inventory yet. Explore the marketplace to find your next tool.
                 </p>
                 <Link
                   href="/#projects"

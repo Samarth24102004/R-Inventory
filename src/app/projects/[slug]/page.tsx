@@ -117,7 +117,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: orderData.amount,
         currency: orderData.currency,
-        name: "Vault Platform",
+        name: "RoS Inventory",
         description: `Lifetime access to ${project.title}`,
         order_id: orderData.orderId,
         handler: async function (response: any) {

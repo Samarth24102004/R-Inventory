@@ -7,7 +7,7 @@ export default function ProjectSlider({ projects }: { projects: any[] }) {
   return (
     <div className="relative w-full overflow-hidden py-24 bg-black/40 border-y border-white/10 my-20">
       <div className="text-center mb-16 relative z-20">
-        <h2 className="text-4xl font-bold text-white mb-4 drop-shadow-md">Latest Projects Vault</h2>
+        <h2 className="text-4xl font-bold text-white mb-4 drop-shadow-md">Latest Projects Inventory</h2>
         <p className="text-gray-400 text-lg max-w-2xl mx-auto drop-shadow-sm">Explore premium ROS 2 projects complete with components, circuit diagrams, commands, and GitHub code.</p>
       </div>
 

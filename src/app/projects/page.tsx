@@ -24,7 +24,7 @@ export default async function ProjectsPage() {
 
       <div className="pt-32 pb-32 px-6 md:px-12 max-w-7xl mx-auto grow w-full relative z-10">
         <div className="text-center mb-16 relative z-20">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-md">Projects Vault</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-md">Projects Inventory</h1>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto drop-shadow-sm">Explore premium ROS 2 projects complete with components, circuit diagrams, commands, and Drive link for code.</p>
         </div>
 

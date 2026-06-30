@@ -8,7 +8,7 @@ export default function GlassNavbar() {
       <Link href="/" className="flex items-center space-x-2 group">
         <Terminal className="text-cyan-400 group-hover:text-cyan-300 transition-colors" size={24} />
         <span className="text-xl font-bold tracking-widest bg-linear-to-br from-white to-gray-400 bg-clip-text text-transparent">
-          ROSVault
+          RoS Inventory
         </span>
       </Link>
       

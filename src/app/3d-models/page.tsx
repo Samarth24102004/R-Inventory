@@ -100,7 +100,7 @@ export default function ThreeDModelsPage() {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: orderData.amount,
         currency: orderData.currency,
-        name: "Vault Platform",
+        name: "RoS Inventory",
         description: `Lifetime access to ${model.title}`,
         order_id: orderData.orderId,
         handler: async function (response: any) {
@@ -201,7 +201,7 @@ export default function ThreeDModelsPage() {
               <Box className="w-4 h-4 text-blue-400" />
               <span className="text-xs font-medium tracking-wider text-neutral-300 uppercase">Premium Models</span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">3D Print <span className="text-neutral-500">Vault</span></h1>
+            <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">3D Print <span className="text-neutral-500">Inventory</span></h1>
             <p className="text-neutral-400 max-w-lg text-lg">
               Download high-quality, print-ready STL files for your next 3D printing project.
             </p>

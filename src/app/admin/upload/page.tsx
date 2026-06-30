@@ -134,7 +134,7 @@ export default function AdminUploadPage() {
     if (error) {
       alert(`Database Error: ${error.message}`);
     } else {
-      alert('Success! Your project has been uploaded to the Vault.');
+      alert('Success! Your project has been uploaded to RoS Inventory.');
       setTitle('');
       setDescription('');
       setPrice('0');

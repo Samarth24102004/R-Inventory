@@ -70,7 +70,7 @@ export default function OnboardingModal({ isOpen, userId, onClose }: OnboardingM
             <Sparkles className="w-6 h-6" strokeWidth={1.5} />
           </div>
           <h2 className="text-2xl font-bold text-white tracking-tight">
-            Welcome to Vault!
+            Welcome to RoS Inventory!
           </h2>
           <p className="text-sm text-gray-400 mt-2 text-center">
             Let's set up your premium profile
@@ -151,7 +151,7 @@ export default function OnboardingModal({ isOpen, userId, onClose }: OnboardingM
             disabled={loading || !username || !selectedAvatar}
             className="w-full py-4 bg-white text-black text-sm font-bold rounded-lg hover:bg-gray-200 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed mt-4 shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)]"
           >
-            {loading ? 'Creating Profile...' : 'Enter the Vault'}
+            {loading ? 'Creating Profile...' : 'Enter RoS Inventory'}
           </button>
         </form>
       </div>
