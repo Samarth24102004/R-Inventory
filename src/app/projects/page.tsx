@@ -4,6 +4,14 @@ import { supabase } from '@/lib/supabase';
 
 export const revalidate = 0; // Ensure data is fetched dynamically
 
+export const metadata = {
+  title: 'ROS Projects | RoS Inventory',
+  description: 'Explore our comprehensive library of open-source ROS and ROS2 robotics projects. Find complete source code, circuit diagrams, components, and robotics tutorials for your next autonomous build.',
+  alternates: {
+    canonical: 'https://rosinventory.co.in/projects',
+  },
+};
+
 export default async function ProjectsPage() {
   const { data: projects } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
 

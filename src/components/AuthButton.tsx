@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import AuthModal from './AuthModal';
+import Image from 'next/image';
 import OnboardingModal from './OnboardingModal';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -76,7 +77,7 @@ export default function AuthButton() {
             >
               <div className="absolute inset-0 rounded-full bg-white/20 animate-ping opacity-20"></div>
               {avatarUrl ? (
-                <img src={avatarUrl} alt="Avatar" className="w-9 h-9 rounded-full bg-black/50 border border-white/10 group-hover:border-white transition-colors" />
+                <Image src={avatarUrl} alt="Avatar" width={36} height={36} className="w-9 h-9 rounded-full bg-black/50 border border-white/10 group-hover:border-white transition-colors object-cover" />
               ) : (
                 <div className="w-9 h-9 rounded-full bg-black/50 border border-white/10 flex items-center justify-center group-hover:border-white transition-colors">
                   <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

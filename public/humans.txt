@@ -1,0 +1,9 @@
+/* TEAM */
+  Developer: RoS Inventory Team
+  Site: https://rosinventory.co.in
+
+/* SITE */
+  Last update: 2024
+  Standards: HTML5, CSS3, ES6
+  Components: Next.js, React, Tailwind CSS, Supabase
+  Software: VS Code

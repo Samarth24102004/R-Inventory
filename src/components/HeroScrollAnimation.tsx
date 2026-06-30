@@ -157,8 +157,11 @@ export default function HeroScrollAnimation() {
           }} 
           className="absolute left-1/2 top-1/2 w-full text-center text-white font-(family-name:--font-orbitron) tracking-widest"
         >
-          <div className="text-5xl md:text-7xl font-black mb-2 tracking-[0.3em] drop-shadow-2xl">ROS</div>
-          <div className="text-xl md:text-3xl opacity-90 tracking-[0.5em] mb-12 text-[#84cc16] font-light">INVENTORY</div>
+          <h1 className="text-5xl md:text-7xl font-black mb-2 tracking-[0.3em] drop-shadow-2xl">RoS</h1>
+          <div className="text-xl md:text-3xl opacity-90 tracking-[0.5em] mb-4 text-[#84cc16] font-light">INVENTORY</div>
+          <p className="text-xs md:text-sm max-w-lg mx-auto opacity-70 mb-12 tracking-wider font-mono">
+            The Premier Open Source Robotics & ROS2 Development Platform
+          </p>
           <div className="flex flex-col items-center opacity-70 animate-bounce">
             <div className="text-xs font-mono tracking-widest mb-2">SCROLL TO INITIALIZE</div>
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Settings, Edit2, Trash2, Plus, X, Upload, CheckCircle2, Box, CircuitBoard, ImageIcon } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function AdminProjectsPage() {
   const [activeTab, setActiveTab] = useState<'projects' | 'models'>('projects');
@@ -369,7 +370,7 @@ export default function AdminProjectsPage() {
                       <tr key={model.id} className="hover:bg-white/5 transition-colors group">
                         <td className="px-6 py-4 flex items-center space-x-4">
                           {model.image_url ? (
-                            <img src={model.image_url} alt={model.title} className="w-10 h-10 object-cover rounded-md bg-white/10" />
+                            <Image src={model.image_url} alt={model.title} width={40} height={40} className="w-10 h-10 object-cover rounded-md bg-white/10" />
                           ) : (
                             <div className="w-10 h-10 rounded-md bg-white/10 flex items-center justify-center">
                               <Box className="w-5 h-5 text-gray-400" />

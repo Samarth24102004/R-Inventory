@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { Lock, Code, CheckCircle, ArrowLeft, ChevronLeft, ChevronRight, ImageIcon } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import AuthModal from '@/components/AuthModal';
 
 export default function ProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -232,10 +233,11 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
                   <ImageIcon className="w-6 h-6 mr-3" /> Project Gallery
                 </h3>
                 <div className="relative rounded-lg overflow-hidden border border-white/10 bg-black/50 aspect-video group flex items-center justify-center">
-                  <img 
+                  <Image 
                     src={project.preview_images[currentImageIndex]} 
-                    alt={`Preview ${currentImageIndex + 1}`} 
-                    className="w-full h-full object-contain"
+                    alt={`Preview ${currentImageIndex + 1}`}
+                    fill
+                    className="object-contain"
                   />
                   
                   {project.preview_images.length > 1 && (
@@ -280,9 +282,11 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
                   <>
                     <p className="text-gray-400 mb-6 text-sm">Hardware wiring and architecture reference.</p>
                     <div className="rounded-lg overflow-hidden border border-white/10 bg-black/50 p-2 flex items-center justify-center grow">
-                      <img 
+                      <Image 
                         src={project.circuit_diagram_url} 
-                        alt="Circuit Diagram" 
+                        alt="Circuit Diagram"
+                        width={800}
+                        height={450} 
                         className="w-full h-auto max-h-[450px] object-contain rounded-md"
                       />
                     </div>

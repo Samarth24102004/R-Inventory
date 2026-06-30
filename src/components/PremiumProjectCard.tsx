@@ -2,6 +2,7 @@
 import React from 'react';
 import { Project } from '@/lib/data';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function PremiumProjectCard({ project }: { project: Project }) {
   // Use the first preview image if available, else null
@@ -17,11 +18,11 @@ export default function PremiumProjectCard({ project }: { project: Project }) {
         {/* Cover Image Section */}
         <div className="h-40 w-full relative bg-[#111] overflow-hidden shrink-0 border-b border-white/10">
           {coverImage ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img 
+            <Image 
               src={coverImage} 
               alt={project.title} 
-              className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" 
+              fill
+              className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" 
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-white/20">

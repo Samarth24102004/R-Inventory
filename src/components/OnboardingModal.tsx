@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import Image from 'next/image';
 import { User, Sparkles, Check, RefreshCw } from 'lucide-react';
 
 interface OnboardingModalProps {
@@ -100,7 +101,7 @@ export default function OnboardingModal({ isOpen, userId, onClose }: OnboardingM
                       : 'border-white/10 hover:border-white/40'
                   }`}
                 >
-                  <img src={avatar} alt={`Avatar option ${index + 1}`} className="w-full h-auto bg-black" />
+                  <Image src={avatar} alt={`Avatar option ${index + 1}`} width={100} height={100} className="w-full h-auto bg-black" />
                   {selectedAvatar === avatar && (
                     <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
                       <div className="bg-white rounded-full p-1">

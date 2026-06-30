@@ -83,7 +83,7 @@ export default function ProfilePage() {
                 <div className="relative group mb-6">
                   <div className="absolute -inset-1 bg-linear-to-r from-gray-500 to-white rounded-full blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
                   {profile?.avatar_url ? (
-                    <img src={profile.avatar_url} alt="Profile" className="relative w-32 h-32 rounded-full border-2 border-white/20 bg-black/50 object-cover" />
+                    <Image src={profile.avatar_url} alt="Profile" width={128} height={128} className="relative w-32 h-32 rounded-full border-2 border-white/20 bg-black/50 object-cover" />
                   ) : (
                     <div className="relative w-32 h-32 rounded-full border-2 border-white/20 bg-black/50 flex items-center justify-center">
                       <User className="w-12 h-12 text-gray-500" />
