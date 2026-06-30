@@ -10,10 +10,10 @@ export default async function ProjectsPage() {
   return (
     <main className="relative bg-black min-h-screen text-white selection:bg-[#84cc16]/30 flex flex-col">
       {/* Background Image */}
-      <div 
+      <div
         className="fixed inset-0 z-0 opacity-40 pointer-events-none mix-blend-screen"
         style={{
-          backgroundImage: 'url("/api/drone-bg")',
+          backgroundImage: 'url("/drone-bg.png")',
           backgroundSize: 'contain',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center center',
@@ -25,7 +25,7 @@ export default async function ProjectsPage() {
       <div className="pt-32 pb-32 px-6 md:px-12 max-w-7xl mx-auto grow w-full relative z-10">
         <div className="text-center mb-16 relative z-20">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-md">Projects Vault</h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto drop-shadow-sm">Explore premium ROS 2 projects complete with components, circuit diagrams, commands, and GitHub code.</p>
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto drop-shadow-sm">Explore premium ROS 2 projects complete with components, circuit diagrams, commands, and Drive link for code.</p>
         </div>
 
         {projects && projects.length > 0 ? (

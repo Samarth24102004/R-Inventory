@@ -183,7 +183,7 @@ export default function ThreeDModelsPage() {
       <div 
         className="fixed inset-0 z-0 opacity-30 pointer-events-none mix-blend-screen"
         style={{
-          backgroundImage: 'url("/api/models-bg")',
+          backgroundImage: 'url("/models-bg.png")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed',
