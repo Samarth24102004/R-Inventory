@@ -17,6 +17,8 @@ export default function HeroScrollAnimation() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [scrollFraction, setScrollFraction] = useState(0);
 
+  const [textTranslateY, setTextTranslateY] = useState(0);
+
   // Preload images
   useEffect(() => {
     const loadedImages: HTMLImageElement[] = [];
@@ -83,6 +85,17 @@ export default function HeroScrollAnimation() {
         Math.max(0, Math.floor(fraction * frameCount))
       );
 
+      // Check for projects section to push up the text
+      const projectsEl = document.getElementById('projects');
+      if (projectsEl) {
+        const rect = projectsEl.getBoundingClientRect();
+        if (rect.top < window.innerHeight / 2) {
+          setTextTranslateY((window.innerHeight / 2) - rect.top);
+        } else {
+          setTextTranslateY(0);
+        }
+      }
+
       requestAnimationFrame(() => {
         if (images[frameIndex] && images[frameIndex].complete) {
           context.clearRect(0, 0, canvas.width, canvas.height);
@@ -110,9 +123,10 @@ export default function HeroScrollAnimation() {
     return 0;
   };
 
+  const text0Opacity = getOpacity(scrollFraction, -0.1, 0, 0.02, 0.08);
   const text1Opacity = getOpacity(scrollFraction, 0.03, 0.08, 0.15, 0.25);
   const text2Opacity = getOpacity(scrollFraction, 0.3, 0.4, 0.55, 0.65);
-  const text3Opacity = getOpacity(scrollFraction, 0.7, 0.8, 0.9, 1.0);
+  const text3Opacity = getOpacity(scrollFraction, 0.55, 0.65, 1.0, 1.0);
 
   return (
     <div ref={containerRef} className="h-screen sticky top-0 flex justify-center items-center overflow-hidden z-0 bg-black">
@@ -132,8 +146,27 @@ export default function HeroScrollAnimation() {
       )}
       
       {/* Floating Text Overlay - Multiple Positions & Sizes */}
-      <div className="absolute inset-0 z-10 pointer-events-none">
+      <div className={`absolute inset-0 z-10 pointer-events-none transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
         
+        {/* Text 0: Initial Screen (Title) */}
+        <div 
+          style={{ 
+            opacity: text0Opacity, 
+            transition: 'opacity 0.1s ease-out, transform 0.1s ease-out',
+            transform: `translate(-50%, -50%) scale(${1 + scrollFraction * 80})`
+          }} 
+          className="absolute left-1/2 top-1/2 w-full text-center text-white font-(family-name:--font-orbitron) tracking-widest"
+        >
+          <div className="text-5xl md:text-7xl font-black mb-2 tracking-[0.3em] drop-shadow-2xl">ROS</div>
+          <div className="text-xl md:text-3xl opacity-90 tracking-[0.5em] mb-12 text-[#84cc16] font-light">INVENTORY</div>
+          <div className="flex flex-col items-center opacity-70 animate-bounce">
+            <div className="text-xs font-mono tracking-widest mb-2">SCROLL TO INITIALIZE</div>
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </div>
+        </div>
+
         {/* Text 1: Left Center (Large) - Adjusted Alignment */}
         <div 
           style={{ opacity: text1Opacity, transition: 'opacity 0.1s ease-out' }} 
@@ -154,10 +187,14 @@ export default function HeroScrollAnimation() {
           <div className="text-xs font-mono opacity-60">JOINTS // SECURED</div>
         </div>
 
-        {/* Text 3: Top Center (Huge) */}
+        {/* Text 3: Center (Huge) */}
         <div 
-          style={{ opacity: text3Opacity, transition: 'opacity 0.1s ease-out' }} 
-          className="absolute left-1/2 top-16 transform -translate-x-1/2 w-full text-center text-white font-(family-name:--font-orbitron) tracking-widest"
+          style={{ 
+            opacity: text3Opacity, 
+            transition: 'opacity 0.1s ease-out',
+            transform: `translate(-50%, calc(-50% - ${textTranslateY}px))`
+          }} 
+          className="absolute left-1/2 top-1/2 w-full text-center text-white font-(family-name:--font-orbitron) tracking-widest"
         >
           <div className="text-5xl md:text-7xl font-black mb-2 tracking-[0.2em] drop-shadow-xl">ENGAGING</div>
           <div className="text-2xl opacity-80 tracking-[0.4em] mb-2">AUTO_ROUTINE</div>

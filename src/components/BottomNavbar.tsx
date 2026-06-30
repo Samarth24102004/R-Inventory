@@ -29,7 +29,7 @@ export default function BottomNavbar() {
 
   const navItems = [
     { name: 'Home', path: '/', icon: Home },
-    { name: 'Projects', path: '/#projects', icon: LayoutList },
+    { name: 'Projects', path: '/projects', icon: LayoutList },
     { name: '3D Models', path: '/3d-models', icon: Box },
     { name: 'Search', path: '?search=true', icon: Search },
     { name: 'Idea', path: '?idea=true', icon: MessageSquare, hasBadge: true },

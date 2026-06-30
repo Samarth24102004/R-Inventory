@@ -178,9 +178,21 @@ export default function ThreeDModelsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pt-24 pb-32 px-6">
+    <div className="min-h-screen bg-[#050505] text-white pt-24 pb-32 px-6 relative">
+      {/* Background Image */}
+      <div 
+        className="fixed inset-0 z-0 opacity-30 pointer-events-none mix-blend-screen"
+        style={{
+          backgroundImage: 'url("/api/models-bg")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+        }}
+      />
+      <div className="fixed inset-0 bg-linear-to-b from-[#050505]/80 via-[#050505]/60 to-[#050505] z-0 pointer-events-none"></div>
+
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} onSuccess={fetchData} />
-      <div className="max-w-6xl mx-auto flex flex-col gap-12">
+      <div className="max-w-6xl mx-auto flex flex-col gap-12 relative z-10">
 
         {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">

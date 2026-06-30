@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { Lock, Code, CheckCircle, ArrowLeft } from 'lucide-react';
+import { Lock, Code, CheckCircle, ArrowLeft, ChevronLeft, ChevronRight, ImageIcon } from 'lucide-react';
 import Link from 'next/link';
 import AuthModal from '@/components/AuthModal';
 
@@ -16,6 +16,19 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
   const [user, setUser] = useState<any>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [purchasing, setPurchasing] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const nextImage = () => {
+    if (project?.preview_images?.length) {
+      setCurrentImageIndex((prev) => (prev + 1) % project.preview_images.length);
+    }
+  };
+
+  const prevImage = () => {
+    if (project?.preview_images?.length) {
+      setCurrentImageIndex((prev) => (prev - 1 + project.preview_images.length) % project.preview_images.length);
+    }
+  };
 
   useEffect(() => {
     // Load Razorpay Script
@@ -210,46 +223,105 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
         <h2 className="text-2xl font-semibold mb-6">Project Overview</h2>
         
         {hasPurchased ? (
-          <div className="space-y-12">
-            <div className="prose prose-invert max-w-none text-gray-300">
-              {project.description.split('\n').map((paragraph: string, idx: number) => (
-                <p key={idx} className="mb-4">{paragraph}</p>
-              ))}
-            </div>
-
-            {project.circuit_diagram_url && (
-              <div className="bg-[#0a0a0a] border border-white/10 p-8 rounded-xl mb-8">
+          <div className="space-y-8">
+            
+            {/* 1. Top Section: Preview Images (PImg) */}
+            {project.preview_images && project.preview_images.length > 0 && (
+              <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg">
                 <h3 className="text-xl font-semibold mb-4 flex items-center">
-                  <CheckCircle className="w-6 h-6 mr-3" /> Circuit Diagram
+                  <ImageIcon className="w-6 h-6 mr-3" /> Project Gallery
                 </h3>
-                <p className="text-gray-400 mb-6">Hardware wiring and architecture reference.</p>
-                <div className="rounded-lg overflow-hidden border border-white/10 bg-black/50 p-2">
+                <div className="relative rounded-lg overflow-hidden border border-white/10 bg-black/50 aspect-video group flex items-center justify-center">
                   <img 
-                    src={project.circuit_diagram_url} 
-                    alt="Circuit Diagram" 
-                    className="w-full h-auto object-contain rounded-md"
-                    style={{ maxHeight: '600px' }}
+                    src={project.preview_images[currentImageIndex]} 
+                    alt={`Preview ${currentImageIndex + 1}`} 
+                    className="w-full h-full object-contain"
                   />
+                  
+                  {project.preview_images.length > 1 && (
+                    <>
+                      <button 
+                        onClick={prevImage}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <ChevronLeft className="w-6 h-6" />
+                      </button>
+                      <button 
+                        onClick={nextImage}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <ChevronRight className="w-6 h-6" />
+                      </button>
+                      
+                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+                        {project.preview_images.map((_: any, idx: number) => (
+                          <button
+                            key={idx}
+                            onClick={() => setCurrentImageIndex(idx)}
+                            className={`w-2.5 h-2.5 rounded-full transition-colors ${idx === currentImageIndex ? 'bg-white' : 'bg-white/30 hover:bg-white/50'}`}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             )}
 
-            {project.github_link && (
-              <div className="bg-[#0a0a0a] border border-white/10 p-8 rounded-xl">
-                <h3 className="text-xl font-semibold mb-4 flex items-center">
-                  <Code className="w-6 h-6 mr-3" /> Source Code Repository
+            {/* 2. Bottom Section: 2 Columns for Circuit Diagram & Description */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+              
+              {/* Left Column: Circuit Diagram (C:D) */}
+              <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg flex flex-col h-full">
+                <h3 className="text-xl font-semibold mb-4 flex items-center text-white">
+                  <CheckCircle className="w-6 h-6 mr-3" /> Circuit Diagram
                 </h3>
-                <p className="text-gray-400 mb-6">You have full access to the source code for this project.</p>
-                <a 
-                  href={project.github_link} 
-                  target="_blank" 
-                  rel="noreferrer"
-                  className="inline-flex items-center px-6 py-3 bg-white text-black rounded-md font-medium hover:bg-gray-200 transition-colors"
-                >
-                  Open in GitHub
-                </a>
+                {project.circuit_diagram_url ? (
+                  <>
+                    <p className="text-gray-400 mb-6 text-sm">Hardware wiring and architecture reference.</p>
+                    <div className="rounded-lg overflow-hidden border border-white/10 bg-black/50 p-2 flex items-center justify-center grow">
+                      <img 
+                        src={project.circuit_diagram_url} 
+                        alt="Circuit Diagram" 
+                        className="w-full h-auto max-h-[450px] object-contain rounded-md"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-gray-500 italic grow flex items-center justify-center py-12 bg-white/5 rounded-lg border border-white/10">
+                    No circuit diagram provided.
+                  </div>
+                )}
               </div>
-            )}
+
+              {/* Right Column: Description (Descri) & GitHub */}
+              <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg flex flex-col h-full">
+                <h3 className="text-xl font-semibold mb-4 text-white">Project Description</h3>
+                <div className="prose prose-invert max-w-none text-gray-300 mb-8 grow">
+                  {project.description.split('\n').map((paragraph: string, idx: number) => (
+                    <p key={idx} className="mb-4 text-sm md:text-base leading-relaxed">{paragraph}</p>
+                  ))}
+                </div>
+
+                {project.github_link && (
+                  <div className="pt-6 border-t border-white/10 mt-auto">
+                    <h4 className="text-lg font-medium mb-3 flex items-center text-white">
+                      <Code className="w-5 h-5 mr-2" /> Source Code (Drive Link)
+                    </h4>
+                    <p className="text-gray-400 text-sm mb-4">You have full access to the source code for this project.</p>
+                    <a 
+                      href={project.github_link} 
+                      target="_blank" 
+                      rel="noreferrer"
+                      className="inline-flex items-center w-full justify-center px-6 py-3 bg-white text-black rounded-md font-medium hover:bg-gray-200 transition-colors"
+                    >
+                      Open in Drive
+                    </a>
+                  </div>
+                )}
+              </div>
+              
+            </div>
           </div>
         ) : (
           <div className="relative">
@@ -262,7 +334,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
               <div className="bg-[#0a0a0a] border border-white/10 p-8 rounded-xl text-center max-w-md shadow-2xl">
                 <Lock className="w-10 h-10 text-gray-400 mx-auto mb-4" strokeWidth={1.5} />
                 <h3 className="text-xl font-semibold mb-2">Premium Content Locked</h3>
-                <p className="text-sm text-gray-400 mb-6">Purchase this project to unlock the full architecture description, circuit diagrams, and GitHub repository access.</p>
+                <p className="text-sm text-gray-400 mb-6">Purchase this project to unlock the full architecture description, circuit diagrams, and source code Drive link.</p>
                 <button 
                   onClick={handleBuy}
                   disabled={purchasing}

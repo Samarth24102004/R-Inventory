@@ -17,6 +17,9 @@ export default function AdminUploadPage() {
   const [circuitFile, setCircuitFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
+  const [previewImages, setPreviewImages] = useState<File[]>([]);
+  const previewImagesRef = useRef<HTMLInputElement>(null);
+  
   // Model Specific States
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [stlFile, setStlFile] = useState<File | null>(null);
@@ -88,6 +91,26 @@ export default function AdminUploadPage() {
       circuit_diagram_url = urlData.publicUrl;
     }
 
+    let uploaded_preview_urls: string[] = [];
+    if (previewImages.length > 0) {
+      for (const img of previewImages) {
+        const fileExt = img.name.split('.').pop();
+        const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage
+          .from('project_previews')
+          .upload(fileName, img);
+          
+        if (uploadError) {
+          console.error("Preview image upload error:", uploadError);
+        } else {
+          const { data: urlData } = supabase.storage
+            .from('project_previews')
+            .getPublicUrl(fileName);
+          uploaded_preview_urls.push(urlData.publicUrl);
+        }
+      }
+    }
+
     const { error } = await supabase.from('projects').insert([
       {
         title: title,
@@ -97,6 +120,7 @@ export default function AdminUploadPage() {
         price: parseFloat(price) || 0,
         github_link: githubLink,
         circuit_diagram_url: circuit_diagram_url,
+        preview_images: uploaded_preview_urls,
         category: 'Uncategorized',
         difficulty: 'Beginner',
         ros_version: 'ROS Humble',
@@ -116,6 +140,7 @@ export default function AdminUploadPage() {
       setPrice('0');
       setGithubLink('');
       setCircuitFile(null);
+      setPreviewImages([]);
     }
   };
 
@@ -242,13 +267,13 @@ export default function AdminUploadPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">GitHub Repository Link</label>
+              <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">Drive Link for Code</label>
               <input 
                 type="url" 
                 value={githubLink}
                 onChange={(e) => setGithubLink(e.target.value)}
                 className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors"
-                placeholder="https://github.com/username/project"
+                placeholder="https://drive.google.com/drive/folders/..."
               />
             </div>
 
@@ -297,6 +322,45 @@ export default function AdminUploadPage() {
                   <>
                     <Plus className="w-6 h-6 text-gray-400 mx-auto mb-2 group-hover:text-white transition-colors" strokeWidth={1.5} />
                     <p className="text-sm text-gray-400 group-hover:text-white transition-colors">Click to upload image or drag & drop</p>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Preview Images Section */}
+            <div className="p-6 bg-transparent border border-white/10 rounded-md space-y-4">
+              <div className="flex items-center space-x-3">
+                <ImageIcon className="text-white w-5 h-5" strokeWidth={1.5} />
+                <h3 className="text-lg font-medium text-white tracking-tight">Preview Images</h3>
+              </div>
+              <p className="text-sm text-gray-400">Upload one or multiple preview images to display on the project card.</p>
+              
+              <div 
+                className="border border-dashed border-white/20 rounded-md p-8 text-center hover:border-white transition-colors cursor-pointer group"
+                onClick={() => previewImagesRef.current?.click()}
+              >
+                <input 
+                  type="file" 
+                  ref={previewImagesRef} 
+                  className="hidden" 
+                  accept="image/*"
+                  multiple
+                  onChange={(e) => {
+                    if (e.target.files) {
+                      setPreviewImages(Array.from(e.target.files));
+                    }
+                  }}
+                />
+                {previewImages.length > 0 ? (
+                  <div className="text-white flex flex-col items-center">
+                    <CheckCircle2 className="w-6 h-6 text-green-500 mb-2" />
+                    <p className="text-sm">{previewImages.length} image(s) selected</p>
+                    <p className="text-xs text-gray-400 mt-1">Click to reselect files</p>
+                  </div>
+                ) : (
+                  <>
+                    <Plus className="w-6 h-6 text-gray-400 mx-auto mb-2 group-hover:text-white transition-colors" strokeWidth={1.5} />
+                    <p className="text-sm text-gray-400 group-hover:text-white transition-colors">Click to upload images or drag & drop</p>
                   </>
                 )}
               </div>

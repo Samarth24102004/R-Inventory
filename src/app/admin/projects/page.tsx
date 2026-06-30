@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Settings, Edit2, Trash2, Plus, X, Upload, CheckCircle2, Box, CircuitBoard } from 'lucide-react';
+import { Settings, Edit2, Trash2, Plus, X, Upload, CheckCircle2, Box, CircuitBoard, ImageIcon } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminProjectsPage() {
@@ -25,6 +25,8 @@ export default function AdminProjectsPage() {
   });
   const [circuitFile, setCircuitFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [previewImages, setPreviewImages] = useState<File[]>([]);
+  const previewImagesRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Edit Model Modal State
@@ -113,6 +115,7 @@ export default function AdminProjectsPage() {
       github_link: project.github_link || ''
     });
     setCircuitFile(null);
+    setPreviewImages([]);
   };
 
   const openEditModelModal = (model: any) => {
@@ -166,6 +169,27 @@ export default function AdminProjectsPage() {
       circuit_diagram_url = urlData.publicUrl;
     }
     
+    // 3. Upload new preview images and append them
+    let current_preview_images: string[] = editingProject.preview_images || [];
+    if (previewImages.length > 0) {
+      for (const img of previewImages) {
+        const fileExt = img.name.split('.').pop();
+        const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage
+          .from('project_previews')
+          .upload(fileName, img);
+          
+        if (!uploadError) {
+          const { data: urlData } = supabase.storage
+            .from('project_previews')
+            .getPublicUrl(fileName);
+          current_preview_images.push(urlData.publicUrl);
+        } else {
+          console.error("Preview image upload error:", uploadError);
+        }
+      }
+    }
+    
     const { data, error } = await supabase
       .from('projects')
       .update({
@@ -174,7 +198,8 @@ export default function AdminProjectsPage() {
         description: editProjectForm.description,
         short_description: editProjectForm.description.length > 100 ? editProjectForm.description.substring(0, 100) + '...' : editProjectForm.description,
         github_link: editProjectForm.github_link,
-        circuit_diagram_url: circuit_diagram_url
+        circuit_diagram_url: circuit_diagram_url,
+        preview_images: current_preview_images
       })
       .eq('id', editingProject.id)
       .select();
@@ -433,12 +458,13 @@ export default function AdminProjectsPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">GitHub Link</label>
+                <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Drive Link for Code</label>
                 <input 
                   type="url" 
                   value={editProjectForm.github_link}
                   onChange={(e) => setEditProjectForm({...editProjectForm, github_link: e.target.value})}
                   className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors"
+                  placeholder="https://drive.google.com/..."
                 />
               </div>
 
@@ -486,6 +512,41 @@ export default function AdminProjectsPage() {
                     <>
                       <Upload className="w-5 h-5 text-gray-400 mx-auto mb-2 group-hover:text-white transition-colors" />
                       <p className="text-sm text-gray-400 group-hover:text-white transition-colors">Click to add a circuit diagram</p>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Preview Images Upload Section */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Preview Images</label>
+                <div 
+                  className="border border-dashed border-white/20 rounded-md p-6 text-center hover:border-white transition-colors cursor-pointer group"
+                  onClick={() => previewImagesRef.current?.click()}
+                >
+                  <input 
+                    type="file" 
+                    ref={previewImagesRef} 
+                    className="hidden" 
+                    accept="image/*"
+                    multiple
+                    onChange={(e) => {
+                      if (e.target.files) {
+                        setPreviewImages(Array.from(e.target.files));
+                      }
+                    }}
+                  />
+                  {previewImages.length > 0 ? (
+                    <div className="text-white flex flex-col items-center">
+                      <CheckCircle2 className="w-5 h-5 text-green-500 mb-2" />
+                      <p className="text-sm">{previewImages.length} image(s) selected</p>
+                      <p className="text-xs text-gray-400 mt-1">These will be added to the project</p>
+                    </div>
+                  ) : (
+                    <>
+                      <ImageIcon className="w-5 h-5 text-gray-400 mx-auto mb-2 group-hover:text-white transition-colors" />
+                      <p className="text-sm text-gray-400 group-hover:text-white transition-colors">Click to upload new images</p>
+                      <p className="text-[10px] text-gray-500 mt-1">They will be added to the existing images</p>
                     </>
                   )}
                 </div>

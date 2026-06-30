@@ -35,6 +35,7 @@ export interface Project {
   hardware: HardwareComponent[];
   commands: Command[];
   circuits?: CircuitDiagram[];
+  preview_images?: string[];
 }
 
 export const demoProjects: Project[] = [
