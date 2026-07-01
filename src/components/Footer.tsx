@@ -15,7 +15,7 @@ export default function Footer() {
             INVENTORY
           </span>
           <p className="text-gray-400 text-sm text-center md:text-left leading-relaxed">
-            RoS Inventory is your premier destination for ROS2 projects, autonomous robots, AI robotics tutorials, and 3D models. We empower the open-source robotics community with production-ready code and simulation resources.
+            RoS Inventory is your premier destination for ROS2 projects, autonomous robots, and AI robotics. We empower the open-source robotics community with production-ready code, 3D models, and developer resources for SLAM, Navigation2, MoveIt, and Gazebo robot simulation.
           </p>
         </div>
         

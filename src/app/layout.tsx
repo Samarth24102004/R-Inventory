@@ -18,8 +18,8 @@ export const metadata: Metadata = {
     default: "RoS Inventory | Open Source Robotics & ROS2 Projects",
     template: "%s | RoS Inventory"
   },
-  description: "RoS Inventory is a modern platform dedicated to ROS2 robotics, autonomous robots, open-source robotics projects, AI robotics, simulation resources, 3D models, and robotics development.",
-  keywords: ["ROS", "ROS2", "Robotics", "Autonomous Robots", "Open Source Robotics", "ROS Projects", "AI Robotics", "Gazebo", "MoveIt", "Navigation2", "SLAM", "3D Models", "Robotics Tutorials", "Robot Simulation"],
+  description: "RoS Inventory is an open-source robotics platform featuring ROS2 projects, autonomous robots, AI robotics, SLAM, Navigation2, Gazebo, MoveIt, robotics tutorials, 3D models, simulation resources, and developer tools.",
+  keywords: ["RoS Inventory", "ROS", "ROS2", "Robotics", "Robot Operating System", "Open Source Robotics", "Autonomous Robots", "AI Robotics", "MoveIt", "Gazebo", "SLAM", "Navigation2", "Robot Simulation", "3D Models", "ROS Tutorials", "Industrial Robotics"],
   authors: [{ name: "RoS Inventory" }],
   creator: "RoS Inventory",
   publisher: "RoS Inventory",
@@ -31,11 +31,11 @@ export const metadata: Metadata = {
     telephone: false,
   },
   alternates: {
-    canonical: '/',
+    canonical: 'https://rosinventory.co.in',
   },
   openGraph: {
     title: "RoS Inventory | Open Source Robotics & ROS2 Projects",
-    description: "RoS Inventory is a modern platform dedicated to ROS2 robotics, autonomous robots, open-source robotics projects, AI robotics, simulation resources, 3D models, and robotics development.",
+    description: "RoS Inventory is an open-source robotics platform featuring ROS2 projects, autonomous robots, AI robotics, SLAM, Navigation2, Gazebo, MoveIt, robotics tutorials, 3D models, simulation resources, and developer tools.",
     url: 'https://rosinventory.co.in',
     siteName: 'RoS Inventory',
     images: [
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: "RoS Inventory | Open Source Robotics & ROS2 Projects",
-    description: "RoS Inventory is a modern platform dedicated to ROS2 robotics, autonomous robots, open-source robotics projects, AI robotics, simulation resources, 3D models, and robotics development.",
+    description: "RoS Inventory is an open-source robotics platform featuring ROS2 projects, autonomous robots, AI robotics, SLAM, Navigation2, Gazebo, MoveIt, robotics tutorials, 3D models, simulation resources, and developer tools.",
     images: ['/twitter-image.jpg'],
     creator: '@rosinventory',
   },
@@ -84,7 +84,7 @@ const jsonLd = {
       "@id": "https://rosinventory.co.in/#website",
       "url": "https://rosinventory.co.in",
       "name": "RoS Inventory",
-      "description": "Open Source Robotics & ROS2 Projects",
+      "description": "RoS Inventory is an open-source robotics platform featuring ROS2 projects, autonomous robots, AI robotics, SLAM, Navigation2, Gazebo, MoveIt, robotics tutorials, 3D models, simulation resources, and developer tools.",
       "publisher": {
         "@id": "https://rosinventory.co.in/#organization"
       },
@@ -112,6 +112,14 @@ const jsonLd = {
         "https://youtube.com/@rosinventory",
         "https://twitter.com/rosinventory"
       ]
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://rosinventory.co.in/#software",
+      "name": "RoS Inventory",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "All",
+      "url": "https://rosinventory.co.in"
     }
   ]
 };
