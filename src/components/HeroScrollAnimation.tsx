@@ -50,7 +50,7 @@ export default function HeroScrollAnimation() {
         }
       };
       img.onerror = () => {
-        console.error(`Failed to load frame: ${img.src}`);
+        // Silently handle missing frames to prevent console spam
         loadedCount++; // Increment anyway so it doesn't hang forever
         if (loadedCount === frameCount) {
           imagesFinished = true;
@@ -97,7 +97,7 @@ export default function HeroScrollAnimation() {
       }
 
       requestAnimationFrame(() => {
-        if (images[frameIndex] && images[frameIndex].complete) {
+        if (images[frameIndex] && images[frameIndex].complete && images[frameIndex].naturalWidth > 0) {
           context.clearRect(0, 0, canvas.width, canvas.height);
           context.drawImage(images[frameIndex], 0, 0);
         }

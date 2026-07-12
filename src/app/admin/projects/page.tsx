@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Settings, Edit2, Trash2, Plus, X, Upload, CheckCircle2, Box, CircuitBoard, ImageIcon } from 'lucide-react';
+import { Settings, Edit2, Trash2, Plus, X, Upload, CheckCircle2, Box, CircuitBoard, ImageIcon, FileBox } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -26,6 +26,8 @@ export default function AdminProjectsPage() {
   });
   const [circuitFile, setCircuitFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [codeFile, setCodeFile] = useState<File | null>(null);
+  const codeFileRef = useRef<HTMLInputElement>(null);
   const [previewImages, setPreviewImages] = useState<File[]>([]);
   const previewImagesRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -116,6 +118,7 @@ export default function AdminProjectsPage() {
       github_link: project.github_link || ''
     });
     setCircuitFile(null);
+    setCodeFile(null);
     setPreviewImages([]);
   };
 
@@ -132,6 +135,42 @@ export default function AdminProjectsPage() {
     e.preventDefault();
     setIsSubmitting(true);
     
+    let github_link_url = editProjectForm.github_link;
+
+    if (codeFile) {
+      if (editingProject.github_link && editingProject.github_link.includes('supabase.co')) {
+        try {
+          const urlObj = new URL(editingProject.github_link);
+          const pathSegments = urlObj.pathname.split('/');
+          const fileName = pathSegments[pathSegments.length - 1];
+          if (fileName) {
+            await supabase.storage.from('project_code').remove([fileName]);
+          }
+        } catch (e) {
+          console.error("Failed to delete old code zip", e);
+        }
+      }
+
+      const fileExt = codeFile.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('project_code')
+        .upload(fileName, codeFile);
+        
+      if (uploadError) {
+        alert(`Failed to upload new code file: ${uploadError.message}`);
+        setIsSubmitting(false);
+        return;
+      }
+      
+      const { data: urlData } = supabase.storage
+        .from('project_code')
+        .getPublicUrl(fileName);
+        
+      github_link_url = urlData.publicUrl;
+    }
+
     let circuit_diagram_url = editingProject.circuit_diagram_url;
     
     if (circuitFile) {
@@ -198,7 +237,7 @@ export default function AdminProjectsPage() {
         price: parseFloat(editProjectForm.price) || 0,
         description: editProjectForm.description,
         short_description: editProjectForm.description.length > 100 ? editProjectForm.description.substring(0, 100) + '...' : editProjectForm.description,
-        github_link: editProjectForm.github_link,
+        github_link: github_link_url,
         circuit_diagram_url: circuit_diagram_url,
         preview_images: current_preview_images
       })
@@ -458,15 +497,44 @@ export default function AdminProjectsPage() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Drive Link for Code</label>
-                <input 
-                  type="url" 
-                  value={editProjectForm.github_link}
-                  onChange={(e) => setEditProjectForm({...editProjectForm, github_link: e.target.value})}
-                  className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors"
-                  placeholder="https://drive.google.com/..."
-                />
+              <div className="space-y-4 p-4 border border-white/10 rounded-md">
+                <div className="flex items-center space-x-3">
+                  <FileBox className="text-white w-5 h-5" />
+                  <h3 className="text-sm font-medium text-white">Source Code (.zip)</h3>
+                </div>
+                {editProjectForm.github_link && (
+                  <p className="text-xs text-gray-400 break-all">
+                    Current: <a href={editProjectForm.github_link} target="_blank" className="text-blue-400 hover:underline">{editProjectForm.github_link}</a>
+                  </p>
+                )}
+                
+                <div 
+                  className="border border-dashed border-white/20 rounded-md p-6 text-center hover:border-white transition-colors cursor-pointer group"
+                  onClick={() => codeFileRef.current?.click()}
+                >
+                  <input 
+                    type="file" 
+                    ref={codeFileRef} 
+                    className="hidden" 
+                    accept=".zip,.rar,.tar,.gz"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setCodeFile(e.target.files[0]);
+                      }
+                    }}
+                  />
+                  {codeFile ? (
+                    <div className="text-white flex flex-col items-center">
+                      <CheckCircle2 className="w-5 h-5 text-green-500 mb-2" />
+                      <p className="text-xs">{codeFile.name}</p>
+                    </div>
+                  ) : (
+                    <>
+                      <Plus className="w-5 h-5 text-gray-400 mx-auto mb-1 group-hover:text-white transition-colors" />
+                      <p className="text-xs text-gray-400 group-hover:text-white transition-colors">Upload new .ZIP to replace current</p>
+                    </>
+                  )}
+                </div>
               </div>
 
               <div className="space-y-2">

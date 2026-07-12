@@ -13,7 +13,8 @@ export default function AdminUploadPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Project Specific States
-  const [githubLink, setGithubLink] = useState('');
+  const [codeFile, setCodeFile] = useState<File | null>(null);
+  const codeFileRef = useRef<HTMLInputElement>(null);
   const [circuitFile, setCircuitFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -69,6 +70,28 @@ export default function AdminUploadPage() {
     
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
+    let uploaded_code_url = '';
+    if (codeFile) {
+      const fileExt = codeFile.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+      
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('project_code')
+        .upload(fileName, codeFile);
+        
+      if (uploadError) {
+        alert(`Failed to upload code file: ${uploadError.message}`);
+        setIsSubmitting(false);
+        return;
+      }
+      
+      const { data: urlData } = supabase.storage
+        .from('project_code')
+        .getPublicUrl(fileName);
+        
+      uploaded_code_url = urlData.publicUrl;
+    }
+
     let circuit_diagram_url = null;
     if (circuitFile) {
       const fileExt = circuitFile.name.split('.').pop();
@@ -118,7 +141,7 @@ export default function AdminUploadPage() {
         description: description,
         short_description: description.length > 100 ? description.substring(0, 100) + '...' : description,
         price: parseFloat(price) || 0,
-        github_link: githubLink,
+        github_link: uploaded_code_url,
         circuit_diagram_url: circuit_diagram_url,
         preview_images: uploaded_preview_urls,
         category: 'Uncategorized',
@@ -138,7 +161,7 @@ export default function AdminUploadPage() {
       setTitle('');
       setDescription('');
       setPrice('0');
-      setGithubLink('');
+      setCodeFile(null);
       setCircuitFile(null);
       setPreviewImages([]);
     }
@@ -266,15 +289,41 @@ export default function AdminUploadPage() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">Drive Link for Code</label>
-              <input 
-                type="url" 
-                value={githubLink}
-                onChange={(e) => setGithubLink(e.target.value)}
-                className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors"
-                placeholder="https://drive.google.com/drive/folders/..."
-              />
+            <div className="p-6 bg-transparent border border-white/10 rounded-md space-y-4">
+              <div className="flex items-center space-x-3">
+                <FileBox className="text-white w-5 h-5" strokeWidth={1.5} />
+                <h3 className="text-lg font-medium text-white tracking-tight">Source Code (.zip)</h3>
+              </div>
+              <p className="text-sm text-gray-400">Upload the complete source code as a ZIP folder.</p>
+              
+              <div 
+                className="border border-dashed border-white/20 rounded-md p-8 text-center hover:border-white transition-colors cursor-pointer group"
+                onClick={() => codeFileRef.current?.click()}
+              >
+                <input 
+                  type="file" 
+                  ref={codeFileRef} 
+                  className="hidden" 
+                  accept=".zip,.rar,.tar,.gz"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      setCodeFile(e.target.files[0]);
+                    }
+                  }}
+                />
+                {codeFile ? (
+                  <div className="text-white flex flex-col items-center">
+                    <CheckCircle2 className="w-6 h-6 text-green-500 mb-2" />
+                    <p className="text-sm">{codeFile.name}</p>
+                    <p className="text-xs text-gray-400 mt-1">Click to change file</p>
+                  </div>
+                ) : (
+                  <>
+                    <Plus className="w-6 h-6 text-gray-400 mx-auto mb-2 group-hover:text-white transition-colors" strokeWidth={1.5} />
+                    <p className="text-sm text-gray-400 group-hover:text-white transition-colors">Click to upload .ZIP or drag & drop</p>
+                  </>
+                )}
+              </div>
             </div>
 
             <div className="space-y-2">

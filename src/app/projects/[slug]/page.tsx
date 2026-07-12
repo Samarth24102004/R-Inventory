@@ -310,7 +310,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
                 {project.github_link && (
                   <div className="pt-6 border-t border-white/10 mt-auto">
                     <h4 className="text-lg font-medium mb-3 flex items-center text-white">
-                      <Code className="w-5 h-5 mr-2" /> Source Code (Drive Link)
+                      <Code className="w-5 h-5 mr-2" /> Download Source Code
                     </h4>
                     <p className="text-gray-400 text-sm mb-4">You have full access to the source code for this project.</p>
                     <a 
@@ -319,7 +319,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
                       rel="noreferrer"
                       className="inline-flex items-center w-full justify-center px-6 py-3 bg-white text-black rounded-md font-medium hover:bg-gray-200 transition-colors"
                     >
-                      Open in Drive
+                      Download .ZIP
                     </a>
                   </div>
                 )}
@@ -338,7 +338,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
               <div className="bg-[#0a0a0a] border border-white/10 p-8 rounded-xl text-center max-w-md shadow-2xl">
                 <Lock className="w-10 h-10 text-gray-400 mx-auto mb-4" strokeWidth={1.5} />
                 <h3 className="text-xl font-semibold mb-2">Premium Content Locked</h3>
-                <p className="text-sm text-gray-400 mb-6">Purchase this project to unlock the full architecture description, circuit diagrams, and source code Drive link.</p>
+                <p className="text-sm text-gray-400 mb-6">Purchase this project to unlock the full architecture description, circuit diagrams, and source code download.</p>
                 <button 
                   onClick={handleBuy}
                   disabled={purchasing}
