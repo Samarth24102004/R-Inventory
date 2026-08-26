@@ -795,8 +795,9 @@ export default function AdminUploadPage() {
               </div>
             ))}
           </div>
-        </div>
+        )}
       </div>
     </div>
-  );
+  </div>
+);
 }
