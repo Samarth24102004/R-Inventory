@@ -70,10 +70,20 @@ export default function HeroScrollAnimation() {
     const context = canvas.getContext('2d');
     if (!context) return;
 
-    canvas.width = images[0].width;
-    canvas.height = images[0].height;
+    const updateCanvasDimensions = () => {
+      const valid = images.find(img => img.complete && img.naturalWidth > 0);
+      const width = valid?.naturalWidth || 1920;
+      const height = valid?.naturalHeight || 1080;
+
+      if (canvas.width !== width) canvas.width = width;
+      if (canvas.height !== height) canvas.height = height;
+    };
+
+    updateCanvasDimensions();
 
     const render = () => {
+      updateCanvasDimensions();
+
       const parent = containerRef.current?.parentElement;
       let fraction = 0;
 
