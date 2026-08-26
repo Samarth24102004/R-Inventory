@@ -325,114 +325,122 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
           const hardwareText = project.hardware_description || parsedDesc.hardware;
 
           return (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-              
-              {/* Left Column: SOFTWARE Overview & Code Download / Lock */}
-              <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg flex flex-col h-full">
-                <h3 className="text-xl font-semibold mb-4 flex items-center text-white">
-                  <Code2 className="w-6 h-6 mr-3 text-white" /> SOFTWARE Architecture
-                </h3>
-                <div className="text-gray-300 mb-6 grow space-y-3">
-                  {softwareText ? (
-                    softwareText.split('\n').map((paragraph: string, idx: number) => (
-                      <p key={idx} className="text-sm md:text-base leading-relaxed">{paragraph}</p>
-                    ))
-                  ) : (
-                    <p className="text-gray-500 italic text-sm">No software details specified.</p>
-                  )}
-                </div>
+            <div className="space-y-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+                
+                {/* Left Column: SOFTWARE Overview */}
+                <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg flex flex-col h-full">
+                  <h3 className="text-xl font-semibold mb-4 flex items-center text-white">
+                    <Code2 className="w-6 h-6 mr-3 text-white" /> SOFTWARE Architecture
+                  </h3>
+                  <div className="text-gray-300 mb-6 grow space-y-3">
+                    {softwareText ? (
+                      softwareText.split('\n').map((paragraph: string, idx: number) => (
+                        <p key={idx} className="text-sm md:text-base leading-relaxed">{paragraph}</p>
+                      ))
+                    ) : (
+                      <p className="text-gray-500 italic text-sm">No software details specified.</p>
+                    )}
+                  </div>
 
-                {/* Source Code Section (Locked until purchase) */}
-                <div className="pt-6 border-t border-white/10 mt-auto">
-                  <h4 className="text-lg font-medium mb-3 flex items-center text-white">
-                    <Code className="w-5 h-5 mr-2 text-white" /> Source Code (.ZIP)
-                  </h4>
-                  
-                  {hasPurchased ? (
-                    <div>
-                      <p className="text-gray-400 text-sm mb-4">You have full access to the source code for this project.</p>
-                      {project.github_link ? (
-                        <a 
-                          href={project.github_link} 
-                          target="_blank" 
-                          rel="noreferrer"
-                          className="inline-flex items-center w-full justify-center px-6 py-3 bg-white text-black rounded-md font-medium hover:bg-gray-200 transition-colors"
-                        >
-                          Download .ZIP
-                        </a>
-                      ) : (
-                        <p className="text-sm text-gray-500 italic">No source code URL attached yet.</p>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="p-5 bg-white/5 border border-white/10 rounded-lg text-center">
-                      <Lock className="w-6 h-6 text-white mx-auto mb-2" />
-                      <p className="text-xs font-medium text-white mb-1">Source Code Locked</p>
-                      <p className="text-[11px] text-gray-400 mb-4">A single payment unlocks full access to both Source Code .ZIP & Circuit Diagrams.</p>
-                      <button 
-                        onClick={handleBuy}
-                        disabled={purchasing}
-                        className="w-full py-2.5 bg-white text-black hover:bg-gray-200 rounded-md text-xs font-semibold transition-colors"
-                      >
-                        {purchasing ? "Processing..." : `Unlock Full Project for ₹${project.price}`}
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Right Column: HARDWARE Overview & Circuit Diagram / Lock */}
-              <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg flex flex-col h-full">
-                <h3 className="text-xl font-semibold mb-4 flex items-center text-white">
-                  <Cpu className="w-6 h-6 mr-3 text-white" /> HARDWARE Architecture
-                </h3>
-                <div className="text-gray-300 mb-6 grow space-y-3">
-                  {hardwareText ? (
-                    hardwareText.split('\n').map((paragraph: string, idx: number) => (
-                      <p key={idx} className="text-sm md:text-base leading-relaxed">{paragraph}</p>
-                    ))
-                  ) : (
-                    <p className="text-gray-500 italic text-sm">No hardware details specified.</p>
-                  )}
-                </div>
-
-                {/* Circuit Diagram Section (Locked until purchase) */}
-                <div className="pt-6 border-t border-white/10 mt-auto">
-                  <h4 className="text-sm font-medium mb-3 flex items-center text-gray-300">
-                    <CheckCircle className="w-4 h-4 mr-2 text-white" /> Circuit & Wiring Diagram
-                  </h4>
-                  
-                  {hasPurchased ? (
-                    project.circuit_diagram_url ? (
-                      <div className="rounded-lg overflow-hidden border border-white/10 bg-black/50 p-2 flex items-center justify-center">
-                        <Image 
-                          src={project.circuit_diagram_url} 
-                          alt="Circuit Diagram"
-                          width={800}
-                          height={350} 
-                          className="w-full h-auto max-h-[350px] object-contain rounded-md"
-                        />
+                  {/* Source Code Section (Visible if purchased, else helper badge) */}
+                  <div className="pt-6 border-t border-white/10 mt-auto">
+                    <h4 className="text-lg font-medium mb-3 flex items-center text-white">
+                      <Code className="w-5 h-5 mr-2 text-white" /> Source Code (.ZIP)
+                    </h4>
+                    
+                    {hasPurchased ? (
+                      <div>
+                        <p className="text-gray-400 text-sm mb-4">You have full access to the source code for this project.</p>
+                        {project.github_link ? (
+                          <a 
+                            href={project.github_link} 
+                            target="_blank" 
+                            rel="noreferrer"
+                            className="inline-flex items-center w-full justify-center px-6 py-3 bg-white text-black rounded-md font-medium hover:bg-gray-200 transition-colors"
+                          >
+                            Download .ZIP
+                          </a>
+                        ) : (
+                          <p className="text-sm text-gray-500 italic">No source code URL attached yet.</p>
+                        )}
                       </div>
                     ) : (
-                      <p className="text-sm text-gray-500 italic">No circuit diagram provided for this project.</p>
-                    )
-                  ) : (
-                    <div className="p-5 bg-white/5 border border-white/10 rounded-lg text-center">
-                      <Lock className="w-6 h-6 text-white mx-auto mb-2" />
-                      <p className="text-xs font-medium text-white mb-1">Circuit Diagram Locked</p>
-                      <p className="text-[11px] text-gray-400 mb-4">A single payment unlocks full access to both Circuit Diagrams & Source Code .ZIP.</p>
-                      <button 
-                        onClick={handleBuy}
-                        disabled={purchasing}
-                        className="w-full py-2.5 bg-white text-black hover:bg-gray-200 rounded-md text-xs font-semibold transition-colors"
-                      >
-                        {purchasing ? "Processing..." : `Unlock Full Project for ₹${project.price}`}
-                      </button>
-                    </div>
-                  )}
+                      <div className="p-3 bg-white/5 border border-white/10 rounded-lg text-xs text-gray-400 flex items-center gap-2">
+                        <Lock className="w-4 h-4 text-gray-400 shrink-0" />
+                        <span>Source code repository (.ZIP) is included with full project unlock.</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
+
+                {/* Right Column: HARDWARE Overview */}
+                <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg flex flex-col h-full">
+                  <h3 className="text-xl font-semibold mb-4 flex items-center text-white">
+                    <Cpu className="w-6 h-6 mr-3 text-white" /> HARDWARE Architecture
+                  </h3>
+                  <div className="text-gray-300 mb-6 grow space-y-3">
+                    {hardwareText ? (
+                      hardwareText.split('\n').map((paragraph: string, idx: number) => (
+                        <p key={idx} className="text-sm md:text-base leading-relaxed">{paragraph}</p>
+                      ))
+                    ) : (
+                      <p className="text-gray-500 italic text-sm">No hardware details specified.</p>
+                    )}
+                  </div>
+
+                  {/* Circuit Diagram Section (Visible if purchased, else helper badge) */}
+                  <div className="pt-6 border-t border-white/10 mt-auto">
+                    <h4 className="text-sm font-medium mb-3 flex items-center text-gray-300">
+                      <CheckCircle className="w-4 h-4 mr-2 text-white" /> Circuit & Wiring Diagram
+                    </h4>
+                    
+                    {hasPurchased ? (
+                      project.circuit_diagram_url ? (
+                        <div className="rounded-lg overflow-hidden border border-white/10 bg-black/50 p-2 flex items-center justify-center">
+                          <Image 
+                            src={project.circuit_diagram_url} 
+                            alt="Circuit Diagram"
+                            width={800}
+                            height={350} 
+                            className="w-full h-auto max-h-[350px] object-contain rounded-md"
+                          />
+                        </div>
+                      ) : (
+                        <p className="text-sm text-gray-500 italic">No circuit diagram provided for this project.</p>
+                      )
+                    ) : (
+                      <div className="p-3 bg-white/5 border border-white/10 rounded-lg text-xs text-gray-400 flex items-center gap-2">
+                        <Lock className="w-4 h-4 text-gray-400 shrink-0" />
+                        <span>High-res circuit & wiring diagrams are included with full project unlock.</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
               </div>
 
+              {/* Single Unified Lock Section */}
+              {!hasPurchased && (
+                <div className="bg-[#0a0a0a] border border-white/10 p-8 md:p-10 rounded-xl text-center shadow-2xl space-y-4">
+                  <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-2">
+                    <Lock className="w-6 h-6 text-white" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-white">Unlock Full Project Access</h3>
+                  <p className="text-sm text-gray-400 max-w-lg mx-auto leading-relaxed">
+                    Get instant lifetime access to the complete source code repository (.ZIP) and high-resolution circuit & wiring diagrams with a single purchase.
+                  </p>
+                  <div className="pt-3">
+                    <button 
+                      onClick={handleBuy}
+                      disabled={purchasing}
+                      className="px-8 py-3.5 bg-white text-black hover:bg-gray-200 rounded-md font-semibold text-sm md:text-base transition-colors shadow-lg"
+                    >
+                      {purchasing ? "Processing..." : `Unlock Full Project for ₹${project.price}`}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           );
         })()}
