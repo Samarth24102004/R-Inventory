@@ -15,42 +15,49 @@ export default function HomepageSlideshow() {
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
-        const { data: projects } = await supabase
-          .from('projects')
+        // 1. Try custom admin uploaded banners
+        const { data: customBanners } = await supabase
+          .from('slideshow_banners')
           .select('*')
-          .order('created_at', { ascending: false })
-          .limit(5);
+          .eq('is_active', true)
+          .order('created_at', { ascending: false });
 
-        if (projects && projects.length > 0) {
-          setSlides(projects);
+        if (customBanners && customBanners.length > 0) {
+          setSlides(customBanners.map(b => ({
+            id: b.id,
+            title: b.title,
+            short_description: b.subtitle || 'Featured Showcase',
+            category: b.badge_text || 'Featured',
+            image_url: b.image_url,
+            link_url: b.link_url || '#projects',
+            isCustomBanner: true
+          })));
         } else {
-          // Default showcase fallback slides if DB is empty
-          setSlides([
-            {
-              id: '1',
-              title: 'AI Assistant v1.0',
-              slug: 'ai-assistant-v1-0',
-              short_description: 'Raspberry Pi-powered desktop robot assistant that combines voice control with ROS 2 kinematics.',
-              price: 699,
-              category: 'Robotics',
-              difficulty: 'Beginner',
-              ros_version: 'ROS Humble',
-              thumbnail: '/placeholder.jpg',
-              preview_video_url: null
-            },
-            {
-              id: '2',
-              title: 'Autonomous Navigation Rover',
-              slug: 'autonomous-navigation-rover',
-              short_description: 'Full Navigation2 & SLAM toolbox integration for differential drive mobile robots.',
-              price: 999,
-              category: 'Autonomous Driving',
-              difficulty: 'Intermediate',
-              ros_version: 'ROS Jazzy',
-              thumbnail: '/placeholder.jpg',
-              preview_video_url: null
-            }
-          ]);
+          // 2. Fallback to latest projects
+          const { data: projects } = await supabase
+            .from('projects')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(5);
+
+          if (projects && projects.length > 0) {
+            setSlides(projects);
+          } else {
+            setSlides([
+              {
+                id: '1',
+                title: 'AI Assistant v1.0',
+                slug: 'ai-assistant-v1-0',
+                short_description: 'Raspberry Pi-powered desktop robot assistant that combines voice control with ROS 2 kinematics.',
+                price: 699,
+                category: 'Robotics',
+                difficulty: 'Beginner',
+                ros_version: 'ROS Humble',
+                thumbnail: '/placeholder.jpg',
+                preview_video_url: null
+              }
+            ]);
+          }
         }
       } catch (err) {
         console.error("Error fetching slides:", err);
@@ -82,10 +89,11 @@ export default function HomepageSlideshow() {
   if (loading || slides.length === 0) return null;
 
   const currentSlide = slides[currentIndex];
-  const coverImage = currentSlide.preview_images && currentSlide.preview_images.length > 0 
+  const coverImage = currentSlide.image_url || (currentSlide.preview_images && currentSlide.preview_images.length > 0 
     ? currentSlide.preview_images[0] 
-    : currentSlide.thumbnail !== '/placeholder.jpg' ? currentSlide.thumbnail : null;
+    : currentSlide.thumbnail !== '/placeholder.jpg' ? currentSlide.thumbnail : null);
   const previewVideo = currentSlide.preview_video_url || currentSlide.previewVideoUrl;
+  const targetLink = currentSlide.link_url || (currentSlide.slug ? `/projects/${currentSlide.slug}` : '#projects');
 
   return (
     <section 
@@ -151,14 +159,18 @@ export default function HomepageSlideshow() {
         <div className="relative z-10 p-6 md:p-10 max-w-2xl space-y-4">
           <div className="flex flex-wrap gap-2.5 items-center">
             <span className="px-3 py-1 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-full text-xs font-semibold uppercase tracking-wider">
-              {currentSlide.category || 'Robotics'}
+              {currentSlide.category || 'Featured'}
             </span>
-            <span className="px-3 py-1 bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-full text-xs font-medium uppercase tracking-wider">
-              {currentSlide.ros_version || currentSlide.rosVersion || 'ROS 2'}
-            </span>
-            <span className="px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-full text-xs font-medium uppercase tracking-wider">
-              {currentSlide.difficulty || 'Beginner'}
-            </span>
+            {currentSlide.ros_version && (
+              <span className="px-3 py-1 bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-full text-xs font-medium uppercase tracking-wider">
+                {currentSlide.ros_version}
+              </span>
+            )}
+            {currentSlide.difficulty && (
+              <span className="px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-full text-xs font-medium uppercase tracking-wider">
+                {currentSlide.difficulty}
+              </span>
+            )}
           </div>
 
           <h3 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
@@ -166,21 +178,23 @@ export default function HomepageSlideshow() {
           </h3>
 
           <p className="text-gray-300 text-sm md:text-base leading-relaxed line-clamp-2">
-            {currentSlide.short_description || currentSlide.description}
+            {currentSlide.short_description || currentSlide.subtitle || currentSlide.description}
           </p>
 
           <div className="flex flex-wrap items-center gap-4 pt-3">
             <Link 
-              href={`/projects/${currentSlide.slug}`}
+              href={targetLink}
               className="px-6 py-3 bg-white text-black hover:bg-gray-200 rounded-md font-semibold text-sm transition-colors flex items-center gap-2 shadow-lg"
             >
-              <span>Explore Project</span>
+              <span>Explore Showcase</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
 
-            <div className="text-xl font-bold text-white bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-md border border-white/15">
-              ₹{currentSlide.price}
-            </div>
+            {currentSlide.price && (
+              <div className="text-xl font-bold text-white bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-md border border-white/15">
+                ₹{currentSlide.price}
+              </div>
+            )}
           </div>
         </div>
 
