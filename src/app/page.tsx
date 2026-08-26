@@ -1,38 +1,28 @@
 import HeroScrollAnimation from '@/components/HeroScrollAnimation';
 import HomepageSlideshow from '@/components/HomepageSlideshow';
-import ProjectSlider from '@/components/ProjectSlider';
 import Footer from '@/components/Footer';
-import { supabase } from '@/lib/supabase';
 
 export const revalidate = 0; // Ensure data is fetched dynamically
 
 export default async function Home() {
-  const { data: projects } = await supabase
-    .from('projects')
-    .select('*')
-    .order('created_at', { ascending: false });
-
   return (
-    <main className="relative bg-black min-h-screen text-white selection:bg-[#84cc16]/30">
+    <main className="relative bg-black min-h-screen text-white selection:bg-[#84cc16]/30 overflow-x-hidden">
       
-      {/* Sticky Canvas Animation */}
+      {/* 1. Sticky 3D Canvas Background Animation */}
       <HeroScrollAnimation />
 
-      {/* Empty space to allow scrolling through the animation without text overlay */}
-      <div className="relative z-10 mt-[-100vh] h-[500vh] pointer-events-none"></div>
-
-      {/* Interactive Homepage Showcase Slideshow */}
-      <div id="projects" className="relative z-20 -mt-32">
+      {/* 2. Floating Right-Side Slideshow (Visible right from starting view down to footer) */}
+      <div className="fixed top-24 right-4 md:right-8 lg:right-12 z-40 w-[90vw] sm:w-[420px] md:w-[460px] lg:w-[500px] pointer-events-auto transition-all duration-300">
         <HomepageSlideshow />
       </div>
 
-      {/* Marquee Card Slider */}
-      <div className="relative z-20">
-        <ProjectSlider projects={projects || []} />
-      </div>
+      {/* 3. Empty scroll space to allow scrolling through 3D canvas animation */}
+      <div className="relative z-10 mt-[-100vh] h-[450vh] pointer-events-none"></div>
 
-      {/* Footer Section */}
-      <Footer />
+      {/* 4. Footer Section (Overlaps sticky slideshow smoothly when reached) */}
+      <div className="relative z-50 bg-black">
+        <Footer />
+      </div>
     </main>
   );
 }
