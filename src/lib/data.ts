@@ -22,20 +22,60 @@ export interface Project {
   title: string;
   slug: string;
   description: string;
-  shortDescription: string;
+  shortDescription?: string;
+  short_description?: string;
+  software_description?: string;
+  hardware_description?: string;
   category: string;
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
   rosVersion: 'ROS Humble' | 'ROS Iron' | 'ROS Jazzy';
+  ros_version?: string;
   thumbnail: string;
   heroImage: string;
   price: number;
   githubUrl?: string;
+  github_link?: string;
   videoUrl?: string;
-  createdAt: string;
-  hardware: HardwareComponent[];
-  commands: Command[];
+  video_url?: string;
+  previewVideoUrl?: string;
+  preview_video_url?: string;
+  circuit_diagram_url?: string;
+  createdAt?: string;
+  created_at?: string;
+  hardware?: HardwareComponent[];
+  commands?: Command[];
   circuits?: CircuitDiagram[];
   preview_images?: string[];
+}
+
+export function parseProjectDescription(desc: string = ''): { software: string; hardware: string } {
+  if (!desc) return { software: '', hardware: '' };
+
+  const softwareMatch = desc.match(/(?:\[SOFTWARE\]|SOFTWARE DESCRIPTION|SOFTWARE:)\s*([\s\S]*?)(?=(?:\[HARDWARE\]|HARDWARE DESCRIPTION|HARDWARE:)|$)/i);
+  const hardwareMatch = desc.match(/(?:\[HARDWARE\]|HARDWARE DESCRIPTION|HARDWARE:)\s*([\s\S]*?)$/i);
+
+  if (softwareMatch || hardwareMatch) {
+    return {
+      software: softwareMatch ? softwareMatch[1].trim() : '',
+      hardware: hardwareMatch ? hardwareMatch[1].trim() : ''
+    };
+  }
+
+  return {
+    software: desc.trim(),
+    hardware: ''
+  };
+}
+
+export function formatProjectDescription(software: string, hardware: string): string {
+  const parts = [];
+  if (software.trim()) {
+    parts.push(`SOFTWARE:\n${software.trim()}`);
+  }
+  if (hardware.trim()) {
+    parts.push(`HARDWARE:\n${hardware.trim()}`);
+  }
+  return parts.join('\n\n');
 }
 
 export const demoProjects: Project[] = [

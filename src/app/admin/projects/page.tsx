@@ -1,9 +1,10 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Settings, Edit2, Trash2, Plus, X, Upload, CheckCircle2, Box, CircuitBoard, ImageIcon, FileBox } from 'lucide-react';
+import { Settings, Edit2, Trash2, Plus, X, Upload, CheckCircle2, Box, CircuitBoard, ImageIcon, FileBox, Video, Cpu, Code2, Film } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { parseProjectDescription, formatProjectDescription } from '@/lib/data';
 
 export default function AdminProjectsPage() {
   const [activeTab, setActiveTab] = useState<'projects' | 'models'>('projects');
@@ -22,7 +23,11 @@ export default function AdminProjectsPage() {
     title: '',
     price: '',
     description: '',
-    github_link: ''
+    software_description: '',
+    hardware_description: '',
+    github_link: '',
+    video_url: '',
+    preview_video_url: ''
   });
   const [circuitFile, setCircuitFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -30,7 +35,18 @@ export default function AdminProjectsPage() {
   const codeFileRef = useRef<HTMLInputElement>(null);
   const [previewImages, setPreviewImages] = useState<File[]>([]);
   const previewImagesRef = useRef<HTMLInputElement>(null);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const videoFileRef = useRef<HTMLInputElement>(null);
+  const [previewVideoFile, setPreviewVideoFile] = useState<File | null>(null);
+  const previewVideoFileRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Quick Video Modal State
+  const [quickVideoProject, setQuickVideoProject] = useState<any>(null);
+  const [quickVideoUrl, setQuickVideoUrl] = useState('');
+  const [quickVideoFile, setQuickVideoFile] = useState<File | null>(null);
+  const quickVideoFileRef = useRef<HTMLInputElement>(null);
+  const [isQuickVideoSubmitting, setIsQuickVideoSubmitting] = useState(false);
 
   // Edit Model Modal State
   const [editingModel, setEditingModel] = useState<any>(null);
@@ -79,7 +95,7 @@ export default function AdminProjectsPage() {
   }, []);
 
   const handleDeleteProject = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this project? This cannot be undone.")) return;
+    if (!window.confirm("Are you sure you want to delete this project? This action cannot be undone.")) return;
     
     // First, delete related purchases so we don't hit foreign key constraints
     await supabase.from('purchases').delete().eq('project_id', id);
@@ -97,7 +113,7 @@ export default function AdminProjectsPage() {
   const handleDeleteModel = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this 3D model? This cannot be undone.")) return;
     
-    // Also delete purchases for models if they exist in purchases table or similar
+    // Also delete purchases for models if they exist
     await supabase.from('purchases').delete().eq('model_id', id);
 
     const { error } = await supabase.from('stl_models').delete().eq('id', id);
@@ -111,15 +127,74 @@ export default function AdminProjectsPage() {
 
   const openEditProjectModal = (project: any) => {
     setEditingProject(project);
+    const parsed = parseProjectDescription(project.description || '');
     setEditProjectForm({
       title: project.title || '',
       price: project.price?.toString() || '0',
       description: project.description || '',
-      github_link: project.github_link || ''
+      software_description: project.software_description || parsed.software || '',
+      hardware_description: project.hardware_description || parsed.hardware || '',
+      github_link: project.github_link || '',
+      video_url: project.video_url || project.videoUrl || ''
     });
     setCircuitFile(null);
     setCodeFile(null);
     setPreviewImages([]);
+    setVideoFile(null);
+  };
+
+  const openQuickVideoModal = (project: any) => {
+    setQuickVideoProject(project);
+    setQuickVideoUrl(project.video_url || project.videoUrl || '');
+    setQuickVideoFile(null);
+  };
+
+  const handleQuickVideoSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!quickVideoProject) return;
+
+    setIsQuickVideoSubmitting(true);
+    let finalUrl = quickVideoUrl.trim();
+
+    if (quickVideoFile) {
+      const fileExt = quickVideoFile.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+      
+      const { error: videoUploadErr } = await supabase.storage
+        .from('project_videos')
+        .upload(fileName, quickVideoFile);
+        
+      if (!videoUploadErr) {
+        const { data: urlData } = supabase.storage
+          .from('project_videos')
+          .getPublicUrl(fileName);
+        finalUrl = urlData.publicUrl;
+      } else {
+        const { error: fallbackErr } = await supabase.storage
+          .from('diagrams')
+          .upload(fileName, quickVideoFile);
+        if (!fallbackErr) {
+          const { data: fallbackUrlData } = supabase.storage
+            .from('diagrams')
+            .getPublicUrl(fileName);
+          finalUrl = fallbackUrlData.publicUrl;
+        }
+      }
+    }
+
+    const { error } = await supabase
+      .from('projects')
+      .update({ video_url: finalUrl })
+      .eq('id', quickVideoProject.id);
+
+    setIsQuickVideoSubmitting(false);
+
+    if (error) {
+      alert(`Failed to update video: ${error.message}`);
+    } else {
+      setQuickVideoProject(null);
+      fetchProjects();
+    }
   };
 
   const openEditModelModal = (model: any) => {
@@ -134,6 +209,62 @@ export default function AdminProjectsPage() {
   const handleEditProjectSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    let finalVideoUrl = editProjectForm.video_url;
+
+    if (videoFile) {
+      const fileExt = videoFile.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+      
+      const { error: videoUploadErr } = await supabase.storage
+        .from('project_videos')
+        .upload(fileName, videoFile);
+        
+      if (!videoUploadErr) {
+        const { data: urlData } = supabase.storage
+          .from('project_videos')
+          .getPublicUrl(fileName);
+        finalVideoUrl = urlData.publicUrl;
+      } else {
+        const { error: fallbackErr } = await supabase.storage
+          .from('diagrams')
+          .upload(fileName, videoFile);
+        if (!fallbackErr) {
+          const { data: fallbackUrlData } = supabase.storage
+            .from('diagrams')
+            .getPublicUrl(fileName);
+          finalVideoUrl = fallbackUrlData.publicUrl;
+        }
+      }
+    }
+
+    let finalPreviewVideoUrl = editProjectForm.preview_video_url;
+
+    if (previewVideoFile) {
+      const fileExt = previewVideoFile.name.split('.').pop();
+      const fileName = `preview_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+      
+      const { error: videoUploadErr } = await supabase.storage
+        .from('project_videos')
+        .upload(fileName, previewVideoFile);
+        
+      if (!videoUploadErr) {
+        const { data: urlData } = supabase.storage
+          .from('project_videos')
+          .getPublicUrl(fileName);
+        finalPreviewVideoUrl = urlData.publicUrl;
+      } else {
+        const { error: fallbackErr } = await supabase.storage
+          .from('project_previews')
+          .upload(fileName, previewVideoFile);
+        if (!fallbackErr) {
+          const { data: fallbackUrlData } = supabase.storage
+            .from('project_previews')
+            .getPublicUrl(fileName);
+          finalPreviewVideoUrl = fallbackUrlData.publicUrl;
+        }
+      }
+    }
     
     let github_link_url = editProjectForm.github_link;
 
@@ -230,14 +361,25 @@ export default function AdminProjectsPage() {
       }
     }
     
+    const combinedDesc = formatProjectDescription(
+      editProjectForm.software_description,
+      editProjectForm.hardware_description
+    ) || editProjectForm.description;
+
+    const shortDesc = (editProjectForm.software_description || editProjectForm.hardware_description || editProjectForm.description).substring(0, 120) + '...';
+
     const { data, error } = await supabase
       .from('projects')
       .update({
         title: editProjectForm.title,
         price: parseFloat(editProjectForm.price) || 0,
-        description: editProjectForm.description,
-        short_description: editProjectForm.description.length > 100 ? editProjectForm.description.substring(0, 100) + '...' : editProjectForm.description,
+        description: combinedDesc,
+        software_description: editProjectForm.software_description,
+        hardware_description: editProjectForm.hardware_description,
+        short_description: shortDesc,
         github_link: github_link_url,
+        video_url: finalVideoUrl,
+        preview_video_url: finalPreviewVideoUrl,
         circuit_diagram_url: circuit_diagram_url,
         preview_images: current_preview_images
       })
@@ -249,7 +391,7 @@ export default function AdminProjectsPage() {
     if (error) {
       alert(`Update failed: ${error.message}`);
     } else if (!data || data.length === 0) {
-      alert("Update failed: 0 rows affected. This is likely because Supabase blocked the update due to Row Level Security (RLS) policies on the 'projects' table. Please check your Supabase Policies for UPDATE.");
+      alert("Update failed: 0 rows affected. Check Supabase RLS policies on 'projects'.");
     } else {
       setEditingProject(null);
       fetchProjects();
@@ -340,6 +482,7 @@ export default function AdminProjectsPage() {
                     <tr>
                       <th className="px-6 py-4 text-xs font-medium tracking-wider text-gray-400 uppercase">Project</th>
                       <th className="px-6 py-4 text-xs font-medium tracking-wider text-gray-400 uppercase">Price</th>
+                      <th className="px-6 py-4 text-xs font-medium tracking-wider text-gray-400 uppercase">Video</th>
                       <th className="px-6 py-4 text-xs font-medium tracking-wider text-gray-400 uppercase">Date</th>
                       <th className="px-6 py-4 text-xs font-medium tracking-wider text-gray-400 uppercase text-right">Actions</th>
                     </tr>
@@ -356,22 +499,42 @@ export default function AdminProjectsPage() {
                             ₹{project.price}
                           </span>
                         </td>
+                        <td className="px-6 py-4">
+                          <button 
+                            onClick={() => openQuickVideoModal(project)}
+                            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                              (project.video_url || project.videoUrl)
+                                ? 'bg-purple-500/10 text-purple-400 border-purple-500/30 hover:bg-purple-500/20'
+                                : 'bg-white/5 text-gray-400 border-white/10 hover:bg-white/10 hover:text-white'
+                            }`}
+                          >
+                            <Video className="w-3.5 h-3.5" />
+                            {(project.video_url || project.videoUrl) ? 'Has Video' : '+ Add Video'}
+                          </button>
+                        </td>
                         <td className="px-6 py-4 text-sm text-gray-400">
                           {new Date(project.created_at).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end space-x-2">
                             <button 
+                              onClick={() => openQuickVideoModal(project)}
+                              className="p-2 text-gray-400 hover:text-purple-400 hover:bg-purple-400/10 rounded transition-colors"
+                              title="Add/Edit Video"
+                            >
+                              <Video className="w-4 h-4" />
+                            </button>
+                            <button 
                               onClick={() => openEditProjectModal(project)}
                               className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded transition-colors"
-                              title="Edit"
+                              title="Edit Project"
                             >
                               <Edit2 className="w-4 h-4" />
                             </button>
                             <button 
                               onClick={() => handleDeleteProject(project.id)}
                               className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded transition-colors"
-                              title="Delete"
+                              title="Delete Project"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -537,15 +700,83 @@ export default function AdminProjectsPage() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Description</label>
-                <textarea 
-                  value={editProjectForm.description}
-                  onChange={(e) => setEditProjectForm({...editProjectForm, description: e.target.value})}
-                  rows={6}
-                  className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors resize-none"
-                  required
-                />
+              {/* Software & Hardware Descriptions */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2 p-4 bg-white/5 border border-white/10 rounded-lg">
+                  <div className="flex items-center space-x-2 text-cyan-400 mb-1">
+                    <Code2 className="w-4 h-4" />
+                    <label className="text-xs font-semibold tracking-wider uppercase text-white">SOFTWARE Description</label>
+                  </div>
+                  <textarea 
+                    value={editProjectForm.software_description}
+                    onChange={(e) => setEditProjectForm({...editProjectForm, software_description: e.target.value})}
+                    rows={5}
+                    className="w-full bg-black/50 border border-white/20 rounded-md px-3 py-2 text-white focus:outline-none focus:border-cyan-400 transition-colors resize-none text-xs"
+                    placeholder="ROS 2 nodes, packages, launch files, algorithms..."
+                  />
+                </div>
+
+                <div className="space-y-2 p-4 bg-white/5 border border-white/10 rounded-lg">
+                  <div className="flex items-center space-x-2 text-amber-400 mb-1">
+                    <Cpu className="w-4 h-4" />
+                    <label className="text-xs font-semibold tracking-wider uppercase text-white">HARDWARE Description</label>
+                  </div>
+                  <textarea 
+                    value={editProjectForm.hardware_description}
+                    onChange={(e) => setEditProjectForm({...editProjectForm, hardware_description: e.target.value})}
+                    rows={5}
+                    className="w-full bg-black/50 border border-white/20 rounded-md px-3 py-2 text-white focus:outline-none focus:border-amber-400 transition-colors resize-none text-xs"
+                    placeholder="Compute unit, microcontrollers, sensors, wiring..."
+                  />
+                </div>
+              </div>
+
+              {/* Video Section */}
+              <div className="space-y-4 p-4 border border-white/10 rounded-md bg-white/5">
+                <div className="flex items-center space-x-3">
+                  <Video className="text-purple-400 w-5 h-5" />
+                  <h3 className="text-sm font-medium text-white">Project Video</h3>
+                </div>
+                
+                <div>
+                  <label className="text-xs font-medium text-gray-400 uppercase tracking-wider block mb-1">Video URL (YouTube / Vimeo / MP4)</label>
+                  <input 
+                    type="url"
+                    value={editProjectForm.video_url}
+                    onChange={(e) => setEditProjectForm({...editProjectForm, video_url: e.target.value})}
+                    className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-2.5 text-white focus:outline-none focus:border-purple-400 transition-colors text-xs"
+                    placeholder="https://www.youtube.com/watch?v=..."
+                  />
+                </div>
+
+                <div 
+                  className="border border-dashed border-white/20 rounded-md p-4 text-center hover:border-purple-400 transition-colors cursor-pointer group"
+                  onClick={() => videoFileRef.current?.click()}
+                >
+                  <input 
+                    type="file" 
+                    ref={videoFileRef} 
+                    className="hidden" 
+                    accept="video/*"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setVideoFile(e.target.files[0]);
+                      }
+                    }}
+                  />
+                  {videoFile ? (
+                    <div className="text-white flex flex-col items-center">
+                      <CheckCircle2 className="w-5 h-5 text-green-500 mb-1" />
+                      <p className="text-xs font-medium">{videoFile.name}</p>
+                      <p className="text-[10px] text-gray-400 mt-0.5">Will replace current video file</p>
+                    </div>
+                  ) : (
+                    <>
+                      <Film className="w-5 h-5 text-gray-400 mx-auto mb-1 group-hover:text-purple-400 transition-colors" />
+                      <p className="text-xs text-gray-400 group-hover:text-white transition-colors">Click to upload new video file (.mp4, .webm)</p>
+                    </>
+                  )}
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -707,6 +938,93 @@ export default function AdminProjectsPage() {
                   className="px-6 py-3 bg-white text-black hover:bg-gray-200 disabled:opacity-50 rounded-md font-medium transition-colors"
                 >
                   {isModelSubmitting ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Quick Add/Edit Video Modal */}
+      {quickVideoProject && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#0a0a0a] border border-white/20 rounded-2xl w-full max-w-lg overflow-y-auto shadow-2xl relative p-6">
+            <button 
+              onClick={() => setQuickVideoProject(null)}
+              className="absolute top-5 right-5 text-gray-400 hover:text-white transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <div className="mb-6 flex items-center space-x-3">
+              <Video className="text-purple-400 w-6 h-6" />
+              <div>
+                <h2 className="text-xl font-semibold text-white">Add / Edit Video</h2>
+                <p className="text-gray-400 text-xs mt-0.5">{quickVideoProject.title}</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleQuickVideoSubmit} className="space-y-5">
+              <div>
+                <label className="text-xs font-medium text-gray-400 uppercase tracking-wider block mb-1">Video Link (YouTube / Vimeo / MP4)</label>
+                <input 
+                  type="url"
+                  value={quickVideoUrl}
+                  onChange={(e) => setQuickVideoUrl(e.target.value)}
+                  placeholder="https://www.youtube.com/watch?v=... or https://example.com/video.mp4"
+                  className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-purple-400 transition-colors text-sm"
+                />
+              </div>
+
+              <div className="flex items-center gap-4 text-xs text-gray-500 uppercase tracking-wider">
+                <div className="h-px bg-white/10 flex-1"></div>
+                <span>OR Upload Video File</span>
+                <div className="h-px bg-white/10 flex-1"></div>
+              </div>
+
+              <div 
+                className="border border-dashed border-white/20 rounded-md p-6 text-center hover:border-purple-400 transition-colors cursor-pointer group"
+                onClick={() => quickVideoFileRef.current?.click()}
+              >
+                <input 
+                  type="file" 
+                  ref={quickVideoFileRef} 
+                  className="hidden" 
+                  accept="video/*"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      setQuickVideoFile(e.target.files[0]);
+                    }
+                  }}
+                />
+                {quickVideoFile ? (
+                  <div className="text-white flex flex-col items-center">
+                    <CheckCircle2 className="w-5 h-5 text-green-500 mb-1" />
+                    <p className="text-xs font-medium">{quickVideoFile.name}</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">Ready to upload</p>
+                  </div>
+                ) : (
+                  <>
+                    <Film className="w-5 h-5 text-gray-400 mx-auto mb-1 group-hover:text-purple-400 transition-colors" />
+                    <p className="text-xs text-gray-400 group-hover:text-white transition-colors">Click to upload video file (.mp4, .webm)</p>
+                  </>
+                )}
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-3 border-t border-white/10">
+                <button 
+                  type="button"
+                  onClick={() => setQuickVideoProject(null)}
+                  className="px-4 py-2 bg-transparent text-white hover:bg-white/5 rounded-md text-sm transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  disabled={isQuickVideoSubmitting}
+                  className="px-5 py-2 bg-purple-600 text-white hover:bg-purple-500 disabled:opacity-50 rounded-md text-sm font-medium transition-colors"
+                >
+                  {isQuickVideoSubmitting ? 'Saving...' : 'Save Video'}
                 </button>
               </div>
             </form>

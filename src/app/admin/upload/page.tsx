@@ -1,7 +1,8 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
-import { Upload, Plus, CircuitBoard, Lightbulb, CheckCircle2, Box, Image as ImageIcon, FileBox, Loader2 } from 'lucide-react';
+import { Upload, Plus, CircuitBoard, Lightbulb, CheckCircle2, Box, Image as ImageIcon, FileBox, Loader2, Video, Cpu, Code2, Film } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { formatProjectDescription } from '@/lib/data';
 
 export default function AdminUploadPage() {
   const [uploadType, setUploadType] = useState<'project' | 'model'>('project');
@@ -9,6 +10,14 @@ export default function AdminUploadPage() {
   // Shared States
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [softwareDescription, setSoftwareDescription] = useState('');
+  const [hardwareDescription, setHardwareDescription] = useState('');
+  const [videoUrlInput, setVideoUrlInput] = useState('');
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const videoFileRef = useRef<HTMLInputElement>(null);
+  const [previewVideoUrlInput, setPreviewVideoUrlInput] = useState('');
+  const [previewVideoFile, setPreviewVideoFile] = useState<File | null>(null);
+  const previewVideoFileRef = useRef<HTMLInputElement>(null);
   const [price, setPrice] = useState('0');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -64,11 +73,74 @@ export default function AdminUploadPage() {
 
   const handleProjectSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !description) return alert("Please fill title and description");
+    if (!title) return alert("Please fill project title");
+    if (!softwareDescription && !hardwareDescription && !description) {
+      return alert("Please fill at least one description section (Software or Hardware)");
+    }
     
     setIsSubmitting(true);
     
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+
+    const combinedDescription = formatProjectDescription(softwareDescription, hardwareDescription) || description;
+    const shortDesc = (softwareDescription || hardwareDescription || description).substring(0, 120) + '...';
+
+    // 1. Upload Full Demo Video if selected
+    let finalVideoUrl = videoUrlInput.trim();
+    if (videoFile) {
+      const fileExt = videoFile.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+      
+      const { error: videoUploadErr } = await supabase.storage
+        .from('project_videos')
+        .upload(fileName, videoFile);
+        
+      if (!videoUploadErr) {
+        const { data: urlData } = supabase.storage
+          .from('project_videos')
+          .getPublicUrl(fileName);
+        finalVideoUrl = urlData.publicUrl;
+      } else {
+        console.error("Video upload error:", videoUploadErr);
+        const { error: fallbackErr } = await supabase.storage
+          .from('diagrams')
+          .upload(fileName, videoFile);
+        if (!fallbackErr) {
+          const { data: fallbackUrlData } = supabase.storage
+            .from('diagrams')
+            .getPublicUrl(fileName);
+          finalVideoUrl = fallbackUrlData.publicUrl;
+        }
+      }
+    }
+
+    // 2. Upload Preview Video if selected
+    let finalPreviewVideoUrl = previewVideoUrlInput.trim();
+    if (previewVideoFile) {
+      const fileExt = previewVideoFile.name.split('.').pop();
+      const fileName = `preview_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+      
+      const { error: videoUploadErr } = await supabase.storage
+        .from('project_videos')
+        .upload(fileName, previewVideoFile);
+        
+      if (!videoUploadErr) {
+        const { data: urlData } = supabase.storage
+          .from('project_videos')
+          .getPublicUrl(fileName);
+        finalPreviewVideoUrl = urlData.publicUrl;
+      } else {
+        const { error: fallbackErr } = await supabase.storage
+          .from('project_previews')
+          .upload(fileName, previewVideoFile);
+        if (!fallbackErr) {
+          const { data: fallbackUrlData } = supabase.storage
+            .from('project_previews')
+            .getPublicUrl(fileName);
+          finalPreviewVideoUrl = fallbackUrlData.publicUrl;
+        }
+      }
+    }
 
     let uploaded_code_url = '';
     if (codeFile) {
@@ -138,10 +210,14 @@ export default function AdminUploadPage() {
       {
         title: title,
         slug: slug,
-        description: description,
-        short_description: description.length > 100 ? description.substring(0, 100) + '...' : description,
+        description: combinedDescription,
+        software_description: softwareDescription,
+        hardware_description: hardwareDescription,
+        short_description: shortDesc,
         price: parseFloat(price) || 0,
         github_link: uploaded_code_url,
+        video_url: finalVideoUrl || null,
+        preview_video_url: finalPreviewVideoUrl || null,
         circuit_diagram_url: circuit_diagram_url,
         preview_images: uploaded_preview_urls,
         category: 'Uncategorized',
@@ -160,6 +236,12 @@ export default function AdminUploadPage() {
       alert('Success! Your project has been uploaded to RoS Inventory.');
       setTitle('');
       setDescription('');
+      setSoftwareDescription('');
+      setHardwareDescription('');
+      setVideoUrlInput('');
+      setVideoFile(null);
+      setPreviewVideoUrlInput('');
+      setPreviewVideoFile(null);
       setPrice('0');
       setCodeFile(null);
       setCircuitFile(null);
@@ -326,16 +408,151 @@ export default function AdminUploadPage() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">Description</label>
-              <textarea 
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={4}
-                className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors resize-none"
-                placeholder="Describe the architecture, capabilities, and setup..."
-                required
-              ></textarea>
+            {/* Description Sections: Software & Hardware */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2 p-5 bg-white/5 border border-white/10 rounded-lg">
+                <div className="flex items-center space-x-2 text-cyan-400 mb-1">
+                  <Code2 className="w-5 h-5" />
+                  <label className="text-xs font-semibold tracking-wider uppercase text-white">SOFTWARE Description</label>
+                </div>
+                <p className="text-xs text-gray-400">Specify ROS 2 nodes, packages, launch files, algorithms, and setup commands.</p>
+                <textarea 
+                  value={softwareDescription}
+                  onChange={(e) => setSoftwareDescription(e.target.value)}
+                  rows={5}
+                  className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-cyan-400 transition-colors resize-none text-sm"
+                  placeholder="e.g. Navigation2 setup, SLAM toolbox configuration, custom ROS 2 lifecycle nodes..."
+                ></textarea>
+              </div>
+
+              <div className="space-y-2 p-5 bg-white/5 border border-white/10 rounded-lg">
+                <div className="flex items-center space-x-2 text-amber-400 mb-1">
+                  <Cpu className="w-5 h-5" />
+                  <label className="text-xs font-semibold tracking-wider uppercase text-white">HARDWARE Description</label>
+                </div>
+                <p className="text-xs text-gray-400">Specify compute unit, microcontrollers, sensors, actuators, and power requirements.</p>
+                <textarea 
+                  value={hardwareDescription}
+                  onChange={(e) => setHardwareDescription(e.target.value)}
+                  rows={5}
+                  className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-amber-400 transition-colors resize-none text-sm"
+                  placeholder="e.g. Jetson Nano 4GB, RPLidar A1, L298N motor driver, 12V 5Ah LiFePO4 battery..."
+                ></textarea>
+              </div>
+            </div>
+
+            {/* Video Section (URL or File Upload) */}
+            <div className="p-6 bg-transparent border border-white/10 rounded-md space-y-4">
+              <div className="flex items-center space-x-3">
+                <Video className="text-purple-400 w-5 h-5" strokeWidth={1.5} />
+                <h3 className="text-lg font-medium text-white tracking-tight">Project Video (Optional)</h3>
+              </div>
+              <p className="text-sm text-gray-400">Add a video link (YouTube, Vimeo, MP4) OR upload a video file for this project.</p>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-medium text-gray-400 tracking-wider uppercase block mb-1">Video Link (YouTube / Vimeo / MP4 URL)</label>
+                  <input 
+                    type="url" 
+                    value={videoUrlInput}
+                    onChange={(e) => setVideoUrlInput(e.target.value)}
+                    placeholder="https://www.youtube.com/watch?v=... or https://example.com/video.mp4"
+                    className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-purple-400 transition-colors text-sm"
+                  />
+                </div>
+
+                <div className="flex items-center gap-4 text-xs text-gray-500 uppercase tracking-wider">
+                  <div className="h-px bg-white/10 flex-1"></div>
+                  <span>OR Upload Video File</span>
+                  <div className="h-px bg-white/10 flex-1"></div>
+                </div>
+
+                <div 
+                  className="border border-dashed border-white/20 rounded-md p-6 text-center hover:border-purple-400 transition-colors cursor-pointer group"
+                  onClick={() => videoFileRef.current?.click()}
+                >
+                  <input 
+                    type="file" 
+                    ref={videoFileRef} 
+                    className="hidden" 
+                    accept="video/*"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setVideoFile(e.target.files[0]);
+                      }
+                    }}
+                  />
+                  {videoFile ? (
+                    <div className="text-white flex flex-col items-center">
+                      <CheckCircle2 className="w-6 h-6 text-green-500 mb-2" />
+                      <p className="text-sm font-medium">{videoFile.name}</p>
+                      <p className="text-xs text-gray-400 mt-1">Click to change video file</p>
+                    </div>
+                  ) : (
+                    <>
+                      <Film className="w-6 h-6 text-gray-400 mx-auto mb-2 group-hover:text-purple-400 transition-colors" strokeWidth={1.5} />
+                      <p className="text-sm text-gray-400 group-hover:text-white transition-colors">Click to upload video file (.mp4, .webm)</p>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Preview Video Section */}
+            <div className="p-6 bg-transparent border border-white/10 rounded-md space-y-4">
+              <div className="flex items-center space-x-3">
+                <Film className="text-pink-400 w-5 h-5" strokeWidth={1.5} />
+                <h3 className="text-lg font-medium text-white tracking-tight">Card Preview Video (Optional)</h3>
+              </div>
+              <p className="text-sm text-gray-400">Upload a short loopable preview video (.mp4) that plays when hovering over the project card.</p>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-medium text-gray-400 tracking-wider uppercase block mb-1">Preview Video Link (Direct MP4 URL)</label>
+                  <input 
+                    type="url" 
+                    value={previewVideoUrlInput}
+                    onChange={(e) => setPreviewVideoUrlInput(e.target.value)}
+                    placeholder="https://example.com/preview.mp4"
+                    className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-pink-400 transition-colors text-sm"
+                  />
+                </div>
+
+                <div className="flex items-center gap-4 text-xs text-gray-500 uppercase tracking-wider">
+                  <div className="h-px bg-white/10 flex-1"></div>
+                  <span>OR Upload Preview Video File</span>
+                  <div className="h-px bg-white/10 flex-1"></div>
+                </div>
+
+                <div 
+                  className="border border-dashed border-white/20 rounded-md p-6 text-center hover:border-pink-400 transition-colors cursor-pointer group"
+                  onClick={() => previewVideoFileRef.current?.click()}
+                >
+                  <input 
+                    type="file" 
+                    ref={previewVideoFileRef} 
+                    className="hidden" 
+                    accept="video/*"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setPreviewVideoFile(e.target.files[0]);
+                      }
+                    }}
+                  />
+                  {previewVideoFile ? (
+                    <div className="text-white flex flex-col items-center">
+                      <CheckCircle2 className="w-6 h-6 text-green-500 mb-2" />
+                      <p className="text-sm font-medium">{previewVideoFile.name}</p>
+                      <p className="text-xs text-gray-400 mt-1">Click to change preview video file</p>
+                    </div>
+                  ) : (
+                    <>
+                      <Video className="w-6 h-6 text-gray-400 mx-auto mb-2 group-hover:text-pink-400 transition-colors" strokeWidth={1.5} />
+                      <p className="text-sm text-gray-400 group-hover:text-white transition-colors">Click to upload preview video (.mp4, .webm)</p>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Circuit Diagram Section */}

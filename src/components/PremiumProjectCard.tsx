@@ -10,14 +10,25 @@ export default function PremiumProjectCard({ project }: { project: Project }) {
     ? project.preview_images[0] 
     : null;
 
+  const previewVideo = project.preview_video_url || project.previewVideoUrl;
+
   return (
     <Link href={`/projects/${project.slug}`}>
       <div
         className="w-full h-96 shrink-0 relative rounded-xl bg-[#0a0a0a] border border-white/10 group hover:border-white/30 transition-colors shadow-lg overflow-hidden cursor-pointer flex flex-col"
       >
-        {/* Cover Image Section */}
+        {/* Cover Section: Video or Image */}
         <div className="h-40 w-full relative bg-[#111] overflow-hidden shrink-0 border-b border-white/10">
-          {coverImage ? (
+          {previewVideo ? (
+            <video 
+              src={previewVideo} 
+              autoPlay 
+              loop 
+              muted 
+              playsInline 
+              className="object-cover w-full h-full opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 pointer-events-none"
+            />
+          ) : coverImage ? (
             <Image 
               src={coverImage} 
               alt={project.title} 
@@ -53,6 +64,11 @@ export default function PremiumProjectCard({ project }: { project: Project }) {
             <span className="bg-white/10 text-gray-300 border border-white/20 px-2 py-1 rounded text-[10px] font-sans tracking-wide uppercase">
               {project.difficulty}
             </span>
+            {(project.video_url || project.videoUrl) && (
+              <span className="bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-1 rounded text-[10px] font-sans tracking-wide uppercase flex items-center gap-1 font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse"></span> Video
+              </span>
+            )}
           </div>
 
           <p className="text-gray-400 text-xs leading-relaxed line-clamp-2 mb-4">
