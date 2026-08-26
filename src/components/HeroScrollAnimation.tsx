@@ -24,42 +24,28 @@ export default function HeroScrollAnimation() {
     const loadedImages: HTMLImageElement[] = [];
     let loadedCount = 0;
 
-    let timerFinished = false;
-    let imagesFinished = false;
-
-    const checkDone = () => {
-      if (timerFinished && imagesFinished) {
-        setIsLoaded(true);
-      }
-    };
-
-    // Enforce a minimum loading time of 1.5 seconds so the animation can be seen
-    setTimeout(() => {
-      timerFinished = true;
-      checkDone();
-    }, 1500);
+    // Timeout to ensure canvas renders quickly even on slower connections
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+    }, 1200);
 
     for (let i = 0; i < frameCount; i++) {
       const img = new Image();
       img.src = currentFrame(i);
       img.onload = () => {
         loadedCount++;
-        if (loadedCount === frameCount) {
-          imagesFinished = true;
-          checkDone();
+        if (loadedCount >= 10) {
+          setIsLoaded(true);
         }
       };
       img.onerror = () => {
-        // Silently handle missing frames to prevent console spam
-        loadedCount++; // Increment anyway so it doesn't hang forever
-        if (loadedCount === frameCount) {
-          imagesFinished = true;
-          checkDone();
-        }
+        loadedCount++;
       };
       loadedImages.push(img);
     }
     setImages(loadedImages);
+
+    return () => clearTimeout(timer);
   }, []);
 
   // Handle scroll and drawing to canvas
