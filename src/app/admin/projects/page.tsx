@@ -449,6 +449,13 @@ export default function AdminProjectsPage() {
             <BarChart3 className="w-4 h-4" />
             Analytics Dashboard
           </Link>
+          <Link
+            href="/admin/slideshow"
+            className="pb-4 px-2 text-sm font-medium transition-colors border-b-2 border-transparent text-gray-500 hover:text-gray-300 flex items-center gap-2"
+          >
+            <ImageIcon className="w-4 h-4 text-purple-400" />
+            Homepage Slideshow
+          </Link>
           <button
             onClick={() => setActiveTab('projects')}
             className={`pb-4 px-2 text-sm font-medium transition-colors border-b-2 flex items-center gap-2 ${

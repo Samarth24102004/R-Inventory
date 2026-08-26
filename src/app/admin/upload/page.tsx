@@ -340,6 +340,9 @@ export default function AdminUploadPage() {
             <a href="/admin/analytics" className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-md text-sm font-medium transition-colors flex items-center gap-1.5">
               <BarChart3 className="w-4 h-4" /> Analytics
             </a>
+            <a href="/admin/slideshow" className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-md text-sm font-medium transition-colors flex items-center gap-1.5">
+              <ImageIcon className="w-4 h-4 text-purple-400" /> Slideshow
+            </a>
             <a href="/admin/projects" className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-md text-sm font-medium transition-colors">
               Manage Content
             </a>
