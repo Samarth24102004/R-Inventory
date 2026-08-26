@@ -133,7 +133,7 @@ export default function HeroScrollAnimation() {
       
       <canvas
         ref={canvasRef}
-        className={`w-full h-full object-cover object-[25%_center] md:object-[30%_center] transition-opacity duration-1000 ease-in-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+        className={`w-full h-full object-cover object-[40%_center] md:object-center transition-opacity duration-1000 ease-in-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
       />
       {!isLoaded && (
         <div className="absolute flex flex-col items-center justify-center space-y-4">

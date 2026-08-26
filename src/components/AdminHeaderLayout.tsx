@@ -16,7 +16,6 @@ export default function AdminHeaderLayout({ title, subtitle, children }: AdminHe
 
   const tabs = [
     { name: 'Analytics Dashboard', path: '/admin/analytics', icon: BarChart3 },
-    { name: 'Homepage Slideshow', path: '/admin/slideshow', icon: ImageIcon },
     { name: 'Manage Content', path: '/admin/projects', icon: CircuitBoard },
     { name: 'Upload New', path: '/admin/upload', icon: Plus },
   ];
