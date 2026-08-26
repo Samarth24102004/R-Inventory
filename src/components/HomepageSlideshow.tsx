@@ -101,7 +101,7 @@ export default function HomepageSlideshow() {
         return (
           <motion.div
             key={slide.id || index}
-            className="absolute w-[85%] sm:w-[90%] h-[80%] sm:h-[85%] bg-white p-2.5 sm:p-3 rounded-xl shadow-[0_25px_60px_rgba(0,0,0,0.9)] border border-white/40"
+            className="absolute w-[85%] sm:w-[90%] h-[80%] sm:h-[85%] rounded-2xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.9)] bg-black"
             initial={false}
             animate={{
               rotate: config.rotate,
@@ -118,8 +118,8 @@ export default function HomepageSlideshow() {
             }}
             whileHover={isTop ? { scale: 1.04, rotate: -2 } : {}}
           >
-            {/* Pure Framed Photo (No Text, No Titles) */}
-            <div className="relative w-full h-full rounded-lg overflow-hidden bg-black">
+            {/* Pure Photo (No Borders, No Text) */}
+            <div className="relative w-full h-full">
               <Image
                 src={slide.image_url}
                 alt="Showcase Photo"
