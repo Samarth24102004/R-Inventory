@@ -135,7 +135,8 @@ export default function AdminProjectsPage() {
       software_description: project.software_description || parsed.software || '',
       hardware_description: project.hardware_description || parsed.hardware || '',
       github_link: project.github_link || '',
-      video_url: project.video_url || project.videoUrl || ''
+      video_url: project.video_url || project.videoUrl || '',
+      preview_video_url: project.preview_video_url || project.previewVideoUrl || ''
     });
     setCircuitFile(null);
     setCodeFile(null);
