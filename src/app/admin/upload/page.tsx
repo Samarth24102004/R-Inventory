@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
-import { Upload, Plus, CircuitBoard, Lightbulb, CheckCircle2, Box, Image as ImageIcon, FileBox, Loader2, Video, Cpu, Code2, Film } from 'lucide-react';
+import { Upload, Plus, CircuitBoard, Lightbulb, CheckCircle2, Box, Image as ImageIcon, FileBox, Loader2, Video, Cpu, Code2, Film, BarChart3 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { formatProjectDescription } from '@/lib/data';
 
@@ -337,6 +337,9 @@ export default function AdminUploadPage() {
                 3D Model
               </button>
             </div>
+            <a href="/admin/analytics" className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-md text-sm font-medium transition-colors flex items-center gap-1.5">
+              <BarChart3 className="w-4 h-4" /> Analytics
+            </a>
             <a href="/admin/projects" className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-md text-sm font-medium transition-colors">
               Manage Content
             </a>

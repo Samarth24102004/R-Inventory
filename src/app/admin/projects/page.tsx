@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Settings, Edit2, Trash2, Plus, X, Upload, CheckCircle2, Box, CircuitBoard, ImageIcon, FileBox, Video, Cpu, Code2, Film } from 'lucide-react';
+import { Settings, Edit2, Trash2, Plus, X, Upload, CheckCircle2, Box, CircuitBoard, ImageIcon, FileBox, Video, Cpu, Code2, Film, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { parseProjectDescription, formatProjectDescription } from '@/lib/data';
@@ -441,7 +441,14 @@ export default function AdminProjectsPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex space-x-4 mb-8 border-b border-white/10 pb-px">
+        <div className="flex space-x-6 mb-8 border-b border-white/10 pb-px">
+          <Link
+            href="/admin/analytics"
+            className="pb-4 px-2 text-sm font-medium transition-colors border-b-2 border-transparent text-gray-500 hover:text-gray-300 flex items-center gap-2"
+          >
+            <BarChart3 className="w-4 h-4" />
+            Analytics Dashboard
+          </Link>
           <button
             onClick={() => setActiveTab('projects')}
             className={`pb-4 px-2 text-sm font-medium transition-colors border-b-2 flex items-center gap-2 ${

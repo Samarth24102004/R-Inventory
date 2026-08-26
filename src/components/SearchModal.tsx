@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { Search, X } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { trackSearchQuery } from '@/lib/analytics';
 import PremiumProjectCard from './PremiumProjectCard';
 
 export default function SearchModal() {
@@ -29,6 +30,10 @@ export default function SearchModal() {
       if (query.trim()) {
         setLoading(true);
         setSearched(true);
+        
+        // Track search query for analytics
+        trackSearchQuery(query.trim());
+
         // Assuming title search for simplicity
         const { data } = await supabase
           .from('projects')
