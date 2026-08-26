@@ -610,9 +610,6 @@ export default function AdminProjectsPage() {
             )
           )}
 
-        </div>
-      </div>
-
       {/* Edit Project Modal */}
       {editingProject && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -682,7 +679,7 @@ export default function AdminProjectsPage() {
                   {codeFile ? (
                     <div className="text-white flex flex-col items-center">
                       <CheckCircle2 className="w-5 h-5 text-green-500 mb-2" />
-                      <p className="text-xs">{codeFile.name}</p>
+                      <p className="text-xs">{codeFile?.name}</p>
                     </div>
                   ) : (
                     <>
@@ -760,7 +757,7 @@ export default function AdminProjectsPage() {
                   {videoFile ? (
                     <div className="text-white flex flex-col items-center">
                       <CheckCircle2 className="w-5 h-5 text-green-500 mb-1" />
-                      <p className="text-xs font-medium">{videoFile.name}</p>
+                      <p className="text-xs font-medium">{videoFile?.name}</p>
                       <p className="text-[10px] text-gray-400 mt-0.5">Will replace current video file</p>
                     </div>
                   ) : (
@@ -792,7 +789,7 @@ export default function AdminProjectsPage() {
                   {circuitFile ? (
                     <div className="text-white flex flex-col items-center">
                       <CheckCircle2 className="w-5 h-5 text-green-500 mb-2" />
-                      <p className="text-sm">{circuitFile.name}</p>
+                      <p className="text-sm">{circuitFile?.name}</p>
                       <p className="text-xs text-gray-400 mt-1">Will replace current diagram</p>
                     </div>
                   ) : editingProject.circuit_diagram_url ? (
@@ -993,7 +990,7 @@ export default function AdminProjectsPage() {
                 {quickVideoFile ? (
                   <div className="text-white flex flex-col items-center">
                     <CheckCircle2 className="w-5 h-5 text-green-500 mb-1" />
-                    <p className="text-xs font-medium">{quickVideoFile.name}</p>
+                    <p className="text-xs font-medium">{quickVideoFile?.name}</p>
                     <p className="text-[10px] text-gray-400 mt-0.5">Ready to upload</p>
                   </div>
                 ) : (
