@@ -609,6 +609,7 @@ export default function AdminProjectsPage() {
               </div>
             )
           )}
+        </div>
 
       {/* Edit Project Modal */}
       {editingProject && (
