@@ -97,17 +97,39 @@ export default function HeroScrollAnimation() {
       }
 
       requestAnimationFrame(() => {
-        if (images[frameIndex] && images[frameIndex].complete && images[frameIndex].naturalWidth > 0) {
+        let imgToDraw = images[frameIndex];
+
+        // Fallback to nearest loaded frame if target frame is still downloading
+        if (!imgToDraw || !imgToDraw.complete || imgToDraw.naturalWidth === 0) {
+          for (let offset = 1; offset < frameCount; offset++) {
+            const prevIndex = Math.max(0, frameIndex - offset);
+            const nextIndex = Math.min(frameCount - 1, frameIndex + offset);
+            if (images[prevIndex]?.complete && images[prevIndex]?.naturalWidth > 0) {
+              imgToDraw = images[prevIndex];
+              break;
+            }
+            if (images[nextIndex]?.complete && images[nextIndex]?.naturalWidth > 0) {
+              imgToDraw = images[nextIndex];
+              break;
+            }
+          }
+        }
+
+        if (imgToDraw && imgToDraw.complete && imgToDraw.naturalWidth > 0) {
           context.clearRect(0, 0, canvas.width, canvas.height);
-          context.drawImage(images[frameIndex], 0, 0);
+          context.drawImage(imgToDraw, 0, 0);
         }
       });
     };
 
     window.addEventListener('scroll', render);
+    window.addEventListener('resize', render);
     render();
 
-    return () => window.removeEventListener('scroll', render);
+    return () => {
+      window.removeEventListener('scroll', render);
+      window.removeEventListener('resize', render);
+    };
   }, [isLoaded, images]);
 
   // Helper to calculate opacity based on scroll fraction
@@ -126,7 +148,7 @@ export default function HeroScrollAnimation() {
   const text0Opacity = getOpacity(scrollFraction, -0.1, 0, 0.02, 0.08);
   const text1Opacity = getOpacity(scrollFraction, 0.03, 0.08, 0.15, 0.25);
   const text2Opacity = getOpacity(scrollFraction, 0.3, 0.4, 0.55, 0.65);
-  const text3Opacity = getOpacity(scrollFraction, 0.55, 0.65, 1.0, 1.0);
+  const text3Opacity = getOpacity(scrollFraction, 0.55, 0.65, 0.85, 0.98);
 
   return (
     <div ref={containerRef} className="h-screen sticky top-0 flex justify-center items-center overflow-hidden z-0 bg-black">
