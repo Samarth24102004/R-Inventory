@@ -145,10 +145,10 @@ export default function HeroScrollAnimation() {
     return 0;
   };
 
-  const text0Opacity = getOpacity(scrollFraction, -0.1, 0, 0.02, 0.08);
-  const text1Opacity = getOpacity(scrollFraction, 0.03, 0.08, 0.15, 0.25);
-  const text2Opacity = getOpacity(scrollFraction, 0.3, 0.4, 0.55, 0.65);
-  const text3Opacity = getOpacity(scrollFraction, 0.55, 0.65, 0.85, 0.98);
+  const text0Opacity = getOpacity(scrollFraction, -0.1, 0, 0.05, 0.15);
+  const text1Opacity = getOpacity(scrollFraction, 0.10, 0.18, 0.28, 0.38);
+  const text2Opacity = getOpacity(scrollFraction, 0.32, 0.40, 0.52, 0.62);
+  const text3Opacity = getOpacity(scrollFraction, 0.58, 0.65, 0.78, 0.88);
 
   return (
     <div ref={containerRef} className="h-screen sticky top-0 flex justify-center items-center overflow-hidden z-0 bg-black">
