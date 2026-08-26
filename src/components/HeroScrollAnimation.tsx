@@ -74,27 +74,28 @@ export default function HeroScrollAnimation() {
     canvas.height = images[0].height;
 
     const render = () => {
-      const scrollTop = document.documentElement.scrollTop;
-      const maxScrollTop = document.documentElement.scrollHeight - window.innerHeight;
-      
-      const fraction = maxScrollTop > 0 ? scrollTop / maxScrollTop : 0;
+      const parent = containerRef.current?.parentElement;
+      let fraction = 0;
+
+      if (parent) {
+        const rect = parent.getBoundingClientRect();
+        const scrollableDistance = rect.height - window.innerHeight;
+        if (scrollableDistance > 0) {
+          const currentScroll = Math.max(0, -rect.top);
+          fraction = Math.min(1, Math.max(0, currentScroll / scrollableDistance));
+        }
+      } else {
+        const scrollTop = document.documentElement.scrollTop;
+        const maxScrollTop = document.documentElement.scrollHeight - window.innerHeight;
+        fraction = maxScrollTop > 0 ? scrollTop / maxScrollTop : 0;
+      }
+
       setScrollFraction(fraction);
-      
+
       const frameIndex = Math.min(
         frameCount - 1,
         Math.max(0, Math.floor(fraction * frameCount))
       );
-
-      // Check for projects section to push up the text
-      const projectsEl = document.getElementById('projects');
-      if (projectsEl) {
-        const rect = projectsEl.getBoundingClientRect();
-        if (rect.top < window.innerHeight / 2) {
-          setTextTranslateY((window.innerHeight / 2) - rect.top);
-        } else {
-          setTextTranslateY(0);
-        }
-      }
 
       requestAnimationFrame(() => {
         let imgToDraw = images[frameIndex];
