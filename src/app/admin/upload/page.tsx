@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Upload, Plus, CircuitBoard, Lightbulb, CheckCircle2, Box, Image as ImageIcon, FileBox, Loader2, Video, Cpu, Code2, Film, BarChart3 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { formatProjectDescription } from '@/lib/data';
-import AdminNavHeader from '@/components/AdminNavHeader';
+import AdminHeaderLayout from '@/components/AdminHeaderLayout';
 
 export default function AdminUploadPage() {
   const [uploadType, setUploadType] = useState<'project' | 'model'>('project');
@@ -312,20 +312,14 @@ export default function AdminUploadPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white pt-28 pb-20 px-[5%] font-sans">
-      <div className="max-w-4xl mx-auto space-y-6">
-        
-        {/* Unified Admin Navigation Header */}
-        <AdminNavHeader />
-
+    <AdminHeaderLayout
+      title="Upload Content"
+      subtitle="Upload new ROS 2 projects, hardware architectures, code ZIPs, and 3D STL models."
+    >
+      <div className="space-y-8">
         <div className="bg-[#0a0a0a] p-10 rounded-xl border border-white/10 shadow-lg">
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 border-b border-white/10 pb-6 gap-6">
-            <div className="flex items-center space-x-4">
-              <Upload className="text-white w-8 h-8" strokeWidth={1.5} />
-              <h1 className="text-3xl font-semibold text-white tracking-tight">
-                Upload Content
-              </h1>
-            </div>
+            <h2 className="text-xl font-semibold text-white tracking-tight">Select Content Type</h2>
             <div className="flex bg-white/5 rounded-md p-1 border border-white/10">
               <button 
                 onClick={() => setUploadType('project')}
@@ -796,8 +790,8 @@ export default function AdminUploadPage() {
             ))}
           </div>
         )}
+        </div>
       </div>
-    </div>
-  </div>
-);
+    </AdminHeaderLayout>
+  );
 }

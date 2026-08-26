@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import AdminNavHeader from '@/components/AdminNavHeader';
+import AdminHeaderLayout from '@/components/AdminHeaderLayout';
 
 export default function AdminSlideshowPage() {
   const [banners, setBanners] = useState<any[]>([]);
@@ -145,24 +145,10 @@ export default function AdminSlideshowPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white pt-28 pb-20 px-[5%] font-sans">
-      <div className="max-w-6xl mx-auto space-y-10">
-
-        {/* Page Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/10">
-          <div>
-            <div className="flex items-center gap-3">
-              <ImageIcon className="w-8 h-8 text-white" strokeWidth={1.5} />
-              <h1 className="text-3xl font-semibold text-white tracking-tight">
-                Homepage Slideshow Manager
-              </h1>
-            </div>
-            <p className="text-sm text-gray-400 mt-1">Upload and customize promotional banner slides for the main homepage slideshow.</p>
-          </div>
-        </div>
-
-        {/* Admin Navigation Bar */}
-        <AdminNavHeader />
+    <AdminHeaderLayout
+      title="Homepage Slideshow Manager"
+      subtitle="Upload and customize promotional banner slides for the main homepage slideshow."
+    >
 
         {/* Upload New Banner Form */}
         <div className="bg-[#0a0a0a] border border-white/10 p-8 rounded-xl shadow-lg space-y-6">
@@ -351,8 +337,6 @@ export default function AdminSlideshowPage() {
             </div>
           )}
         </div>
-
-      </div>
-    </div>
+    </AdminHeaderLayout>
   );
 }

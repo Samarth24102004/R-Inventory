@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase';
 import { Settings, Edit2, Trash2, Plus, X, Upload, CheckCircle2, Box, CircuitBoard, ImageIcon, FileBox, Video, Cpu, Code2, Film, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import AdminNavHeader from '@/components/AdminNavHeader';
+import AdminHeaderLayout from '@/components/AdminHeaderLayout';
 import { parseProjectDescription, formatProjectDescription } from '@/lib/data';
 
 export default function AdminProjectsPage() {
@@ -427,22 +427,10 @@ export default function AdminProjectsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white pt-32 pb-20 px-[5%] font-sans">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-4">
-          <div className="flex items-center space-x-4">
-            <Settings className="text-white w-8 h-8" strokeWidth={1.5} />
-            <h1 className="text-3xl font-semibold text-white tracking-tight">
-              Manage Content
-            </h1>
-          </div>
-          <Link href="/admin/upload" className="flex items-center px-6 py-3 bg-white text-black hover:bg-gray-200 rounded-md text-sm font-medium transition-colors">
-            <Plus className="w-4 h-4 mr-2" /> Add New
-          </Link>
-        </div>
-
-        {/* Unified Admin Navigation Header */}
-        <AdminNavHeader />
+    <AdminHeaderLayout
+      title="Manage Content"
+      subtitle="Edit, update video links, or delete existing ROS 2 projects and 3D STL models."
+    >
 
         {/* Sub-Tabs: Projects / 3D Models */}
         <div className="flex space-x-3 mb-6">
@@ -1037,6 +1025,6 @@ export default function AdminProjectsPage() {
         </div>
       )}
 
-    </div>
+    </AdminHeaderLayout>
   );
 }
