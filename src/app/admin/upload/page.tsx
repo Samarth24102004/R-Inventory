@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Upload, Plus, CircuitBoard, Lightbulb, CheckCircle2, Box, Image as ImageIcon, FileBox, Loader2, Video, Cpu, Code2, Film, BarChart3 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { formatProjectDescription } from '@/lib/data';
+import AdminNavHeader from '@/components/AdminNavHeader';
 
 export default function AdminUploadPage() {
   const [uploadType, setUploadType] = useState<'project' | 'model'>('project');
@@ -311,43 +312,37 @@ export default function AdminUploadPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white pt-32 pb-20 px-[5%] font-sans">
-      <div className="max-w-4xl mx-auto bg-[#0a0a0a] p-10 rounded-xl border border-white/10 shadow-lg">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 border-b border-white/10 pb-6 gap-6">
-          <div className="flex items-center space-x-4">
-            <Upload className="text-white w-8 h-8" strokeWidth={1.5} />
-            <h1 className="text-3xl font-semibold text-white tracking-tight">
-              Upload Content
-            </h1>
-          </div>
-          <div className="flex gap-3 items-center">
+    <div className="min-h-screen bg-black text-white pt-28 pb-20 px-[5%] font-sans">
+      <div className="max-w-4xl mx-auto space-y-6">
+        
+        {/* Unified Admin Navigation Header */}
+        <AdminNavHeader />
+
+        <div className="bg-[#0a0a0a] p-10 rounded-xl border border-white/10 shadow-lg">
+          <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 border-b border-white/10 pb-6 gap-6">
+            <div className="flex items-center space-x-4">
+              <Upload className="text-white w-8 h-8" strokeWidth={1.5} />
+              <h1 className="text-3xl font-semibold text-white tracking-tight">
+                Upload Content
+              </h1>
+            </div>
             <div className="flex bg-white/5 rounded-md p-1 border border-white/10">
               <button 
                 onClick={() => setUploadType('project')}
-                className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors flex items-center gap-2 ${uploadType === 'project' ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white'}`}
+                className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors flex items-center gap-2 ${uploadType === 'project' ? 'bg-white text-black font-semibold' : 'text-gray-400 hover:text-white'}`}
               >
                 <CircuitBoard className="w-4 h-4" />
                 Project
               </button>
               <button 
                 onClick={() => setUploadType('model')}
-                className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors flex items-center gap-2 ${uploadType === 'model' ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white'}`}
+                className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors flex items-center gap-2 ${uploadType === 'model' ? 'bg-white text-black font-semibold' : 'text-gray-400 hover:text-white'}`}
               >
                 <Box className="w-4 h-4" />
                 3D Model
               </button>
             </div>
-            <a href="/admin/analytics" className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-md text-sm font-medium transition-colors flex items-center gap-1.5">
-              <BarChart3 className="w-4 h-4" /> Analytics
-            </a>
-            <a href="/admin/slideshow" className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-md text-sm font-medium transition-colors flex items-center gap-1.5">
-              <ImageIcon className="w-4 h-4 text-purple-400" /> Slideshow
-            </a>
-            <a href="/admin/projects" className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-md text-sm font-medium transition-colors">
-              Manage Content
-            </a>
           </div>
-        </div>
 
         {uploadType === 'project' ? (
           <form onSubmit={handleProjectSubmit} className="space-y-8">

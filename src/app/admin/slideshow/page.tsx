@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import AdminNavHeader from '@/components/AdminNavHeader';
 
 export default function AdminSlideshowPage() {
   const [banners, setBanners] = useState<any[]>([]);
@@ -161,36 +162,7 @@ export default function AdminSlideshowPage() {
         </div>
 
         {/* Admin Navigation Bar */}
-        <div className="flex space-x-6 border-b border-white/10 pb-px">
-          <Link
-            href="/admin/analytics"
-            className="pb-4 px-2 text-sm font-medium transition-colors border-b-2 border-transparent text-gray-500 hover:text-gray-300 flex items-center gap-2"
-          >
-            <BarChart3 className="w-4 h-4" />
-            Analytics Dashboard
-          </Link>
-          <Link
-            href="/admin/slideshow"
-            className="pb-4 px-2 text-sm font-medium transition-colors border-b-2 border-white text-white flex items-center gap-2"
-          >
-            <ImageIcon className="w-4 h-4" />
-            Homepage Slideshow
-          </Link>
-          <Link
-            href="/admin/projects"
-            className="pb-4 px-2 text-sm font-medium transition-colors border-b-2 border-transparent text-gray-500 hover:text-gray-300 flex items-center gap-2"
-          >
-            <CircuitBoard className="w-4 h-4" />
-            Manage Content
-          </Link>
-          <Link
-            href="/admin/upload"
-            className="pb-4 px-2 text-sm font-medium transition-colors border-b-2 border-transparent text-gray-500 hover:text-gray-300 flex items-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            Upload New
-          </Link>
-        </div>
+        <AdminNavHeader />
 
         {/* Upload New Banner Form */}
         <div className="bg-[#0a0a0a] border border-white/10 p-8 rounded-xl shadow-lg space-y-6">

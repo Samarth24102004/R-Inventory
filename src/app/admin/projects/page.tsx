@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase';
 import { Settings, Edit2, Trash2, Plus, X, Upload, CheckCircle2, Box, CircuitBoard, ImageIcon, FileBox, Video, Cpu, Code2, Film, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import AdminNavHeader from '@/components/AdminNavHeader';
 import { parseProjectDescription, formatProjectDescription } from '@/lib/data';
 
 export default function AdminProjectsPage() {
@@ -440,43 +441,32 @@ export default function AdminProjectsPage() {
           </Link>
         </div>
 
-        {/* Tabs */}
-        <div className="flex space-x-6 mb-8 border-b border-white/10 pb-px">
-          <Link
-            href="/admin/analytics"
-            className="pb-4 px-2 text-sm font-medium transition-colors border-b-2 border-transparent text-gray-500 hover:text-gray-300 flex items-center gap-2"
-          >
-            <BarChart3 className="w-4 h-4" />
-            Analytics Dashboard
-          </Link>
-          <Link
-            href="/admin/slideshow"
-            className="pb-4 px-2 text-sm font-medium transition-colors border-b-2 border-transparent text-gray-500 hover:text-gray-300 flex items-center gap-2"
-          >
-            <ImageIcon className="w-4 h-4 text-purple-400" />
-            Homepage Slideshow
-          </Link>
+        {/* Unified Admin Navigation Header */}
+        <AdminNavHeader />
+
+        {/* Sub-Tabs: Projects / 3D Models */}
+        <div className="flex space-x-3 mb-6">
           <button
             onClick={() => setActiveTab('projects')}
-            className={`pb-4 px-2 text-sm font-medium transition-colors border-b-2 flex items-center gap-2 ${
+            className={`px-4 py-2 text-xs font-semibold rounded-md transition-colors border flex items-center gap-2 ${
               activeTab === 'projects'
-                ? 'border-white text-white'
-                : 'border-transparent text-gray-500 hover:text-gray-300'
+                ? 'bg-white text-black border-white'
+                : 'bg-white/5 text-gray-400 border-white/10 hover:bg-white/10 hover:text-white'
             }`}
           >
-            <CircuitBoard className="w-4 h-4" />
-            Projects
+            <CircuitBoard className="w-3.5 h-3.5" />
+            Projects ({projects.length})
           </button>
           <button
             onClick={() => setActiveTab('models')}
-            className={`pb-4 px-2 text-sm font-medium transition-colors border-b-2 flex items-center gap-2 ${
+            className={`px-4 py-2 text-xs font-semibold rounded-md transition-colors border flex items-center gap-2 ${
               activeTab === 'models'
-                ? 'border-white text-white'
-                : 'border-transparent text-gray-500 hover:text-gray-300'
+                ? 'bg-white text-black border-white'
+                : 'bg-white/5 text-gray-400 border-white/10 hover:bg-white/10 hover:text-white'
             }`}
           >
-            <Box className="w-4 h-4" />
-            3D Models
+            <Box className="w-3.5 h-3.5" />
+            3D Models ({models.length})
           </button>
         </div>
 

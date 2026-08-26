@@ -12,6 +12,7 @@ import {
   Sparkles,
   Settings
 } from 'lucide-react';
+import AdminNavHeader from '@/components/AdminNavHeader';
 
 export default function AdminHubPage() {
   const adminModules = [
@@ -56,6 +57,9 @@ export default function AdminHubPage() {
   return (
     <div className="min-h-screen bg-black text-white pt-28 pb-20 px-[5%] font-sans">
       <div className="max-w-5xl mx-auto space-y-10">
+
+        {/* Unified Admin Navigation Header */}
+        <AdminNavHeader />
 
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/10">
