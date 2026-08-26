@@ -329,8 +329,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
               
               {/* Left Column: SOFTWARE Overview & Code Download / Lock */}
               <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg flex flex-col h-full">
-                <h3 className="text-xl font-semibold mb-4 flex items-center text-cyan-400">
-                  <Code2 className="w-6 h-6 mr-3 text-cyan-400" /> SOFTWARE Architecture
+                <h3 className="text-xl font-semibold mb-4 flex items-center text-white">
+                  <Code2 className="w-6 h-6 mr-3 text-white" /> SOFTWARE Architecture
                 </h3>
                 <div className="text-gray-300 mb-6 grow space-y-3">
                   {softwareText ? (
@@ -345,7 +345,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
                 {/* Source Code Section (Locked until purchase) */}
                 <div className="pt-6 border-t border-white/10 mt-auto">
                   <h4 className="text-lg font-medium mb-3 flex items-center text-white">
-                    <Code className="w-5 h-5 mr-2 text-cyan-400" /> Source Code (.ZIP)
+                    <Code className="w-5 h-5 mr-2 text-white" /> Source Code (.ZIP)
                   </h4>
                   
                   {hasPurchased ? (
@@ -366,15 +366,15 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
                     </div>
                   ) : (
                     <div className="p-5 bg-white/5 border border-white/10 rounded-lg text-center">
-                      <Lock className="w-6 h-6 text-cyan-400 mx-auto mb-2" />
+                      <Lock className="w-6 h-6 text-white mx-auto mb-2" />
                       <p className="text-xs font-medium text-white mb-1">Source Code Locked</p>
-                      <p className="text-[11px] text-gray-400 mb-4">Purchase lifetime access to download ready-to-deploy ROS 2 nodes & packages.</p>
+                      <p className="text-[11px] text-gray-400 mb-4">A single payment unlocks full access to both Source Code .ZIP & Circuit Diagrams.</p>
                       <button 
                         onClick={handleBuy}
                         disabled={purchasing}
                         className="w-full py-2.5 bg-white text-black hover:bg-gray-200 rounded-md text-xs font-semibold transition-colors"
                       >
-                        {purchasing ? "Processing..." : `Unlock Source Code for ₹${project.price}`}
+                        {purchasing ? "Processing..." : `Unlock Full Project for ₹${project.price}`}
                       </button>
                     </div>
                   )}
@@ -383,8 +383,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
 
               {/* Right Column: HARDWARE Overview & Circuit Diagram / Lock */}
               <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg flex flex-col h-full">
-                <h3 className="text-xl font-semibold mb-4 flex items-center text-amber-400">
-                  <Cpu className="w-6 h-6 mr-3 text-amber-400" /> HARDWARE Architecture
+                <h3 className="text-xl font-semibold mb-4 flex items-center text-white">
+                  <Cpu className="w-6 h-6 mr-3 text-white" /> HARDWARE Architecture
                 </h3>
                 <div className="text-gray-300 mb-6 grow space-y-3">
                   {hardwareText ? (
@@ -399,7 +399,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
                 {/* Circuit Diagram Section (Locked until purchase) */}
                 <div className="pt-6 border-t border-white/10 mt-auto">
                   <h4 className="text-sm font-medium mb-3 flex items-center text-gray-300">
-                    <CheckCircle className="w-4 h-4 mr-2 text-amber-400" /> Circuit & Wiring Diagram
+                    <CheckCircle className="w-4 h-4 mr-2 text-white" /> Circuit & Wiring Diagram
                   </h4>
                   
                   {hasPurchased ? (
@@ -418,15 +418,15 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
                     )
                   ) : (
                     <div className="p-5 bg-white/5 border border-white/10 rounded-lg text-center">
-                      <Lock className="w-6 h-6 text-amber-400 mx-auto mb-2" />
+                      <Lock className="w-6 h-6 text-white mx-auto mb-2" />
                       <p className="text-xs font-medium text-white mb-1">Circuit Diagram Locked</p>
-                      <p className="text-[11px] text-gray-400 mb-4">Purchase lifetime access to view high-resolution circuit & pinout diagrams.</p>
+                      <p className="text-[11px] text-gray-400 mb-4">A single payment unlocks full access to both Circuit Diagrams & Source Code .ZIP.</p>
                       <button 
                         onClick={handleBuy}
                         disabled={purchasing}
                         className="w-full py-2.5 bg-white text-black hover:bg-gray-200 rounded-md text-xs font-semibold transition-colors"
                       >
-                        {purchasing ? "Processing..." : `Unlock Circuit Diagram for ₹${project.price}`}
+                        {purchasing ? "Processing..." : `Unlock Full Project for ₹${project.price}`}
                       </button>
                     </div>
                   )}

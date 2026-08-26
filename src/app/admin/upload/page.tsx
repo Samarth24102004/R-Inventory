@@ -411,8 +411,8 @@ export default function AdminUploadPage() {
             {/* Description Sections: Software & Hardware */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2 p-5 bg-white/5 border border-white/10 rounded-lg">
-                <div className="flex items-center space-x-2 text-cyan-400 mb-1">
-                  <Code2 className="w-5 h-5" />
+                <div className="flex items-center space-x-2 text-white mb-1">
+                  <Code2 className="w-5 h-5 text-white" />
                   <label className="text-xs font-semibold tracking-wider uppercase text-white">SOFTWARE Description</label>
                 </div>
                 <p className="text-xs text-gray-400">Specify ROS 2 nodes, packages, launch files, algorithms, and setup commands.</p>
@@ -420,14 +420,14 @@ export default function AdminUploadPage() {
                   value={softwareDescription}
                   onChange={(e) => setSoftwareDescription(e.target.value)}
                   rows={5}
-                  className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-cyan-400 transition-colors resize-none text-sm"
+                  className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors resize-none text-sm"
                   placeholder="e.g. Navigation2 setup, SLAM toolbox configuration, custom ROS 2 lifecycle nodes..."
                 ></textarea>
               </div>
 
               <div className="space-y-2 p-5 bg-white/5 border border-white/10 rounded-lg">
-                <div className="flex items-center space-x-2 text-amber-400 mb-1">
-                  <Cpu className="w-5 h-5" />
+                <div className="flex items-center space-x-2 text-white mb-1">
+                  <Cpu className="w-5 h-5 text-white" />
                   <label className="text-xs font-semibold tracking-wider uppercase text-white">HARDWARE Description</label>
                 </div>
                 <p className="text-xs text-gray-400">Specify compute unit, microcontrollers, sensors, actuators, and power requirements.</p>
@@ -435,7 +435,7 @@ export default function AdminUploadPage() {
                   value={hardwareDescription}
                   onChange={(e) => setHardwareDescription(e.target.value)}
                   rows={5}
-                  className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-amber-400 transition-colors resize-none text-sm"
+                  className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors resize-none text-sm"
                   placeholder="e.g. Jetson Nano 4GB, RPLidar A1, L298N motor driver, 12V 5Ah LiFePO4 battery..."
                 ></textarea>
               </div>

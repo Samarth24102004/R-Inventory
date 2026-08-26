@@ -703,29 +703,29 @@ export default function AdminProjectsPage() {
               {/* Software & Hardware Descriptions */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2 p-4 bg-white/5 border border-white/10 rounded-lg">
-                  <div className="flex items-center space-x-2 text-cyan-400 mb-1">
-                    <Code2 className="w-4 h-4" />
+                  <div className="flex items-center space-x-2 text-white mb-1">
+                    <Code2 className="w-4 h-4 text-white" />
                     <label className="text-xs font-semibold tracking-wider uppercase text-white">SOFTWARE Description</label>
                   </div>
                   <textarea 
                     value={editProjectForm.software_description}
                     onChange={(e) => setEditProjectForm({...editProjectForm, software_description: e.target.value})}
                     rows={5}
-                    className="w-full bg-black/50 border border-white/20 rounded-md px-3 py-2 text-white focus:outline-none focus:border-cyan-400 transition-colors resize-none text-xs"
+                    className="w-full bg-black/50 border border-white/20 rounded-md px-3 py-2 text-white focus:outline-none focus:border-white transition-colors resize-none text-xs"
                     placeholder="ROS 2 nodes, packages, launch files, algorithms..."
                   />
                 </div>
 
                 <div className="space-y-2 p-4 bg-white/5 border border-white/10 rounded-lg">
-                  <div className="flex items-center space-x-2 text-amber-400 mb-1">
-                    <Cpu className="w-4 h-4" />
+                  <div className="flex items-center space-x-2 text-white mb-1">
+                    <Cpu className="w-4 h-4 text-white" />
                     <label className="text-xs font-semibold tracking-wider uppercase text-white">HARDWARE Description</label>
                   </div>
                   <textarea 
                     value={editProjectForm.hardware_description}
                     onChange={(e) => setEditProjectForm({...editProjectForm, hardware_description: e.target.value})}
                     rows={5}
-                    className="w-full bg-black/50 border border-white/20 rounded-md px-3 py-2 text-white focus:outline-none focus:border-amber-400 transition-colors resize-none text-xs"
+                    className="w-full bg-black/50 border border-white/20 rounded-md px-3 py-2 text-white focus:outline-none focus:border-white transition-colors resize-none text-xs"
                     placeholder="Compute unit, microcontrollers, sensors, wiring..."
                   />
                 </div>
