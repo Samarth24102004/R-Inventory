@@ -27,14 +27,15 @@ export default function HeroScrollAnimation() {
     // Timeout to ensure canvas renders quickly even on slower connections
     const timer = setTimeout(() => {
       setIsLoaded(true);
-    }, 1200);
+    }, 800);
 
     for (let i = 0; i < frameCount; i++) {
       const img = new Image();
       img.src = currentFrame(i);
       img.onload = () => {
         loadedCount++;
-        if (loadedCount >= 10) {
+        // Reveal canvas as soon as the initial frame is loaded
+        if (loadedCount >= 1) {
           setIsLoaded(true);
         }
       };
@@ -119,11 +120,15 @@ export default function HeroScrollAnimation() {
       });
     };
 
+    // Render immediately on mount and set interval to draw streaming frames
+    render();
+    const interval = setInterval(render, 150);
+
     window.addEventListener('scroll', render);
     window.addEventListener('resize', render);
-    render();
 
     return () => {
+      clearInterval(interval);
       window.removeEventListener('scroll', render);
       window.removeEventListener('resize', render);
     };
