@@ -296,11 +296,11 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
           </div>
         )}
 
-        {/* 3. Hardware Components & Parts Section */}
+        {/* 3. Components Section */}
         {project.hardware && Array.isArray(project.hardware) && project.hardware.length > 0 && (
           <div>
             <h2 className="text-2xl font-semibold mb-6 flex items-center text-white">
-              <Cpu className="w-6 h-6 mr-3 text-white" /> Hardware Components & Parts
+              <Cpu className="w-6 h-6 mr-3 text-white" /> Components
             </h2>
             <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
