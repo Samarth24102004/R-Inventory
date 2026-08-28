@@ -7,6 +7,7 @@ import NeededProjectModal from "@/components/NeededProjectModal";
 import AuthButton from "@/components/AuthButton";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
 import React, { Suspense } from "react";
+import Script from "next/script";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -137,6 +138,19 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        {/* Google Analytics 4 (GA4) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-RYE9T3W286"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-RYE9T3W286');
+          `}
+        </Script>
       </head>
       <body className={`${inter.className} min-h-screen bg-black text-white antialiased`}>
         {/* Header Background */}
