@@ -3,10 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { User, Mail, Box, Shield, LogOut, ArrowLeft } from 'lucide-react';
+import { User, Mail, Box, Shield, LogOut, ArrowLeft, ExternalLink, Download } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Footer from '@/components/Footer';
+import { demoProjects } from '@/lib/data';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -34,15 +35,12 @@ export default function ProfilePage() {
 
       setProfile(profileData);
 
-      // 3. Fetch Purchases
-      // We assume there's a `purchases` table linking user_id to project_id
-      // and we join it with the `projects` table (if we had a real projects table)
-      // Since projects are hardcoded in page.tsx for now, we will fetch purchase records
-      // and map them to hardcoded project details for the demo.
+      // 3. Fetch Purchases with related Project & STL Model data
       const { data: purchaseData } = await supabase
         .from('purchases')
-        .select('*')
-        .eq('user_id', currentUser.id);
+        .select('*, projects(*), stl_models(*)')
+        .eq('user_id', currentUser.id)
+        .order('created_at', { ascending: false });
 
       if (purchaseData) {
         setPurchases(purchaseData);
@@ -151,32 +149,81 @@ export default function ProfilePage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {purchases.map((purchase: any, index: number) => (
-                  <div key={index} className="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 group hover:border-white/30 transition-colors relative overflow-hidden">
-                    <div className="absolute inset-0 bg-linear-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                {purchases.map((purchase: any, index: number) => {
+                  const proj = purchase.projects || demoProjects.find(p => p.id === purchase.project_id);
+                  const stl = purchase.stl_models;
 
-                    <div className="flex items-start justify-between mb-4 relative z-10">
-                      <div className="p-3 bg-white/10 rounded-xl">
-                        <Box className="w-6 h-6 text-white" />
+                  const itemTitle = proj?.title || stl?.title || (purchase.project_id ? 'Premium Project' : '3D Model');
+                  const itemDesc = proj?.short_description || stl?.short_description || 'Lifetime access unlocked.';
+                  const purchaseDate = purchase.created_at ? new Date(purchase.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
+                  const pricePaid = purchase.amount || proj?.price || stl?.price || 0;
+                  const projectSlug = proj?.slug;
+                  const githubLink = proj?.github_link;
+                  const stlModelId = purchase.model_id;
+
+                  return (
+                    <div key={index} className="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 group hover:border-white/30 transition-colors relative overflow-hidden flex flex-col justify-between space-y-4">
+                      <div className="absolute inset-0 bg-linear-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+                      <div>
+                        <div className="flex items-start justify-between mb-4 relative z-10">
+                          <div className="p-3 bg-white/10 rounded-xl">
+                            <Box className="w-6 h-6 text-white" />
+                          </div>
+                          <div className="text-right">
+                            <span className="text-xs font-semibold text-green-400 block">✓ Purchased</span>
+                            {purchaseDate && <span className="text-[10px] text-gray-500 block mt-0.5">{purchaseDate}</span>}
+                          </div>
+                        </div>
+
+                        <h3 className="text-xl font-bold text-white mb-2 relative z-10">
+                          {itemTitle}
+                        </h3>
+                        <p className="text-xs text-gray-400 line-clamp-2 relative z-10">
+                          {itemDesc}
+                        </p>
                       </div>
-                      <span className="text-xs font-mono text-gray-500">
-                        ID: {(purchase.project_id || purchase.model_id || '').split('-')[0]}
-                      </span>
-                    </div>
 
-                    <h3 className="text-xl font-bold text-white mb-2 relative z-10">
-                      {/* Fallback names since project_id is usually a UUID, you would normally join this with a projects table */}
-                      {purchase.model_id ? "3D Model Unlock" : "Premium Project Unlock"}
-                    </h3>
-
-                    <div className="flex items-center justify-between mt-6 relative z-10">
-                      <div className="text-sm text-green-400 font-medium">✓ Purchased</div>
-                      <button className="px-4 py-2 bg-white/10 hover:bg-white text-white hover:text-black rounded-lg text-sm font-medium transition-colors">
-                        Download
-                      </button>
+                      <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-white/10 relative z-10">
+                        <span className="text-sm font-bold text-white">₹{pricePaid}</span>
+                        <div className="flex items-center gap-2">
+                          {projectSlug && (
+                            <Link 
+                              href={`/projects/${projectSlug}`}
+                              className="px-3 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs font-medium transition-colors"
+                            >
+                              View Project
+                            </Link>
+                          )}
+                          {githubLink ? (
+                            <a 
+                              href={githubLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-4 py-2 bg-white text-black hover:bg-gray-200 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5"
+                            >
+                              <Download className="w-3.5 h-3.5" />
+                              <span>Download ZIP</span>
+                            </a>
+                          ) : stlModelId ? (
+                            <a 
+                              href={`/api/download-stl?modelId=${stlModelId}`}
+                              download
+                              className="px-4 py-2 bg-white text-black hover:bg-gray-200 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5"
+                            >
+                              <Download className="w-3.5 h-3.5" />
+                              <span>Download STL</span>
+                            </a>
+                          ) : (
+                            <span className="px-3 py-1.5 bg-green-500/20 text-green-400 rounded-lg text-xs font-medium">
+                              Unlocked
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

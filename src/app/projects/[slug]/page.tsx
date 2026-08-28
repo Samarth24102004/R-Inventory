@@ -114,7 +114,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
         .select('*')
         .eq('user_id', currentUser.id)
         .eq('project_id', projectData.id)
-        .single();
+        .maybeSingle();
       
       if (purchaseData) {
         setHasPurchased(true);
