@@ -747,6 +747,22 @@ export default function AdminProjectsPage() {
                 </div>
               </div>
 
+              {/* Main Project Overview Text */}
+              <div className="p-4 bg-white/5 border border-white/10 rounded-lg space-y-2">
+                <div className="flex items-center space-x-2 text-white mb-1">
+                  <Lightbulb className="w-4 h-4 text-amber-400" />
+                  <label className="text-xs font-semibold tracking-wider uppercase text-white">PROJECT OVERVIEW</label>
+                </div>
+                <p className="text-[11px] text-gray-400">Main overview description of the project displayed in full under the "Project Overview" section on the project detail page.</p>
+                <textarea 
+                  value={editProjectForm.description}
+                  onChange={(e) => setEditProjectForm({...editProjectForm, description: e.target.value})}
+                  rows={5}
+                  className="w-full bg-black/50 border border-white/20 rounded-md px-3 py-2 text-white focus:outline-none focus:border-white transition-colors resize-y text-xs"
+                  placeholder="Main project overview description..."
+                />
+              </div>
+
               {/* Software & Hardware Descriptions */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2 p-4 bg-white/5 border border-white/10 rounded-lg">
