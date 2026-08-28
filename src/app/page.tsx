@@ -4,18 +4,20 @@ import Footer from '@/components/Footer';
 export const revalidate = 0; // Ensure data is fetched dynamically
 
 export default async function Home() {
+
   return (
-    <main className="relative bg-black min-h-screen text-white selection:bg-[#84cc16]/30 overflow-x-hidden">
-      
-      {/* 3D Hero Scroll Canvas Section */}
-      <div className="relative h-[250vh]">
-        <HeroScrollAnimation />
-      </div>
+    <main className="relative bg-black min-h-screen text-white selection:bg-[#84cc16]/30">
+
+      {/* Sticky Canvas Animation */}
+      <HeroScrollAnimation />
+
+      {/* Empty space to allow scrolling through the animation without text overlay */}
+      <div className="relative z-10 mt-[-100vh] h-[500vh] pointer-events-none"></div>
+
+
 
       {/* Footer Section */}
-      <div className="relative z-50 bg-black">
-        <Footer />
-      </div>
+      <Footer />
     </main>
   );
 }

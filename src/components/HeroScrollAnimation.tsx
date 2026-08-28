@@ -4,8 +4,6 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 
 import Script from 'next/script';
 
-
-
 const frameCount = 240;
 const currentFrame = (index: number) =>
   `https://hwyilzbmlscpaqftlfif.supabase.co/storage/v1/object/public/frames/frame_${index.toString().padStart(4, '0')}.webp`;
@@ -24,29 +22,42 @@ export default function HeroScrollAnimation() {
     const loadedImages: HTMLImageElement[] = [];
     let loadedCount = 0;
 
-    // Timeout to ensure canvas renders quickly even on slower connections
-    const timer = setTimeout(() => {
-      setIsLoaded(true);
-    }, 800);
+    let timerFinished = false;
+    let imagesFinished = false;
+
+    const checkDone = () => {
+      if (timerFinished && imagesFinished) {
+        setIsLoaded(true);
+      }
+    };
+
+    // Enforce a minimum loading time of 1.5 seconds so the animation can be seen
+    setTimeout(() => {
+      timerFinished = true;
+      checkDone();
+    }, 1500);
 
     for (let i = 0; i < frameCount; i++) {
       const img = new Image();
       img.src = currentFrame(i);
       img.onload = () => {
         loadedCount++;
-        // Reveal canvas as soon as the initial frame is loaded
-        if (loadedCount >= 1) {
-          setIsLoaded(true);
+        if (loadedCount === frameCount) {
+          imagesFinished = true;
+          checkDone();
         }
       };
       img.onerror = () => {
-        loadedCount++;
+        // Silently handle missing frames to prevent console spam
+        loadedCount++; // Increment anyway so it doesn't hang forever
+        if (loadedCount === frameCount) {
+          imagesFinished = true;
+          checkDone();
+        }
       };
       loadedImages.push(img);
     }
     setImages(loadedImages);
-
-    return () => clearTimeout(timer);
   }, []);
 
   // Handle scroll and drawing to canvas
@@ -57,81 +68,44 @@ export default function HeroScrollAnimation() {
     const context = canvas.getContext('2d');
     if (!context) return;
 
-    const updateCanvasDimensions = () => {
-      const valid = images.find(img => img.complete && img.naturalWidth > 0);
-      const width = valid?.naturalWidth || 1920;
-      const height = valid?.naturalHeight || 1080;
-
-      if (canvas.width !== width) canvas.width = width;
-      if (canvas.height !== height) canvas.height = height;
-    };
-
-    updateCanvasDimensions();
+    canvas.width = images[0].width;
+    canvas.height = images[0].height;
 
     const render = () => {
-      updateCanvasDimensions();
-
-      const parent = containerRef.current?.parentElement;
-      let fraction = 0;
-
-      if (parent) {
-        const rect = parent.getBoundingClientRect();
-        const scrollableDistance = rect.height - window.innerHeight;
-        if (scrollableDistance > 0) {
-          const currentScroll = Math.max(0, -rect.top);
-          fraction = Math.min(1, Math.max(0, currentScroll / scrollableDistance));
-        }
-      } else {
-        const scrollTop = document.documentElement.scrollTop;
-        const maxScrollTop = document.documentElement.scrollHeight - window.innerHeight;
-        fraction = maxScrollTop > 0 ? scrollTop / maxScrollTop : 0;
-      }
-
+      const scrollTop = document.documentElement.scrollTop;
+      const maxScrollTop = document.documentElement.scrollHeight - window.innerHeight;
+      
+      const fraction = maxScrollTop > 0 ? scrollTop / maxScrollTop : 0;
       setScrollFraction(fraction);
-
+      
       const frameIndex = Math.min(
         frameCount - 1,
         Math.max(0, Math.floor(fraction * frameCount))
       );
 
-      requestAnimationFrame(() => {
-        let imgToDraw = images[frameIndex];
-
-        // Fallback to nearest loaded frame if target frame is still downloading
-        if (!imgToDraw || !imgToDraw.complete || imgToDraw.naturalWidth === 0) {
-          for (let offset = 1; offset < frameCount; offset++) {
-            const prevIndex = Math.max(0, frameIndex - offset);
-            const nextIndex = Math.min(frameCount - 1, frameIndex + offset);
-            if (images[prevIndex]?.complete && images[prevIndex]?.naturalWidth > 0) {
-              imgToDraw = images[prevIndex];
-              break;
-            }
-            if (images[nextIndex]?.complete && images[nextIndex]?.naturalWidth > 0) {
-              imgToDraw = images[nextIndex];
-              break;
-            }
-          }
+      // Check for projects section to push up the text
+      const projectsEl = document.getElementById('projects');
+      if (projectsEl) {
+        const rect = projectsEl.getBoundingClientRect();
+        if (rect.top < window.innerHeight / 2) {
+          setTextTranslateY((window.innerHeight / 2) - rect.top);
+        } else {
+          setTextTranslateY(0);
         }
+      }
 
-        if (imgToDraw && imgToDraw.complete && imgToDraw.naturalWidth > 0) {
+      requestAnimationFrame(() => {
+        if (images[frameIndex] && images[frameIndex].complete && images[frameIndex].naturalWidth > 0) {
           context.clearRect(0, 0, canvas.width, canvas.height);
-          context.drawImage(imgToDraw, 0, 0);
+          context.drawImage(images[frameIndex], 0, 0);
         }
       });
     };
 
-    // Render immediately on mount and set interval to draw streaming frames
-    render();
-    const interval = setInterval(render, 150);
-
     window.addEventListener('scroll', render);
-    window.addEventListener('resize', render);
+    render();
 
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener('scroll', render);
-      window.removeEventListener('resize', render);
-    };
+    return () => window.removeEventListener('scroll', render);
   }, [isLoaded, images]);
 
   // Helper to calculate opacity based on scroll fraction
@@ -147,10 +121,10 @@ export default function HeroScrollAnimation() {
     return 0;
   };
 
-  const text0Opacity = getOpacity(scrollFraction, -0.1, 0, 0.05, 0.15);
-  const text1Opacity = getOpacity(scrollFraction, 0.10, 0.18, 0.28, 0.38);
-  const text2Opacity = getOpacity(scrollFraction, 0.32, 0.40, 0.52, 0.62);
-  const text3Opacity = getOpacity(scrollFraction, 0.58, 0.65, 0.78, 0.88);
+  const text0Opacity = getOpacity(scrollFraction, -0.1, 0, 0.02, 0.08);
+  const text1Opacity = getOpacity(scrollFraction, 0.03, 0.08, 0.15, 0.25);
+  const text2Opacity = getOpacity(scrollFraction, 0.3, 0.4, 0.55, 0.65);
+  const text3Opacity = getOpacity(scrollFraction, 0.55, 0.65, 1.0, 1.0);
 
   return (
     <div ref={containerRef} className="h-screen sticky top-0 flex justify-center items-center overflow-hidden z-0 bg-black">
