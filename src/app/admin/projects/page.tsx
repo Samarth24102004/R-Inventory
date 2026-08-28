@@ -26,6 +26,7 @@ export default function AdminProjectsPage() {
     description: '',
     software_description: '',
     hardware_description: '',
+    tags: '',
     github_link: '',
     video_url: '',
     preview_video_url: ''
@@ -41,6 +42,22 @@ export default function AdminProjectsPage() {
   const [previewVideoFile, setPreviewVideoFile] = useState<File | null>(null);
   const previewVideoFileRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [editHardwareList, setEditHardwareList] = useState<{ component: string; quantity: string; description: string; buy_url: string }[]>([]);
+
+  const addEditHardwareRow = () => {
+    setEditHardwareList([...editHardwareList, { component: '', quantity: '1', description: '', buy_url: '' }]);
+  };
+
+  const updateEditHardwareRow = (index: number, field: string, value: string) => {
+    const updated = [...editHardwareList];
+    updated[index] = { ...updated[index], [field]: value };
+    setEditHardwareList(updated);
+  };
+
+  const removeEditHardwareRow = (index: number) => {
+    setEditHardwareList(editHardwareList.filter((_, i) => i !== index));
+  };
 
   // Quick Video Modal State
   const [quickVideoProject, setQuickVideoProject] = useState<any>(null);
@@ -135,10 +152,22 @@ export default function AdminProjectsPage() {
       description: project.description || '',
       software_description: project.software_description || parsed.software || '',
       hardware_description: project.hardware_description || parsed.hardware || '',
+      tags: Array.isArray(project.tags) ? project.tags.join(', ') : (project.tags || ''),
       github_link: project.github_link || '',
       video_url: project.video_url || project.videoUrl || '',
       preview_video_url: project.preview_video_url || project.previewVideoUrl || ''
     });
+
+    const hwArray = Array.isArray(project.hardware)
+      ? project.hardware.map((h: any) => ({
+          component: h.component || '',
+          quantity: h.quantity?.toString() || '1',
+          description: h.description || '',
+          buy_url: h.buy_url || h.buyUrl || ''
+        }))
+      : [];
+    setEditHardwareList(hwArray.length > 0 ? hwArray : [{ component: '', quantity: '1', description: '', buy_url: '' }]);
+
     setCircuitFile(null);
     setCodeFile(null);
     setPreviewImages([]);
@@ -370,6 +399,20 @@ export default function AdminProjectsPage() {
 
     const shortDesc = (editProjectForm.software_description || editProjectForm.hardware_description || editProjectForm.description).substring(0, 120) + '...';
 
+    const tagsArray = editProjectForm.tags
+      .split(',')
+      .map((t: string) => t.trim())
+      .filter((t: string) => t.length > 0);
+
+    const cleanHardware = editHardwareList
+      .filter(h => h.component.trim() !== '')
+      .map(h => ({
+        component: h.component.trim(),
+        quantity: h.quantity || '1',
+        description: h.description.trim(),
+        buy_url: h.buy_url.trim()
+      }));
+
     const { data, error } = await supabase
       .from('projects')
       .update({
@@ -379,6 +422,8 @@ export default function AdminProjectsPage() {
         software_description: editProjectForm.software_description,
         hardware_description: editProjectForm.hardware_description,
         short_description: shortDesc,
+        tags: tagsArray,
+        hardware: cleanHardware,
         github_link: github_link_url,
         video_url: finalVideoUrl,
         preview_video_url: finalPreviewVideoUrl,
@@ -651,6 +696,17 @@ export default function AdminProjectsPage() {
                 </div>
               </div>
 
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Custom Tags (Comma Separated)</label>
+                <input 
+                  type="text" 
+                  value={editProjectForm.tags}
+                  onChange={(e) => setEditProjectForm({...editProjectForm, tags: e.target.value})}
+                  className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors text-sm"
+                  placeholder="e.g. SLAM, LiDAR, Python, Autonomous"
+                />
+              </div>
+
               <div className="space-y-4 p-4 border border-white/10 rounded-md">
                 <div className="flex items-center space-x-3">
                   <FileBox className="text-white w-5 h-5" />
@@ -719,6 +775,72 @@ export default function AdminProjectsPage() {
                     className="w-full bg-black/50 border border-white/20 rounded-md px-3 py-2 text-white focus:outline-none focus:border-white transition-colors resize-none text-xs"
                     placeholder="Compute unit, microcontrollers, sensors, wiring..."
                   />
+                </div>
+              </div>
+
+              {/* Hardware Parts & Store Links */}
+              <div className="space-y-4 p-4 border border-white/10 rounded-md bg-white/5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Cpu className="w-4 h-4 text-white" />
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-white">Hardware Parts & Store Links</h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={addEditHardwareRow}
+                    className="px-2.5 py-1 bg-white/10 hover:bg-white/20 text-white rounded text-xs font-medium transition-colors flex items-center gap-1"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Add Part
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {editHardwareList.map((item, index) => (
+                    <div key={index} className="grid grid-cols-1 md:grid-cols-12 gap-2 p-3 bg-black/50 border border-white/10 rounded-md items-center">
+                      <div className="md:col-span-4">
+                        <label className="text-[9px] text-gray-400 uppercase block mb-1">Part Name</label>
+                        <input
+                          type="text"
+                          value={item.component}
+                          onChange={(e) => updateEditHardwareRow(index, 'component', e.target.value)}
+                          className="w-full bg-black/60 border border-white/20 rounded px-2.5 py-1.5 text-white text-xs focus:outline-none focus:border-white"
+                          placeholder="e.g. RPLidar A1"
+                        />
+                      </div>
+                      <div className="md:col-span-2">
+                        <label className="text-[9px] text-gray-400 uppercase block mb-1">Qty</label>
+                        <input
+                          type="text"
+                          value={item.quantity}
+                          onChange={(e) => updateEditHardwareRow(index, 'quantity', e.target.value)}
+                          className="w-full bg-black/60 border border-white/20 rounded px-2.5 py-1.5 text-white text-xs focus:outline-none focus:border-white"
+                          placeholder="1"
+                        />
+                      </div>
+                      <div className="md:col-span-5">
+                        <label className="text-[9px] text-gray-400 uppercase block mb-1">Buy Link (URL)</label>
+                        <input
+                          type="url"
+                          value={item.buy_url}
+                          onChange={(e) => updateEditHardwareRow(index, 'buy_url', e.target.value)}
+                          className="w-full bg-black/60 border border-white/20 rounded px-2.5 py-1.5 text-white text-xs focus:outline-none focus:border-white"
+                          placeholder="https://..."
+                        />
+                      </div>
+                      <div className="md:col-span-1 flex justify-end pt-1 md:pt-0">
+                        {editHardwareList.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeEditHardwareRow(index)}
+                            className="text-gray-400 hover:text-red-400 p-1"
+                            title="Remove"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 

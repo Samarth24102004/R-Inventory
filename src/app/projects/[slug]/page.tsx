@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { Lock, Code, CheckCircle, ArrowLeft, ChevronLeft, ChevronRight, ImageIcon, Video, Cpu, Code2 } from 'lucide-react';
+import { Lock, Code, CheckCircle, ArrowLeft, ChevronLeft, ChevronRight, ImageIcon, Video, Cpu, Code2, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import AuthModal from '@/components/AuthModal';
@@ -236,6 +236,11 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
                 <span className="bg-white/10 text-gray-300 border border-white/20 px-3 py-1 rounded text-xs font-medium uppercase tracking-wide">
                   {project.ros_version}
                 </span>
+                {project.tags && Array.isArray(project.tags) && project.tags.map((tag: string, idx: number) => (
+                  <span key={idx} className="bg-purple-500/10 text-purple-300 border border-purple-500/20 px-3 py-1 rounded text-xs font-medium uppercase tracking-wide">
+                    {tag}
+                  </span>
+                ))}
               </div>
               <p className="text-gray-400 text-lg max-w-2xl">{project.short_description}</p>
             </div>
@@ -287,6 +292,48 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
             </h2>
             <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg">
               {renderVideoPlayer(project.video_url || project.videoUrl)}
+            </div>
+          </div>
+        )}
+
+        {/* 3. Hardware Components & Parts Section */}
+        {project.hardware && Array.isArray(project.hardware) && project.hardware.length > 0 && (
+          <div>
+            <h2 className="text-2xl font-semibold mb-6 flex items-center text-white">
+              <Cpu className="w-6 h-6 mr-3 text-white" /> Hardware Components & Parts
+            </h2>
+            <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {project.hardware.map((item: any, idx: number) => (
+                  <div key={idx} className="p-4 bg-white/5 border border-white/10 rounded-lg flex flex-col justify-between space-y-3">
+                    <div>
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="font-semibold text-white text-base md:text-lg">{item.component}</h3>
+                        {item.quantity && (
+                          <span className="px-2 py-0.5 bg-white/10 text-gray-300 rounded text-xs font-mono font-medium shrink-0">
+                            Qty: {item.quantity}
+                          </span>
+                        )}
+                      </div>
+                      {item.description && (
+                        <p className="text-xs text-gray-400 mt-1">{item.description}</p>
+                      )}
+                    </div>
+                    
+                    {(item.buy_url || item.buyUrl) ? (
+                      <a
+                        href={item.buy_url || item.buyUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center px-4 py-2 bg-white text-black hover:bg-gray-200 rounded text-xs font-medium transition-colors w-full gap-2 mt-2 shadow-sm"
+                      >
+                        <span>Buy Component</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}

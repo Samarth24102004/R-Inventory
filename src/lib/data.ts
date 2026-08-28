@@ -1,8 +1,10 @@
 export interface HardwareComponent {
-  id: string;
+  id?: string;
   component: string;
-  quantity: number;
-  description: string;
+  quantity: number | string;
+  description?: string;
+  buy_url?: string;
+  buyUrl?: string;
 }
 
 export interface Command {
@@ -46,6 +48,7 @@ export interface Project {
   commands?: Command[];
   circuits?: CircuitDiagram[];
   preview_images?: string[];
+  tags?: string[];
 }
 
 export function parseProjectDescription(desc: string = ''): { software: string; hardware: string } {

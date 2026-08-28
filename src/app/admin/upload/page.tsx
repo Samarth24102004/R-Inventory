@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
-import { Upload, Plus, CircuitBoard, Lightbulb, CheckCircle2, Box, Image as ImageIcon, FileBox, Loader2, Video, Cpu, Code2, Film, BarChart3 } from 'lucide-react';
+import { Upload, Plus, CircuitBoard, Lightbulb, CheckCircle2, Box, Image as ImageIcon, FileBox, Loader2, Video, Cpu, Code2, Film, BarChart3, Trash2, ExternalLink } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { formatProjectDescription } from '@/lib/data';
 import AdminHeaderLayout from '@/components/AdminHeaderLayout';
@@ -13,6 +13,25 @@ export default function AdminUploadPage() {
   const [description, setDescription] = useState('');
   const [softwareDescription, setSoftwareDescription] = useState('');
   const [hardwareDescription, setHardwareDescription] = useState('');
+  const [tagsInput, setTagsInput] = useState('');
+  const [hardwareList, setHardwareList] = useState<{ component: string; quantity: string; description: string; buy_url: string }[]>([
+    { component: '', quantity: '1', description: '', buy_url: '' }
+  ]);
+
+  const addHardwareRow = () => {
+    setHardwareList([...hardwareList, { component: '', quantity: '1', description: '', buy_url: '' }]);
+  };
+
+  const updateHardwareRow = (index: number, field: string, value: string) => {
+    const updated = [...hardwareList];
+    updated[index] = { ...updated[index], [field]: value };
+    setHardwareList(updated);
+  };
+
+  const removeHardwareRow = (index: number) => {
+    setHardwareList(hardwareList.filter((_, i) => i !== index));
+  };
+
   const [videoUrlInput, setVideoUrlInput] = useState('');
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const videoFileRef = useRef<HTMLInputElement>(null);
@@ -207,6 +226,20 @@ export default function AdminUploadPage() {
       }
     }
 
+    const tagsArray = tagsInput
+      .split(',')
+      .map(t => t.trim())
+      .filter(t => t.length > 0);
+
+    const cleanHardware = hardwareList
+      .filter(h => h.component.trim() !== '')
+      .map(h => ({
+        component: h.component.trim(),
+        quantity: h.quantity || '1',
+        description: h.description.trim(),
+        buy_url: h.buy_url.trim()
+      }));
+
     const { error } = await supabase.from('projects').insert([
       {
         title: title,
@@ -221,6 +254,8 @@ export default function AdminUploadPage() {
         preview_video_url: finalPreviewVideoUrl || null,
         circuit_diagram_url: circuit_diagram_url,
         preview_images: uploaded_preview_urls,
+        tags: tagsArray,
+        hardware: cleanHardware,
         category: 'Uncategorized',
         difficulty: 'Beginner',
         ros_version: 'ROS Humble',
@@ -340,7 +375,7 @@ export default function AdminUploadPage() {
 
         {uploadType === 'project' ? (
           <form onSubmit={handleProjectSubmit} className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">Project Title</label>
                 <input 
@@ -362,6 +397,17 @@ export default function AdminUploadPage() {
                   min="0"
                   className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors"
                   required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">Custom Tags (Comma Separated)</label>
+                <input 
+                  type="text" 
+                  value={tagsInput}
+                  onChange={(e) => setTagsInput(e.target.value)}
+                  className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors"
+                  placeholder="e.g. SLAM, LiDAR, Python, Autonomous"
                 />
               </div>
             </div>
@@ -433,6 +479,75 @@ export default function AdminUploadPage() {
                   className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors resize-none text-sm"
                   placeholder="e.g. Jetson Nano 4GB, RPLidar A1, L298N motor driver, 12V 5Ah LiFePO4 battery..."
                 ></textarea>
+              </div>
+            </div>
+
+            {/* Required Hardware Components & Product Links */}
+            <div className="p-6 bg-transparent border border-white/10 rounded-md space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <Cpu className="text-white w-5 h-5" strokeWidth={1.5} />
+                  <div>
+                    <h3 className="text-lg font-medium text-white tracking-tight">Hardware Parts & Store Links</h3>
+                    <p className="text-xs text-gray-400">Add hardware component parts, quantities, descriptions, and direct product buy links.</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={addHardwareRow}
+                  className="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded text-xs font-medium transition-colors flex items-center gap-1"
+                >
+                  <Plus className="w-4 h-4" /> Add Part
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                {hardwareList.map((item, index) => (
+                  <div key={index} className="grid grid-cols-1 md:grid-cols-12 gap-3 p-4 bg-black/40 border border-white/10 rounded-lg items-center">
+                    <div className="md:col-span-4">
+                      <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Component Name</label>
+                      <input
+                        type="text"
+                        value={item.component}
+                        onChange={(e) => updateHardwareRow(index, 'component', e.target.value)}
+                        className="w-full bg-black/60 border border-white/20 rounded px-3 py-2 text-white text-xs focus:outline-none focus:border-white"
+                        placeholder="e.g. RPLidar A1 360° LiDAR"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Qty</label>
+                      <input
+                        type="text"
+                        value={item.quantity}
+                        onChange={(e) => updateHardwareRow(index, 'quantity', e.target.value)}
+                        className="w-full bg-black/60 border border-white/20 rounded px-3 py-2 text-white text-xs focus:outline-none focus:border-white"
+                        placeholder="1"
+                      />
+                    </div>
+                    <div className="md:col-span-5">
+                      <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Product / Buy Link (URL)</label>
+                      <input
+                        type="url"
+                        value={item.buy_url}
+                        onChange={(e) => updateHardwareRow(index, 'buy_url', e.target.value)}
+                        className="w-full bg-black/60 border border-white/20 rounded px-3 py-2 text-white text-xs focus:outline-none focus:border-white"
+                        placeholder="https://..."
+                      />
+                    </div>
+                    <div className="md:col-span-1 flex justify-end pt-2 md:pt-0">
+                      {hardwareList.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeHardwareRow(index)}
+                          className="text-gray-400 hover:text-red-400 p-1"
+                          title="Remove Part"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
