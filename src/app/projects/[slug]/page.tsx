@@ -261,16 +261,33 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
       </div>
 
       {/* Content */}
-      <div className="max-w-5xl mx-auto px-[5%] py-12 space-y-8">
-        <h2 className="text-2xl font-semibold mb-6">Project Overview</h2>
+      <div className="max-w-5xl mx-auto px-[5%] py-12 space-y-10">
         
-        {/* 1. Demonstration Video (Always visible if video exists) */}
+        {/* 1. Project Overview */}
+        <div>
+          <h2 className="text-2xl font-semibold mb-6">Project Overview</h2>
+          <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg text-gray-200 leading-relaxed text-base md:text-lg space-y-4">
+            {(project.description || project.short_description) ? (
+              (project.description || project.short_description)
+                .split('\n')
+                .map((paragraph: string, idx: number) => 
+                  paragraph.trim() ? <p key={idx}>{paragraph}</p> : null
+                )
+            ) : (
+              <p className="text-gray-500 italic">No description available for this project.</p>
+            )}
+          </div>
+        </div>
+        
+        {/* 2. Project Video Section */}
         {(project.video_url || project.videoUrl) && (
-          <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 flex items-center text-purple-400">
-              <Video className="w-6 h-6 mr-3 text-purple-400" /> Demonstration Video
-            </h3>
-            {renderVideoPlayer(project.video_url || project.videoUrl)}
+          <div>
+            <h2 className="text-2xl font-semibold mb-6 flex items-center text-purple-400">
+              <Video className="w-6 h-6 mr-3 text-purple-400" /> Project-VIDEO
+            </h2>
+            <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg">
+              {renderVideoPlayer(project.video_url || project.videoUrl)}
+            </div>
           </div>
         )}
 
