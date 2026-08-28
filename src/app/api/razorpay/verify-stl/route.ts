@@ -49,8 +49,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: 'Model not found' }, { status: 404 });
     }
 
-    // Insert purchase record to grant lifetime access
-    const { error: insertError } = await supabase
+    // Insert purchase record to grant lifetime access using service role key
+    const adminSupabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
+    const { error: insertError } = await adminSupabase
       .from('purchases')
       .insert([
         {

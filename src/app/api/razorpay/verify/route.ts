@@ -54,8 +54,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
 
-    // Insert purchase record into Supabase
-    const { error: dbError } = await supabase.from('purchases').insert([
+    // Insert purchase record into Supabase using service role key (bypasses RLS limits)
+    const adminSupabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
+    const { error: dbError } = await adminSupabase.from('purchases').insert([
       {
         user_id: user.id,
         project_id: projectId,

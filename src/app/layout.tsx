@@ -5,6 +5,7 @@ import BottomNavbar from "@/components/BottomNavbar";
 import SearchModal from "@/components/SearchModal";
 import NeededProjectModal from "@/components/NeededProjectModal";
 import AuthButton from "@/components/AuthButton";
+import AnalyticsTracker from "@/components/AnalyticsTracker";
 import React, { Suspense } from "react";
 
 const inter = Inter({
@@ -153,6 +154,9 @@ export default function RootLayout({
           </span>
         </div>
         {children}
+        <Suspense fallback={null}>
+          <AnalyticsTracker />
+        </Suspense>
         <Suspense fallback={null}>
           <AuthButton />
         </Suspense>
