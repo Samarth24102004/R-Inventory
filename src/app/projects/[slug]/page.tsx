@@ -226,22 +226,15 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-8">
             <div>
               <h1 className="text-4xl md:text-5xl font-semibold tracking-tight mb-4">{project.title}</h1>
-              <div className="flex flex-wrap gap-3 mb-6">
-                <span className="bg-white/10 text-gray-300 border border-white/20 px-3 py-1 rounded text-xs font-medium uppercase tracking-wide">
-                  {project.category}
-                </span>
-                <span className="bg-white/10 text-gray-300 border border-white/20 px-3 py-1 rounded text-xs font-medium uppercase tracking-wide">
-                  {project.difficulty}
-                </span>
-                <span className="bg-white/10 text-gray-300 border border-white/20 px-3 py-1 rounded text-xs font-medium uppercase tracking-wide">
-                  {project.ros_version}
-                </span>
-                {project.tags && Array.isArray(project.tags) && project.tags.map((tag: string, idx: number) => (
-                  <span key={idx} className="bg-purple-500/10 text-purple-300 border border-purple-500/20 px-3 py-1 rounded text-xs font-medium uppercase tracking-wide">
-                    {tag}
-                  </span>
-                ))}
-              </div>
+              {project.tags && Array.isArray(project.tags) && project.tags.length > 0 && (
+                <div className="flex flex-wrap gap-3 mb-6">
+                  {project.tags.map((tag: string, idx: number) => (
+                    <span key={idx} className="bg-purple-500/10 text-purple-300 border border-purple-500/20 px-3 py-1 rounded text-xs font-medium uppercase tracking-wide">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
               <p className="text-gray-400 text-lg max-w-2xl">{project.short_description}</p>
             </div>
             

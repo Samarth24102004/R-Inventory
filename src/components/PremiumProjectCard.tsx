@@ -57,24 +57,15 @@ export default function PremiumProjectCard({ project }: { project: Project }) {
             <span className="text-lg font-semibold text-white ml-4 shrink-0">₹{project.price}</span>
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-3">
-            <span className="bg-white/10 text-gray-300 border border-white/20 px-2 py-1 rounded text-[10px] font-sans tracking-wide uppercase">
-              {(project as any).ros_version || project.rosVersion}
-            </span>
-            <span className="bg-white/10 text-gray-300 border border-white/20 px-2 py-1 rounded text-[10px] font-sans tracking-wide uppercase">
-              {project.difficulty}
-            </span>
-            {project.tags && Array.isArray(project.tags) && project.tags.slice(0, 2).map((tag: string, idx: number) => (
-              <span key={idx} className="bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-1 rounded text-[10px] font-sans tracking-wide uppercase">
-                {tag}
-              </span>
-            ))}
-            {(project.video_url || project.videoUrl) && (
-              <span className="bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-1 rounded text-[10px] font-sans tracking-wide uppercase flex items-center gap-1 font-medium">
-                <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse"></span> Video
-              </span>
-            )}
-          </div>
+          {project.tags && Array.isArray(project.tags) && project.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-3">
+              {project.tags.map((tag: string, idx: number) => (
+                <span key={idx} className="bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-1 rounded text-[10px] font-sans tracking-wide uppercase">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
 
           <p className="text-gray-400 text-xs leading-relaxed line-clamp-2 mb-4">
             {(project as any).short_description || project.shortDescription}
