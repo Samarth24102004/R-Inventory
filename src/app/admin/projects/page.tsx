@@ -146,10 +146,21 @@ export default function AdminProjectsPage() {
   const openEditProjectModal = (project: any) => {
     setEditingProject(project);
     const parsed = parseProjectDescription(project.description || '');
+
+    let overviewText = project.description || '';
+    if (overviewText.includes('SOFTWARE:') || overviewText.includes('[SOFTWARE]')) {
+      const beforeMatch = overviewText.match(/^([\s\S]*?)(?=(?:\[SOFTWARE\]|SOFTWARE DESCRIPTION|SOFTWARE:))/i);
+      if (beforeMatch && beforeMatch[1].trim()) {
+        overviewText = beforeMatch[1].trim();
+      } else {
+        overviewText = '';
+      }
+    }
+
     setEditProjectForm({
       title: project.title || '',
       price: project.price?.toString() || '0',
-      description: project.description || '',
+      description: overviewText,
       software_description: project.software_description || parsed.software || '',
       hardware_description: project.hardware_description || parsed.hardware || '',
       tags: Array.isArray(project.tags) ? project.tags.join(', ') : (project.tags || ''),
@@ -392,12 +403,16 @@ export default function AdminProjectsPage() {
       }
     }
     
-    const combinedDesc = formatProjectDescription(
+    const finalOverview = editProjectForm.description.trim() || formatProjectDescription(
       editProjectForm.software_description,
       editProjectForm.hardware_description
-    ) || editProjectForm.description;
+    );
 
-    const shortDesc = (editProjectForm.software_description || editProjectForm.hardware_description || editProjectForm.description).substring(0, 120) + '...';
+    const shortDesc = (
+      editProjectForm.description.trim() ||
+      editProjectForm.software_description.trim() ||
+      editProjectForm.hardware_description.trim()
+    ).substring(0, 120) + '...';
 
     const tagsArray = editProjectForm.tags
       .split(',')
@@ -418,7 +433,7 @@ export default function AdminProjectsPage() {
       .update({
         title: editProjectForm.title,
         price: parseFloat(editProjectForm.price) || 0,
-        description: combinedDesc,
+        description: finalOverview,
         software_description: editProjectForm.software_description,
         hardware_description: editProjectForm.hardware_description,
         short_description: shortDesc,

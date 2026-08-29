@@ -65,7 +65,7 @@ export function parseProjectDescription(desc: string = ''): { software: string; 
   }
 
   return {
-    software: desc.trim(),
+    software: '',
     hardware: ''
   };
 }

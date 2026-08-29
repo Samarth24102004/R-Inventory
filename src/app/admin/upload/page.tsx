@@ -102,8 +102,8 @@ export default function AdminUploadPage() {
     
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
-    const combinedDescription = formatProjectDescription(softwareDescription, hardwareDescription) || description;
-    const shortDesc = (softwareDescription || hardwareDescription || description).substring(0, 120) + '...';
+    const finalOverview = description.trim() || formatProjectDescription(softwareDescription, hardwareDescription);
+    const shortDesc = (description.trim() || softwareDescription.trim() || hardwareDescription.trim()).substring(0, 120) + '...';
 
     // 1. Upload Full Demo Video if selected
     let finalVideoUrl = videoUrlInput.trim();
@@ -244,7 +244,7 @@ export default function AdminUploadPage() {
       {
         title: title,
         slug: slug,
-        description: combinedDescription,
+        description: finalOverview,
         software_description: softwareDescription,
         hardware_description: hardwareDescription,
         short_description: shortDesc,

@@ -272,15 +272,27 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
         <div>
           <h2 className="text-2xl font-semibold mb-6">Project Overview</h2>
           <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg text-gray-200 leading-relaxed text-base md:text-lg space-y-4">
-            {(project.description || project.short_description) ? (
-              (project.description || project.short_description)
-                .split('\n')
-                .map((paragraph: string, idx: number) => 
-                  paragraph.trim() ? <p key={idx}>{paragraph}</p> : null
-                )
-            ) : (
-              <p className="text-gray-500 italic">No description available for this project.</p>
-            )}
+            {(() => {
+              let displayOverview = project.description || project.short_description || '';
+              if (displayOverview.includes('SOFTWARE:') || displayOverview.includes('[SOFTWARE]')) {
+                const beforeMatch = displayOverview.match(/^([\s\S]*?)(?=(?:\[SOFTWARE\]|SOFTWARE DESCRIPTION|SOFTWARE:))/i);
+                if (beforeMatch && beforeMatch[1].trim()) {
+                  displayOverview = beforeMatch[1].trim();
+                } else if (project.software_description || project.hardware_description) {
+                  displayOverview = project.software_description || project.hardware_description || '';
+                }
+              }
+
+              return displayOverview ? (
+                displayOverview
+                  .split('\n')
+                  .map((paragraph: string, idx: number) => 
+                    paragraph.trim() ? <p key={idx}>{paragraph}</p> : null
+                  )
+              ) : (
+                <p className="text-gray-500 italic">No description available for this project.</p>
+              );
+            })()}
           </div>
         </div>
         
