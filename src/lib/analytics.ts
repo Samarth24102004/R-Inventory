@@ -79,10 +79,22 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
   const { data: modelsData } = await supabase.from('stl_models').select('id, title, price');
 
   // 2. Fetch Purchases
-  const { data: purchases } = await supabase
+  const { data: rawPurchases } = await supabase
     .from('purchases')
-    .select('*, projects(id, title, price), stl_models(id, title, price)')
+    .select('*')
     .order('created_at', { ascending: false });
+
+  const projectMap: Record<string, any> = {};
+  projectsData?.forEach(p => { projectMap[p.id] = p; });
+
+  const modelMap: Record<string, any> = {};
+  modelsData?.forEach(m => { modelMap[m.id] = m; });
+
+  const purchases = rawPurchases?.map(p => ({
+    ...p,
+    projects: p.project_id ? projectMap[p.project_id] : null,
+    stl_models: p.model_id ? modelMap[p.model_id] : null
+  })) || [];
 
   const totalPurchases = purchases?.length || 0;
   const totalRevenue = purchases?.reduce((sum, p) => sum + (parseFloat(p.amount) || parseFloat(p.projects?.price) || parseFloat(p.stl_models?.price) || 0), 0) || 0;
