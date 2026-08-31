@@ -66,8 +66,11 @@ export default function AdminProjectsPage() {
   // Quick Video Modal State
   const [quickVideoProject, setQuickVideoProject] = useState<any>(null);
   const [quickVideoUrl, setQuickVideoUrl] = useState('');
+  const [quickPreviewVideoUrl, setQuickPreviewVideoUrl] = useState('');
   const [quickVideoFile, setQuickVideoFile] = useState<File | null>(null);
   const quickVideoFileRef = useRef<HTMLInputElement>(null);
+  const [quickPreviewVideoFile, setQuickPreviewVideoFile] = useState<File | null>(null);
+  const quickPreviewVideoFileRef = useRef<HTMLInputElement>(null);
   const [isQuickVideoSubmitting, setIsQuickVideoSubmitting] = useState(false);
 
   // Edit Model Modal State
@@ -220,7 +223,9 @@ export default function AdminProjectsPage() {
   const openQuickVideoModal = (project: any) => {
     setQuickVideoProject(project);
     setQuickVideoUrl(project.video_url || project.videoUrl || '');
+    setQuickPreviewVideoUrl(project.preview_video_url || project.previewVideoUrl || '');
     setQuickVideoFile(null);
+    setQuickPreviewVideoFile(null);
   };
 
   const handleQuickVideoSubmit = async (e: React.FormEvent) => {
@@ -229,10 +234,11 @@ export default function AdminProjectsPage() {
 
     setIsQuickVideoSubmitting(true);
     let finalUrl = quickVideoUrl.trim();
+    let finalPreviewUrl = quickPreviewVideoUrl.trim();
 
     if (quickVideoFile) {
       const fileExt = quickVideoFile.name.split('.').pop();
-      const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const fileName = `video_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
       
       const { error: videoUploadErr } = await supabase.storage
         .from('project_videos')
@@ -256,15 +262,44 @@ export default function AdminProjectsPage() {
       }
     }
 
+    if (quickPreviewVideoFile) {
+      const fileExt = quickPreviewVideoFile.name.split('.').pop();
+      const fileName = `preview_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+      
+      const { error: previewUploadErr } = await supabase.storage
+        .from('project_videos')
+        .upload(fileName, quickPreviewVideoFile);
+        
+      if (!previewUploadErr) {
+        const { data: urlData } = supabase.storage
+          .from('project_videos')
+          .getPublicUrl(fileName);
+        finalPreviewUrl = urlData.publicUrl;
+      } else {
+        const { error: fallbackErr } = await supabase.storage
+          .from('diagrams')
+          .upload(fileName, quickPreviewVideoFile);
+        if (!fallbackErr) {
+          const { data: fallbackUrlData } = supabase.storage
+            .from('diagrams')
+            .getPublicUrl(fileName);
+          finalPreviewUrl = fallbackUrlData.publicUrl;
+        }
+      }
+    }
+
     const { error } = await supabase
       .from('projects')
-      .update({ video_url: finalUrl })
+      .update({ 
+        video_url: finalUrl || null,
+        preview_video_url: finalPreviewUrl || null
+      })
       .eq('id', quickVideoProject.id);
 
     setIsQuickVideoSubmitting(false);
 
     if (error) {
-      alert(`Failed to update video: ${error.message}`);
+      alert(`Failed to update videos: ${error.message}`);
     } else {
       setQuickVideoProject(null);
       fetchProjects();
@@ -1205,7 +1240,7 @@ export default function AdminProjectsPage() {
 
             <form onSubmit={handleQuickVideoSubmit} className="space-y-5">
               <div>
-                <label className="text-xs font-medium text-gray-400 uppercase tracking-wider block mb-1">Video Link (YouTube / Vimeo / MP4)</label>
+                <label className="text-xs font-medium text-gray-400 uppercase tracking-wider block mb-1">Main Video Link (YouTube / Vimeo / MP4)</label>
                 <input 
                   type="url"
                   value={quickVideoUrl}
@@ -1215,39 +1250,81 @@ export default function AdminProjectsPage() {
                 />
               </div>
 
+              <div>
+                <label className="text-xs font-medium text-gray-400 uppercase tracking-wider block mb-1">Preview Video Link (YouTube / MP4)</label>
+                <input 
+                  type="url"
+                  value={quickPreviewVideoUrl}
+                  onChange={(e) => setQuickPreviewVideoUrl(e.target.value)}
+                  placeholder="https://www.youtube.com/watch?v=... or https://example.com/preview.mp4"
+                  className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-purple-400 transition-colors text-sm"
+                />
+              </div>
+
               <div className="flex items-center gap-4 text-xs text-gray-500 uppercase tracking-wider">
                 <div className="h-px bg-white/10 flex-1"></div>
-                <span>OR Upload Video File</span>
+                <span>OR Upload Video Files</span>
                 <div className="h-px bg-white/10 flex-1"></div>
               </div>
 
-              <div 
-                className="border border-dashed border-white/20 rounded-md p-6 text-center hover:border-purple-400 transition-colors cursor-pointer group"
-                onClick={() => quickVideoFileRef.current?.click()}
-              >
-                <input 
-                  type="file" 
-                  ref={quickVideoFileRef} 
-                  className="hidden" 
-                  accept="video/*"
-                  onChange={(e) => {
-                    if (e.target.files && e.target.files[0]) {
-                      setQuickVideoFile(e.target.files[0]);
-                    }
-                  }}
-                />
-                {quickVideoFile ? (
-                  <div className="text-white flex flex-col items-center">
-                    <CheckCircle2 className="w-5 h-5 text-green-500 mb-1" />
-                    <p className="text-xs font-medium">{quickVideoFile?.name}</p>
-                    <p className="text-[10px] text-gray-400 mt-0.5">Ready to upload</p>
-                  </div>
-                ) : (
-                  <>
-                    <Film className="w-5 h-5 text-gray-400 mx-auto mb-1 group-hover:text-purple-400 transition-colors" />
-                    <p className="text-xs text-gray-400 group-hover:text-white transition-colors">Click to upload video file (.mp4, .webm)</p>
-                  </>
-                )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div 
+                  className="border border-dashed border-white/20 rounded-md p-4 text-center hover:border-purple-400 transition-colors cursor-pointer group"
+                  onClick={() => quickVideoFileRef.current?.click()}
+                >
+                  <input 
+                    type="file" 
+                    ref={quickVideoFileRef} 
+                    className="hidden" 
+                    accept="video/*"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setQuickVideoFile(e.target.files[0]);
+                      }
+                    }}
+                  />
+                  {quickVideoFile ? (
+                    <div className="text-white flex flex-col items-center">
+                      <CheckCircle2 className="w-5 h-5 text-green-500 mb-1" />
+                      <p className="text-xs font-medium">{quickVideoFile?.name}</p>
+                      <p className="text-[10px] text-gray-400 mt-0.5">Main video selected</p>
+                    </div>
+                  ) : (
+                    <>
+                      <Film className="w-5 h-5 text-gray-400 mx-auto mb-1 group-hover:text-purple-400 transition-colors" />
+                      <p className="text-xs text-gray-400 group-hover:text-white transition-colors">Upload main video file</p>
+                    </>
+                  )}
+                </div>
+
+                <div 
+                  className="border border-dashed border-white/20 rounded-md p-4 text-center hover:border-purple-400 transition-colors cursor-pointer group"
+                  onClick={() => quickPreviewVideoFileRef.current?.click()}
+                >
+                  <input 
+                    type="file" 
+                    ref={quickPreviewVideoFileRef} 
+                    className="hidden" 
+                    accept="video/*"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setQuickPreviewVideoFile(e.target.files[0]);
+                      }
+                    }}
+                  />
+                  {quickPreviewVideoFile ? (
+                    <div className="text-white flex flex-col items-center">
+                      <CheckCircle2 className="w-5 h-5 text-green-500 mb-1" />
+                      <p className="text-xs font-medium">{quickPreviewVideoFile?.name}</p>
+                      <p className="text-[10px] text-gray-400 mt-0.5">Preview video selected</p>
+                    </div>
+                  ) : (
+                    <>
+                      <Film className="w-5 h-5 text-gray-400 mx-auto mb-1 group-hover:text-purple-400 transition-colors" />
+                      <p className="text-xs text-gray-400 group-hover:text-white transition-colors">Upload preview video file</p>
+                    </>
+                  )}
+                </div>
               </div>
 
               <div className="flex justify-end space-x-3 pt-3 border-t border-white/10">

@@ -4,13 +4,26 @@ import { Project } from '@/lib/data';
 import Link from 'next/link';
 import Image from 'next/image';
 
+function getYouTubeEmbedUrl(url: string | undefined): string | null {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+
+  if (match && match[2].length === 11) {
+    const videoId = match[2];
+    return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&modestbranding=1&rel=0&playsinline=1`;
+  }
+  return null;
+}
+
 export default function PremiumProjectCard({ project }: { project: Project }) {
   // Use the first preview image if available, else null
   const coverImage = project.preview_images && project.preview_images.length > 0 
     ? project.preview_images[0] 
     : null;
 
-  const previewVideo = project.preview_video_url || project.previewVideoUrl;
+  const previewVideo = project.preview_video_url || (project as any).previewVideoUrl || project.video_url || (project as any).videoUrl;
+  const ytEmbed = previewVideo ? getYouTubeEmbedUrl(previewVideo) : null;
 
   return (
     <Link href={`/projects/${project.slug}`}>
@@ -19,7 +32,16 @@ export default function PremiumProjectCard({ project }: { project: Project }) {
       >
         {/* Cover Section: Video or Image */}
         <div className="h-40 w-full relative bg-[#111] overflow-hidden shrink-0 border-b border-white/10">
-          {previewVideo ? (
+          {ytEmbed ? (
+            <div className="w-full h-full relative overflow-hidden pointer-events-none">
+              <iframe
+                src={ytEmbed}
+                title={project.title}
+                className="w-[160%] h-[160%] absolute -top-[30%] -left-[30%] object-cover opacity-80 group-hover:opacity-100 transition-all duration-500 border-0"
+                allow="autoplay; encrypted-media"
+              />
+            </div>
+          ) : previewVideo ? (
             <video 
               src={previewVideo} 
               autoPlay 
@@ -41,7 +63,7 @@ export default function PremiumProjectCard({ project }: { project: Project }) {
             </div>
           )}
           {/* Subtle gradient overlay to blend into the card body */}
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-[#0a0a0a] to-transparent"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-[#0a0a0a] to-transparent pointer-events-none"></div>
         </div>
 
         {/* Animated Glow on Hover */}
