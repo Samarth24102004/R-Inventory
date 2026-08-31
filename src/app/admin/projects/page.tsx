@@ -1009,47 +1009,91 @@ export default function AdminProjectsPage() {
               <div className="space-y-4 p-4 border border-white/10 rounded-md bg-white/5">
                 <div className="flex items-center space-x-3">
                   <Video className="text-purple-400 w-5 h-5" />
-                  <h3 className="text-sm font-medium text-white">Project Video</h3>
+                  <h3 className="text-sm font-medium text-white">Project & Preview Videos</h3>
                 </div>
                 
-                <div>
-                  <label className="text-xs font-medium text-gray-400 uppercase tracking-wider block mb-1">Video URL (YouTube / Vimeo / MP4)</label>
-                  <input 
-                    type="url"
-                    value={editProjectForm.video_url}
-                    onChange={(e) => setEditProjectForm({...editProjectForm, video_url: e.target.value})}
-                    className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-2.5 text-white focus:outline-none focus:border-purple-400 transition-colors text-xs"
-                    placeholder="https://www.youtube.com/watch?v=..."
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-medium text-gray-400 uppercase tracking-wider block mb-1">Main Video Link (YouTube / MP4)</label>
+                    <input 
+                      type="url"
+                      value={editProjectForm.video_url}
+                      onChange={(e) => setEditProjectForm({...editProjectForm, video_url: e.target.value})}
+                      className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-2.5 text-white focus:outline-none focus:border-purple-400 transition-colors text-xs"
+                      placeholder="https://www.youtube.com/watch?v=..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-medium text-purple-300 uppercase tracking-wider block mb-1">Preview Video Link (YouTube / MP4)</label>
+                    <input 
+                      type="url"
+                      value={editProjectForm.preview_video_url}
+                      onChange={(e) => setEditProjectForm({...editProjectForm, preview_video_url: e.target.value})}
+                      className="w-full bg-black/50 border border-purple-500/40 rounded-md px-4 py-2.5 text-white focus:outline-none focus:border-purple-400 transition-colors text-xs"
+                      placeholder="https://www.youtube.com/watch?v=... (Card Preview Video)"
+                    />
+                  </div>
                 </div>
 
-                <div 
-                  className="border border-dashed border-white/20 rounded-md p-4 text-center hover:border-purple-400 transition-colors cursor-pointer group"
-                  onClick={() => videoFileRef.current?.click()}
-                >
-                  <input 
-                    type="file" 
-                    ref={videoFileRef} 
-                    className="hidden" 
-                    accept="video/*"
-                    onChange={(e) => {
-                      if (e.target.files && e.target.files[0]) {
-                        setVideoFile(e.target.files[0]);
-                      }
-                    }}
-                  />
-                  {videoFile ? (
-                    <div className="text-white flex flex-col items-center">
-                      <CheckCircle2 className="w-5 h-5 text-green-500 mb-1" />
-                      <p className="text-xs font-medium">{videoFile?.name}</p>
-                      <p className="text-[10px] text-gray-400 mt-0.5">Will replace current video file</p>
-                    </div>
-                  ) : (
-                    <>
-                      <Film className="w-5 h-5 text-gray-400 mx-auto mb-1 group-hover:text-purple-400 transition-colors" />
-                      <p className="text-xs text-gray-400 group-hover:text-white transition-colors">Click to upload new video file (.mp4, .webm)</p>
-                    </>
-                  )}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div 
+                    className="border border-dashed border-white/20 rounded-md p-4 text-center hover:border-purple-400 transition-colors cursor-pointer group"
+                    onClick={() => videoFileRef.current?.click()}
+                  >
+                    <input 
+                      type="file" 
+                      ref={videoFileRef} 
+                      className="hidden" 
+                      accept="video/*"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setVideoFile(e.target.files[0]);
+                        }
+                      }}
+                    />
+                    {videoFile ? (
+                      <div className="text-white flex flex-col items-center">
+                        <CheckCircle2 className="w-5 h-5 text-green-500 mb-1" />
+                        <p className="text-xs font-medium">{videoFile?.name}</p>
+                        <p className="text-[10px] text-gray-400 mt-0.5">Will replace main video</p>
+                      </div>
+                    ) : (
+                      <>
+                        <Film className="w-5 h-5 text-gray-400 mx-auto mb-1 group-hover:text-purple-400 transition-colors" />
+                        <p className="text-xs text-gray-400 group-hover:text-white transition-colors">Upload main video file (.mp4)</p>
+                      </>
+                    )}
+                  </div>
+
+                  <div 
+                    className="border border-dashed border-white/20 rounded-md p-4 text-center hover:border-purple-400 transition-colors cursor-pointer group"
+                    onClick={() => previewVideoFileRef.current?.click()}
+                  >
+                    <input 
+                      type="file" 
+                      ref={previewVideoFileRef} 
+                      className="hidden" 
+                      accept="video/*"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setPreviewVideoFile(e.target.files[0]);
+                        }
+                      }}
+                    />
+                    {previewVideoFile ? (
+                      <div className="text-white flex flex-col items-center">
+                        <CheckCircle2 className="w-5 h-5 text-green-500 mb-1" />
+                        <p className="text-xs font-medium">{previewVideoFile?.name}</p>
+                        <p className="text-[10px] text-gray-400 mt-0.5">Will replace preview video</p>
+                      </div>
+                    ) : (
+                      <>
+                        <Film className="w-5 h-5 text-purple-400 mx-auto mb-1 group-hover:text-white transition-colors" />
+                        <p className="text-xs text-purple-300 group-hover:text-white transition-colors">Upload preview video file (.mp4)</p>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
 

@@ -756,12 +756,12 @@ export default function AdminUploadPage() {
               
               <div className="space-y-4">
                 <div>
-                  <label className="text-xs font-medium text-gray-400 tracking-wider uppercase block mb-1">Preview Video Link (Direct MP4 URL)</label>
+                  <label className="text-xs font-medium text-gray-400 tracking-wider uppercase block mb-1">Preview Video Link (YouTube / Vimeo / MP4 URL)</label>
                   <input 
                     type="url" 
                     value={previewVideoUrlInput}
                     onChange={(e) => setPreviewVideoUrlInput(e.target.value)}
-                    placeholder="https://example.com/preview.mp4"
+                    placeholder="https://www.youtube.com/watch?v=... or https://example.com/preview.mp4"
                     className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-pink-400 transition-colors text-sm"
                   />
                 </div>
