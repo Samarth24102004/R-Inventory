@@ -1,12 +1,12 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
-import { Upload, Plus, CircuitBoard, Lightbulb, CheckCircle2, Box, Image as ImageIcon, FileBox, Loader2, Video, Cpu, Code2, Film, BarChart3, Trash2, ExternalLink } from 'lucide-react';
+import { Upload, Plus, CircuitBoard, Lightbulb, CheckCircle2, Box, Image as ImageIcon, FileBox, Loader2, Video, Cpu, Code2, Film, BarChart3, Trash2, ExternalLink, BookOpen } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { formatProjectDescription } from '@/lib/data';
 import AdminHeaderLayout from '@/components/AdminHeaderLayout';
 
 export default function AdminUploadPage() {
-  const [uploadType, setUploadType] = useState<'project' | 'model'>('project');
+  const [uploadType, setUploadType] = useState<'project' | 'model' | 'manual'>('project');
 
   // Shared States
   const [title, setTitle] = useState('');
@@ -17,6 +17,21 @@ export default function AdminUploadPage() {
   const [hardwareList, setHardwareList] = useState<{ component: string; quantity: string; description: string; buy_url: string }[]>([
     { component: '', quantity: '1', description: '', buy_url: '' }
   ]);
+
+  // Manual Specific States
+  const [manualTitle, setManualTitle] = useState('');
+  const [manualCategory, setManualCategory] = useState<'SETUP' | 'COMMANDS' | 'HARDWARE' | 'TUTORIALS' | 'TROUBLESHOOTING'>('SETUP');
+  const [manualSummary, setManualSummary] = useState('');
+  const [manualNote, setManualNote] = useState('');
+  const [manualSectionTitle, setManualSectionTitle] = useState('');
+  const [manualCode, setManualCode] = useState('');
+  const [manualLanguage, setManualLanguage] = useState('bash');
+  const [manualExtraTitle, setManualExtraTitle] = useState('');
+  const [manualExtraCode, setManualExtraCode] = useState('');
+  const [manualImageFile, setManualImageFile] = useState<File | null>(null);
+  const manualImageRef = useRef<HTMLInputElement>(null);
+  const [manualExtraImageFile, setManualExtraImageFile] = useState<File | null>(null);
+  const manualExtraImageRef = useRef<HTMLInputElement>(null);
 
   const addHardwareRow = () => {
     setHardwareList([...hardwareList, { component: '', quantity: '1', description: '', buy_url: '' }]);
@@ -346,10 +361,110 @@ export default function AdminUploadPage() {
     }
   };
 
+  const handleManualSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!manualTitle || !manualSummary) return alert("Please fill in manual title and summary");
+
+    setIsSubmitting(true);
+    const slug = manualTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    const categoryLabels: Record<string, string> = {
+      SETUP: 'SETUP',
+      COMMANDS: 'USEFUL COMMANDS',
+      HARDWARE: 'HARDWARE & EMBEDDED',
+      TUTORIALS: 'TUTORIALS',
+      TROUBLESHOOTING: 'TROUBLESHOOTING'
+    };
+
+    let section1ImageUrl: string | undefined = undefined;
+    if (manualImageFile) {
+      const fileExt = manualImageFile.name.split('.').pop();
+      const fileName = `manual_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const { error: uploadErr } = await supabase.storage.from('manual_images').upload(fileName, manualImageFile);
+      if (!uploadErr) {
+        const { data: urlData } = supabase.storage.from('manual_images').getPublicUrl(fileName);
+        section1ImageUrl = urlData.publicUrl;
+      } else {
+        const { error: fallbackErr } = await supabase.storage.from('diagrams').upload(fileName, manualImageFile);
+        if (!fallbackErr) {
+          const { data: fallbackUrlData } = supabase.storage.from('diagrams').getPublicUrl(fileName);
+          section1ImageUrl = fallbackUrlData.publicUrl;
+        }
+      }
+    }
+
+    let section2ImageUrl: string | undefined = undefined;
+    if (manualExtraImageFile) {
+      const fileExt = manualExtraImageFile.name.split('.').pop();
+      const fileName = `manual_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const { error: uploadErr } = await supabase.storage.from('manual_images').upload(fileName, manualExtraImageFile);
+      if (!uploadErr) {
+        const { data: urlData } = supabase.storage.from('manual_images').getPublicUrl(fileName);
+        section2ImageUrl = urlData.publicUrl;
+      } else {
+        const { error: fallbackErr } = await supabase.storage.from('diagrams').upload(fileName, manualExtraImageFile);
+        if (!fallbackErr) {
+          const { data: fallbackUrlData } = supabase.storage.from('diagrams').getPublicUrl(fileName);
+          section2ImageUrl = fallbackUrlData.publicUrl;
+        }
+      }
+    }
+
+    const sectionsData: any[] = [
+      {
+        title: manualSectionTitle || "Overview & Setup Instructions",
+        description: manualSummary,
+        note: manualNote.trim() || undefined,
+        image_url: section1ImageUrl,
+        code: manualCode.trim() || undefined,
+        language: manualLanguage || 'bash'
+      }
+    ];
+
+    if (manualExtraCode.trim() || manualExtraTitle.trim() || section2ImageUrl) {
+      sectionsData.push({
+        title: manualExtraTitle || "Additional Execution & Commands",
+        description: "Run the following commands in terminal:",
+        note: undefined,
+        image_url: section2ImageUrl,
+        code: manualExtraCode.trim() || undefined,
+        language: manualLanguage || 'bash'
+      });
+    }
+
+    const { error } = await supabase.from('manuals').insert([
+      {
+        title: manualTitle,
+        slug: slug,
+        category: manualCategory,
+        category_label: categoryLabels[manualCategory] || manualCategory,
+        breadcrumbs: [manualCategory.toLowerCase(), `${slug}.md`],
+        summary: manualSummary,
+        sections: sectionsData
+      }
+    ]);
+
+    setIsSubmitting(false);
+
+    if (error) {
+      alert(`Database Error: ${error.message}`);
+    } else {
+      alert('Success! Manual post published to RoS Inventory.');
+      setManualTitle('');
+      setManualSummary('');
+      setManualNote('');
+      setManualSectionTitle('');
+      setManualCode('');
+      setManualExtraTitle('');
+      setManualExtraCode('');
+      setManualImageFile(null);
+      setManualExtraImageFile(null);
+    }
+  };
+
   return (
     <AdminHeaderLayout
       title="Upload Content"
-      subtitle="Upload new ROS 2 projects, hardware architectures, code ZIPs, and 3D STL models."
+      subtitle="Upload new ROS 2 projects, hardware architectures, code ZIPs, 3D STL models, and manual guides."
     >
       <div className="space-y-8">
         <div className="bg-[#0a0a0a] p-10 rounded-xl border border-white/10 shadow-lg">
@@ -369,6 +484,13 @@ export default function AdminUploadPage() {
               >
                 <Box className="w-4 h-4" />
                 3D Model
+              </button>
+              <button 
+                onClick={() => setUploadType('manual')}
+                className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors flex items-center gap-2 ${uploadType === 'manual' ? 'bg-white text-black font-semibold' : 'text-gray-400 hover:text-white'}`}
+              >
+                <BookOpen className="w-4 h-4" />
+                Manual / Guide
               </button>
             </div>
           </div>
@@ -771,7 +893,7 @@ export default function AdminUploadPage() {
               ) : 'Publish Project'}
             </button>
           </form>
-        ) : (
+        ) : uploadType === 'model' ? (
           <form onSubmit={handleModelSubmit} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
@@ -874,6 +996,202 @@ export default function AdminUploadPage() {
                   Uploading Model...
                 </>
               ) : 'Publish 3D Model'}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleManualSubmit} className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">Manual Title</label>
+                <input 
+                  type="text" 
+                  value={manualTitle}
+                  onChange={(e) => setManualTitle(e.target.value)}
+                  className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors"
+                  placeholder="e.g. Ubuntu Setup for ROS 2"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">Category</label>
+                <select
+                  value={manualCategory}
+                  onChange={(e) => setManualCategory(e.target.value as any)}
+                  className="w-full bg-[#0a0a0a] border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors"
+                >
+                  <option value="SETUP">SETUP</option>
+                  <option value="COMMANDS">USEFUL COMMANDS</option>
+                  <option value="HARDWARE">HARDWARE & EMBEDDED</option>
+                  <option value="TUTORIALS">TUTORIALS</option>
+                  <option value="TROUBLESHOOTING">TROUBLESHOOTING</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">Manual Summary</label>
+              <textarea 
+                value={manualSummary}
+                onChange={(e) => setManualSummary(e.target.value)}
+                rows={3}
+                className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors resize-none text-sm"
+                placeholder="Brief summary of what this guide covers..."
+                required
+              ></textarea>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-gray-400 tracking-wider uppercase">Important Note / Alert Banner (Optional)</label>
+              <input 
+                type="text" 
+                value={manualNote}
+                onChange={(e) => setManualNote(e.target.value)}
+                className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors text-sm"
+                placeholder="e.g. Note: ROS 2 Jazzy requires Ubuntu 24.04 LTS."
+              />
+            </div>
+
+            <div className="p-6 bg-white/5 border border-white/10 rounded-md space-y-4">
+              <h3 className="text-base font-semibold text-white">Main Commands / Code Block</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-gray-400 uppercase">Section Title</label>
+                  <input 
+                    type="text" 
+                    value={manualSectionTitle}
+                    onChange={(e) => setManualSectionTitle(e.target.value)}
+                    className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-2.5 text-white text-sm"
+                    placeholder="e.g. Installation Commands"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-gray-400 uppercase">Code Language</label>
+                  <select 
+                    value={manualLanguage}
+                    onChange={(e) => setManualLanguage(e.target.value)}
+                    className="w-full bg-[#0a0a0a] border border-white/20 rounded-md px-4 py-2.5 text-white text-sm"
+                  >
+                    <option value="bash">bash / shell</option>
+                    <option value="python">python</option>
+                    <option value="cpp">c++</option>
+                    <option value="ini">ini / config</option>
+                    <option value="text">plain text</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase">Terminal Commands / Source Code</label>
+                <textarea 
+                  value={manualCode}
+                  onChange={(e) => setManualCode(e.target.value)}
+                  rows={6}
+                  className="w-full bg-black/60 font-mono text-emerald-400 border border-white/20 rounded-md p-4 text-xs focus:outline-none focus:border-emerald-400 transition-colors"
+                  placeholder="sudo apt update && sudo apt install -y ros-humble-desktop..."
+                ></textarea>
+              </div>
+
+              {/* Optional Section 1 Image */}
+              <div className="space-y-2 pt-2">
+                <label className="text-xs font-medium text-gray-400 uppercase">Section 1 Diagram / Image (Optional)</label>
+                <div 
+                  className="border border-dashed border-white/20 rounded-md p-5 text-center hover:border-white transition-colors cursor-pointer group"
+                  onClick={() => manualImageRef.current?.click()}
+                >
+                  <input 
+                    type="file" 
+                    ref={manualImageRef} 
+                    className="hidden" 
+                    accept="image/*"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setManualImageFile(e.target.files[0]);
+                      }
+                    }}
+                  />
+                  {manualImageFile ? (
+                    <div className="text-white flex flex-col items-center">
+                      <CheckCircle2 className="w-5 h-5 text-green-500 mb-1" />
+                      <p className="text-xs">{manualImageFile.name}</p>
+                    </div>
+                  ) : (
+                    <>
+                      <ImageIcon className="w-5 h-5 text-gray-400 mx-auto mb-1 group-hover:text-white transition-colors" />
+                      <p className="text-xs text-gray-400 group-hover:text-white transition-colors">Click to upload diagram image (Optional)</p>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 bg-white/5 border border-white/10 rounded-md space-y-4">
+              <h3 className="text-base font-semibold text-white">Additional Execution Block (Optional)</h3>
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase">Step 2 Section Title</label>
+                <input 
+                  type="text" 
+                  value={manualExtraTitle}
+                  onChange={(e) => setManualExtraTitle(e.target.value)}
+                  className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-2.5 text-white text-sm"
+                  placeholder="e.g. Workspace Environment Sourcing"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase">Step 2 Commands</label>
+                <textarea 
+                  value={manualExtraCode}
+                  onChange={(e) => setManualExtraCode(e.target.value)}
+                  rows={4}
+                  className="w-full bg-black/60 font-mono text-emerald-400 border border-white/20 rounded-md p-4 text-xs focus:outline-none focus:border-emerald-400 transition-colors"
+                  placeholder="echo 'source /opt/ros/humble/setup.bash' >> ~/.bashrc..."
+                ></textarea>
+              </div>
+
+              {/* Optional Section 2 Image */}
+              <div className="space-y-2 pt-2">
+                <label className="text-xs font-medium text-gray-400 uppercase">Step 2 Diagram / Image (Optional)</label>
+                <div 
+                  className="border border-dashed border-white/20 rounded-md p-5 text-center hover:border-white transition-colors cursor-pointer group"
+                  onClick={() => manualExtraImageRef.current?.click()}
+                >
+                  <input 
+                    type="file" 
+                    ref={manualExtraImageRef} 
+                    className="hidden" 
+                    accept="image/*"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setManualExtraImageFile(e.target.files[0]);
+                      }
+                    }}
+                  />
+                  {manualExtraImageFile ? (
+                    <div className="text-white flex flex-col items-center">
+                      <CheckCircle2 className="w-5 h-5 text-green-500 mb-1" />
+                      <p className="text-xs">{manualExtraImageFile.name}</p>
+                    </div>
+                  ) : (
+                    <>
+                      <ImageIcon className="w-5 h-5 text-gray-400 mx-auto mb-1 group-hover:text-white transition-colors" />
+                      <p className="text-xs text-gray-400 group-hover:text-white transition-colors">Click to upload step 2 diagram image (Optional)</p>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <button 
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full py-4 bg-white hover:bg-gray-200 disabled:opacity-50 text-black rounded-md font-semibold transition-colors flex justify-center items-center gap-2 cursor-pointer"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Publishing Manual...
+                </>
+              ) : 'Publish Manual Guide'}
             </button>
           </form>
         )}

@@ -24,6 +24,7 @@ export default function Footer() {
             <span className="font-semibold text-gray-300">Resources</span>
             <a href="/projects" className="hover:text-white transition-colors">ROS Projects</a>
             <a href="/3d-models" className="hover:text-white transition-colors">3D Models</a>
+            <a href="/manuals" className="hover:text-white transition-colors">ROS Manuals</a>
           </div>
           <div className="flex flex-col gap-2 text-center md:text-right">
             <span className="font-semibold text-gray-300">Legal</span>

@@ -1,14 +1,14 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Settings, Edit2, Trash2, Plus, X, Upload, CheckCircle2, Box, CircuitBoard, ImageIcon, FileBox, Video, Cpu, Code2, Film, BarChart3, Lightbulb } from 'lucide-react';
+import { Settings, Edit2, Trash2, Plus, X, Upload, CheckCircle2, Box, CircuitBoard, ImageIcon, FileBox, Video, Cpu, Code2, Film, BarChart3, Lightbulb, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import AdminHeaderLayout from '@/components/AdminHeaderLayout';
 import { parseProjectDescription, formatProjectDescription } from '@/lib/data';
 
 export default function AdminProjectsPage() {
-  const [activeTab, setActiveTab] = useState<'projects' | 'models'>('projects');
+  const [activeTab, setActiveTab] = useState<'projects' | 'models' | 'manuals'>('projects');
   
   // Projects State
   const [projects, setProjects] = useState<any[]>([]);
@@ -17,6 +17,10 @@ export default function AdminProjectsPage() {
   // Models State
   const [models, setModels] = useState<any[]>([]);
   const [loadingModels, setLoadingModels] = useState(true);
+
+  // Manuals State
+  const [manualsList, setManualsList] = useState<any[]>([]);
+  const [loadingManuals, setLoadingManuals] = useState(true);
   
   // Edit Project Modal State
   const [editingProject, setEditingProject] = useState<any>(null);
@@ -107,9 +111,25 @@ export default function AdminProjectsPage() {
     setLoadingModels(false);
   };
 
+  const fetchManualsList = async () => {
+    setLoadingManuals(true);
+    const { data, error } = await supabase
+      .from('manuals')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error(error);
+    } else {
+      setManualsList(data || []);
+    }
+    setLoadingManuals(false);
+  };
+
   useEffect(() => {
     fetchProjects();
     fetchModels();
+    fetchManualsList();
   }, []);
 
   const handleDeleteProject = async (id: string) => {
@@ -140,6 +160,18 @@ export default function AdminProjectsPage() {
       alert(`Delete failed: ${error.message}`);
     } else {
       setModels(models.filter(m => m.id !== id));
+    }
+  };
+
+  const handleDeleteManual = async (id: string) => {
+    if (!window.confirm("Are you sure you want to delete this manual guide? This cannot be undone.")) return;
+
+    const { error } = await supabase.from('manuals').delete().eq('id', id);
+
+    if (error) {
+      alert(`Delete failed: ${error.message}`);
+    } else {
+      setManualsList(manualsList.filter(m => m.id !== id));
     }
   };
 
@@ -491,8 +523,9 @@ export default function AdminProjectsPage() {
       title="Manage Content"
       subtitle="Edit, update video links, or delete existing ROS 2 projects and 3D STL models."
     >
+      <div className="space-y-8">
 
-        {/* Sub-Tabs: Projects / 3D Models */}
+        {/* Sub-Tabs: Projects / 3D Models / Manuals */}
         <div className="flex space-x-3 mb-6">
           <button
             onClick={() => setActiveTab('projects')}
@@ -515,6 +548,17 @@ export default function AdminProjectsPage() {
           >
             <Box className="w-3.5 h-3.5" />
             3D Models ({models.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('manuals')}
+            className={`px-4 py-2 text-xs font-semibold rounded-md transition-colors border flex items-center gap-2 ${
+              activeTab === 'manuals'
+                ? 'bg-white text-black border-white'
+                : 'bg-white/5 text-gray-400 border-white/10 hover:bg-white/10 hover:text-white'
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            Manuals ({manualsList.length})
           </button>
         </div>
 
@@ -661,6 +705,57 @@ export default function AdminProjectsPage() {
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )
+          )}
+
+          {/* Manuals Tab */}
+          {activeTab === 'manuals' && (
+            loadingManuals ? (
+              <div className="p-12 text-center text-gray-500">Loading manuals...</div>
+            ) : manualsList.length === 0 ? (
+              <div className="p-12 text-center text-gray-500">
+                No manuals found. <Link href="/admin/upload" className="text-white underline font-semibold">Publish your first manual guide</Link>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead className="bg-white/5 border-b border-white/10">
+                    <tr>
+                      <th className="px-6 py-4 text-xs font-medium tracking-wider text-gray-400 uppercase">Manual Title</th>
+                      <th className="px-6 py-4 text-xs font-medium tracking-wider text-gray-400 uppercase">Category</th>
+                      <th className="px-6 py-4 text-xs font-medium tracking-wider text-gray-400 uppercase">Date</th>
+                      <th className="px-6 py-4 text-xs font-medium tracking-wider text-gray-400 uppercase text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/10">
+                    {manualsList.map((manual) => (
+                      <tr key={manual.id} className="hover:bg-white/5 transition-colors group">
+                        <td className="px-6 py-4">
+                          <div className="font-medium text-white">{manual.title}</div>
+                          <div className="text-xs text-gray-500 truncate max-w-md">{manual.summary}</div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-mono font-medium bg-[#84cc16]/10 text-[#84cc16] border border-[#84cc16]/20">
+                            {manual.category || 'SETUP'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-400">
+                          {new Date(manual.created_at).toLocaleDateString()}
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <button 
+                            onClick={() => handleDeleteManual(manual.id)}
+                            className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded transition-colors"
+                            title="Delete Manual"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -1176,6 +1271,7 @@ export default function AdminProjectsPage() {
         </div>
       )}
 
+      </div>
     </AdminHeaderLayout>
   );
 }

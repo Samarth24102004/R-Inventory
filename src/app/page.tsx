@@ -1,22 +1,214 @@
-import HeroScrollAnimation from '@/components/HeroScrollAnimation';
+import Link from 'next/link';
 import Footer from '@/components/Footer';
+import PremiumProjectCard from '@/components/PremiumProjectCard';
+import { supabase } from '@/lib/supabase';
+import { demoProjects, Project } from '@/lib/data';
+import { ArrowRight, Box, Cpu, FileCode, Layers, Star, Wrench, Sparkles } from 'lucide-react';
 
 export const revalidate = 0; // Ensure data is fetched dynamically
 
 export default async function Home() {
+  // Fetch up to 4 projects
+  const { data: dbProjects } = await supabase
+    .from('projects')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(4);
+
+  const displayProjects: Project[] = (dbProjects && dbProjects.length > 0)
+    ? dbProjects
+    : demoProjects.slice(0, 4);
+
+  // Fetch up to 4 3D models
+  const { data: dbModels } = await supabase
+    .from('stl_models')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(4);
+
+  const displayModels = dbModels || [];
 
   return (
-    <main className="relative bg-black min-h-screen text-white selection:bg-[#84cc16]/30">
+    <main className="relative bg-black min-h-screen text-white selection:bg-[#84cc16]/30 flex flex-col">
+      {/* Background Image Overlay */}
+      <div
+        className="fixed inset-0 z-0 opacity-30 pointer-events-none mix-blend-screen"
+        style={{
+          backgroundImage: 'url("/drone-bg.png")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center',
+          backgroundAttachment: 'fixed',
+        }}
+      />
+      <div className="fixed inset-0 bg-linear-to-b from-black/80 via-black/60 to-black z-0 pointer-events-none"></div>
 
-      {/* Sticky Canvas Animation */}
-      <HeroScrollAnimation />
+      {/* Main Content Container */}
+      <div className="relative z-10 grow max-w-7xl mx-auto px-6 md:px-12 pt-36 pb-24 w-full">
+        
+        {/* Brief / Hero Section */}
+        <section className="text-center max-w-4xl mx-auto mb-24">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#84cc16]/10 border border-[#84cc16]/30 text-[#84cc16] text-xs font-mono tracking-widest uppercase mb-6 shadow-[0_0_20px_rgba(132,204,22,0.15)]">
+            <Sparkles className="w-3.5 h-3.5 animate-pulse" />
+            <span>Open Source Robotics & ROS 2</span>
+          </div>
 
-      {/* Empty space to allow scrolling through the animation without text overlay */}
-      <div className="relative z-10 mt-[-100vh] h-[500vh] pointer-events-none"></div>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-6 leading-[1.15]">
+            Build Production-Ready <br className="hidden sm:block" />
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-[#84cc16] via-emerald-400 to-cyan-400">
+              Robotics Solutions
+            </span>
+          </h1>
 
+          <div className="relative p-6 md:p-8 rounded-3xl bg-[#0a0a0a]/80 border border-white/10 backdrop-blur-xl shadow-2xl mb-10 text-left md:text-center">
+            <p className="text-base sm:text-lg md:text-xl text-gray-200 leading-relaxed font-normal">
+              ROS Inventory is a robotics project and ROS 2 workspace library that provides complete, build-ready robotics solutions including ROS packages, source code, workspace structures, hardware documentation, wiring diagrams, CAD files, and deployment guides.
+            </p>
+          </div>
 
+          {/* Quick Highlight Badges */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto">
+            <div className="flex items-center justify-center gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 text-xs font-medium text-gray-300">
+              <Cpu className="w-4 h-4 text-[#84cc16]" />
+              <span>ROS Packages</span>
+            </div>
+            <div className="flex items-center justify-center gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 text-xs font-medium text-gray-300">
+              <Wrench className="w-4 h-4 text-cyan-400" />
+              <span>Wiring Diagrams</span>
+            </div>
+            <div className="flex items-center justify-center gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 text-xs font-medium text-gray-300">
+              <Box className="w-4 h-4 text-purple-400" />
+              <span>CAD & 3D Models</span>
+            </div>
+            <div className="flex items-center justify-center gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 text-xs font-medium text-gray-300">
+              <FileCode className="w-4 h-4 text-yellow-400" />
+              <span>Source Code</span>
+            </div>
+          </div>
+        </section>
 
-      {/* Footer Section */}
+        {/* Projects Section */}
+        <section className="mb-28">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
+            <div>
+              <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#84cc16] mb-2">
+                <Layers className="w-3.5 h-3.5" />
+                <span>Featured Collection</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">ROS 2 Projects</h2>
+            </div>
+            <Link
+              href="/projects"
+              className="hidden sm:inline-flex group items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-[#84cc16] text-white hover:text-black border border-white/15 hover:border-[#84cc16] text-sm font-semibold transition-all duration-300 shadow-md"
+            >
+              <span>View More Projects</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {displayProjects.map((project, idx) => (
+              <div key={project.id} className={idx >= 2 ? 'hidden sm:block' : 'block'}>
+                <PremiumProjectCard project={project} />
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 text-center sm:hidden">
+            <Link
+              href="/projects"
+              className="inline-flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-[#84cc16] text-black font-semibold shadow-lg shadow-[#84cc16]/20 active:scale-[0.98] transition-all"
+            >
+              <span>View More Projects</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </section>
+
+        {/* 3D Models Section */}
+        <section className="mb-16">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
+            <div>
+              <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-blue-400 mb-2">
+                <Box className="w-3.5 h-3.5" />
+                <span>Print-Ready CAD</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">3D Models</h2>
+            </div>
+            <Link
+              href="/3d-models"
+              className="hidden sm:inline-flex group items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-blue-500 text-white hover:text-white border border-white/15 hover:border-blue-500 text-sm font-semibold transition-all duration-300 shadow-md"
+            >
+              <span>View More 3D Models</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+
+          {displayModels.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {displayModels.map((model, idx) => (
+                <div
+                  key={model.id}
+                  className={`group relative flex flex-col bg-[#0a0a0a] rounded-2xl overflow-hidden border border-white/10 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/10 ${
+                    idx >= 3 ? 'hidden sm:flex' : 'flex'
+                  }`}
+                >
+                  <div className="relative h-48 overflow-hidden bg-neutral-900">
+                    <div className="absolute inset-0 bg-linear-to-t from-[#0a0a0a] to-transparent z-10 opacity-60"></div>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={model.image_url || '/placeholder.jpg'}
+                      alt={model.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute top-3 right-3 z-20 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-xs">
+                      <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                      <span className="font-medium text-white">{model.rating || '5.0'}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col flex-1 p-5 z-20 relative">
+                    <div className="flex justify-between items-start gap-2 mb-2">
+                      <h3 className="text-lg font-medium text-white tracking-tight line-clamp-1 group-hover:text-blue-400 transition-colors">{model.title}</h3>
+                      <span className="text-base font-semibold text-blue-400 shrink-0">₹{model.price}</span>
+                    </div>
+
+                    <p className="text-xs text-neutral-400 line-clamp-2 mb-4 flex-1">
+                      {model.description}
+                    </p>
+
+                    <Link
+                      href="/3d-models"
+                      className="w-full mt-auto bg-white/5 border border-white/10 hover:bg-blue-600 hover:text-white hover:border-blue-500 text-white text-xs font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all duration-300"
+                    >
+                      View 3D Models
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 px-4 rounded-2xl bg-[#0a0a0a] border border-white/10 text-gray-400">
+              <Box className="w-10 h-10 text-gray-600 mx-auto mb-3" />
+              <p className="text-sm">Explore our collection of 3D printable robotics models.</p>
+              <Link href="/3d-models" className="inline-block mt-4 text-xs font-semibold text-blue-400 hover:underline">
+                Go to 3D Models Inventory &rarr;
+              </Link>
+            </div>
+          )}
+
+          <div className="mt-8 text-center sm:hidden">
+            <Link
+              href="/3d-models"
+              className="inline-flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-blue-600 text-white font-semibold shadow-lg shadow-blue-600/20 active:scale-[0.98] transition-all"
+            >
+              <span>View More 3D Models</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </section>
+
+      </div>
+
       <Footer />
     </main>
   );
