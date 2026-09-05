@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Settings, Edit2, Trash2, Plus, X, Upload, CheckCircle2, Box, CircuitBoard, ImageIcon, FileBox, Video, Cpu, Code2, Film, BarChart3, Lightbulb, BookOpen } from 'lucide-react';
+import { Settings, Edit2, Trash2, Plus, X, Upload, CheckCircle2, Box, CircuitBoard, ImageIcon, FileBox, Video, Cpu, Code2, Film, BarChart3, Lightbulb, BookOpen, Terminal } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import AdminHeaderLayout from '@/components/AdminHeaderLayout';
@@ -81,6 +81,164 @@ export default function AdminProjectsPage() {
     description: ''
   });
   const [isModelSubmitting, setIsModelSubmitting] = useState(false);
+
+  // Edit Manual Modal State
+  interface EditManualBlock {
+    id: string;
+    title: string;
+    language: string;
+    code: string;
+    description: string;
+    note: string;
+    imageFile: File | null;
+    image_url?: string;
+  }
+
+  const [editingManual, setEditingManual] = useState<any>(null);
+  const [editManualForm, setEditManualForm] = useState({
+    title: '',
+    category: 'SETUP' as 'SETUP' | 'COMMANDS' | 'HARDWARE' | 'TUTORIALS' | 'TROUBLESHOOTING',
+    summary: '',
+  });
+  const [editManualBlocks, setEditManualBlocks] = useState<EditManualBlock[]>([]);
+  const [isManualSubmitting, setIsManualSubmitting] = useState(false);
+
+  const openEditManualModal = (manual: any) => {
+    setEditingManual(manual);
+    setEditManualForm({
+      title: manual.title || '',
+      category: manual.category || 'SETUP',
+      summary: manual.summary || '',
+    });
+
+    const parsedSections = Array.isArray(manual.sections) ? manual.sections : [];
+    if (parsedSections.length > 0) {
+      setEditManualBlocks(
+        parsedSections.map((sec: any, idx: number) => ({
+          id: idx.toString() + '_' + Date.now(),
+          title: sec.title || `Block #${idx + 1}`,
+          language: sec.language || 'bash',
+          code: sec.code || '',
+          description: sec.description || '',
+          note: sec.note || '',
+          imageFile: null,
+          image_url: sec.image_url || undefined,
+        }))
+      );
+    } else {
+      setEditManualBlocks([
+        {
+          id: '1',
+          title: 'Main Commands / Code Block',
+          language: 'bash',
+          code: manual.content || manual.code || '',
+          description: '',
+          note: '',
+          imageFile: null,
+          image_url: undefined,
+        }
+      ]);
+    }
+  };
+
+  const addEditManualBlock = () => {
+    setEditManualBlocks((prev) => [
+      ...prev,
+      {
+        id: Date.now().toString(),
+        title: `Execution Block #${prev.length + 1}`,
+        language: 'bash',
+        code: '',
+        description: '',
+        note: '',
+        imageFile: null,
+      }
+    ]);
+  };
+
+  const updateEditManualBlock = (id: string, field: keyof EditManualBlock, value: any) => {
+    setEditManualBlocks((prev) =>
+      prev.map((b) => (b.id === id ? { ...b, [field]: value } : b))
+    );
+  };
+
+  const removeEditManualBlock = (id: string) => {
+    if (editManualBlocks.length <= 1) {
+      alert("A manual must have at least one execution block.");
+      return;
+    }
+    setEditManualBlocks((prev) => prev.filter((b) => b.id !== id));
+  };
+
+  const handleEditManualSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingManual) return;
+    if (!editManualForm.title || !editManualForm.summary) {
+      return alert("Please fill in manual title and summary");
+    }
+
+    setIsManualSubmitting(true);
+    const slug = editManualForm.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    const categoryLabels: Record<string, string> = {
+      SETUP: 'SETUP',
+      COMMANDS: 'USEFUL COMMANDS',
+      HARDWARE: 'HARDWARE & EMBEDDED',
+      TUTORIALS: 'TUTORIALS',
+      TROUBLESHOOTING: 'TROUBLESHOOTING'
+    };
+
+    const sectionsData = await Promise.all(
+      editManualBlocks.map(async (block, index) => {
+        let blockImageUrl: string | undefined = block.image_url;
+        if (block.imageFile) {
+          const fileExt = block.imageFile.name.split('.').pop();
+          const fileName = `manual_step_${index + 1}_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+          const { error: uploadErr } = await supabase.storage.from('manual_images').upload(fileName, block.imageFile);
+          if (!uploadErr) {
+            const { data: urlData } = supabase.storage.from('manual_images').getPublicUrl(fileName);
+            blockImageUrl = urlData.publicUrl;
+          } else {
+            const { error: fallbackErr } = await supabase.storage.from('diagrams').upload(fileName, block.imageFile);
+            if (!fallbackErr) {
+              const { data: fallbackUrlData } = supabase.storage.from('diagrams').getPublicUrl(fileName);
+              blockImageUrl = fallbackUrlData.publicUrl;
+            }
+          }
+        }
+
+        return {
+          title: block.title.trim() || `Execution Block #${index + 1}`,
+          description: block.description.trim() || (index === 0 ? editManualForm.summary : undefined),
+          note: block.note.trim() || undefined,
+          image_url: blockImageUrl,
+          code: block.code.trim() || undefined,
+          language: block.language || 'bash'
+        };
+      })
+    );
+
+    const { data, error } = await supabase
+      .from('manuals')
+      .update({
+        title: editManualForm.title,
+        slug: slug,
+        category: editManualForm.category,
+        category_label: categoryLabels[editManualForm.category] || editManualForm.category,
+        summary: editManualForm.summary,
+        sections: sectionsData
+      })
+      .eq('id', editingManual.id)
+      .select();
+
+    setIsManualSubmitting(false);
+
+    if (error) {
+      alert(`Update failed: ${error.message}`);
+    } else {
+      setEditingManual(null);
+      fetchManualsList();
+    }
+  };
 
   const fetchProjects = async () => {
     setLoadingProjects(true);
@@ -784,13 +942,22 @@ export default function AdminProjectsPage() {
                           {new Date(manual.created_at).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <button 
-                            onClick={() => handleDeleteManual(manual.id)}
-                            className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded transition-colors"
-                            title="Delete Manual"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          <div className="flex items-center justify-end space-x-2">
+                            <button 
+                              onClick={() => openEditManualModal(manual)}
+                              className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded transition-colors"
+                              title="Edit Manual & Execution Blocks"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button 
+                              onClick={() => handleDeleteManual(manual.id)}
+                              className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded transition-colors"
+                              title="Delete Manual"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -1393,6 +1560,216 @@ export default function AdminProjectsPage() {
       )}
 
       </div>
+
+      {/* Edit Manual Modal */}
+      {editingManual && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#0a0a0a] border border-white/20 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl relative p-8">
+            <button 
+              onClick={() => setEditingManual(null)}
+              className="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            
+            <div className="flex items-center space-x-3 mb-6 border-b border-white/10 pb-4">
+              <BookOpen className="text-[#84cc16] w-6 h-6" />
+              <div>
+                <h2 className="text-xl font-bold text-white">Edit Manual / Guide</h2>
+                <p className="text-xs text-gray-400">Update title, category, summary, and manage execution blocks.</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleEditManualSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Manual Title</label>
+                  <input 
+                    type="text"
+                    value={editManualForm.title}
+                    onChange={(e) => setEditManualForm({ ...editManualForm, title: e.target.value })}
+                    className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#84cc16]"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Category</label>
+                  <select
+                    value={editManualForm.category}
+                    onChange={(e) => setEditManualForm({ ...editManualForm, category: e.target.value as any })}
+                    className="w-full bg-[#0a0a0a] border border-white/20 rounded-md px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#84cc16]"
+                  >
+                    <option value="SETUP">SETUP</option>
+                    <option value="COMMANDS">USEFUL COMMANDS</option>
+                    <option value="HARDWARE">HARDWARE & EMBEDDED</option>
+                    <option value="TUTORIALS">TUTORIALS</option>
+                    <option value="TROUBLESHOOTING">TROUBLESHOOTING</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Manual Summary</label>
+                <textarea 
+                  value={editManualForm.summary}
+                  onChange={(e) => setEditManualForm({ ...editManualForm, summary: e.target.value })}
+                  rows={3}
+                  className="w-full bg-black/50 border border-white/20 rounded-md p-4 text-white text-sm focus:outline-none focus:border-[#84cc16]"
+                  required
+                ></textarea>
+              </div>
+
+              {/* Execution Blocks Section */}
+              <div className="space-y-4 pt-2">
+                <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                  <div>
+                    <h3 className="text-base font-semibold text-white">Execution Blocks / Steps</h3>
+                    <p className="text-xs text-gray-400">Add or delete execution blocks for this manual guide.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={addEditManualBlock}
+                    className="px-3 py-1.5 bg-[#84cc16]/10 border border-[#84cc16]/30 text-[#84cc16] hover:bg-[#84cc16]/20 rounded text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" /> Add Execution Block
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  {editManualBlocks.map((block, index) => (
+                    <div key={block.id} className="p-5 bg-white/5 border border-white/10 rounded-lg space-y-4 relative">
+                      <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                        <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#84cc16] flex items-center gap-2">
+                          <Terminal className="w-4 h-4" /> Block #{index + 1}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => removeEditManualBlock(block.id)}
+                          className="text-red-400 hover:text-red-300 hover:bg-red-500/10 px-2 py-1 rounded transition-colors flex items-center gap-1 text-xs cursor-pointer"
+                          title="Delete Execution Block"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Delete Block</span>
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <label className="text-[11px] font-medium text-gray-400 uppercase">Section Title</label>
+                          <input 
+                            type="text"
+                            value={block.title}
+                            onChange={(e) => updateEditManualBlock(block.id, 'title', e.target.value)}
+                            className="w-full bg-black/50 border border-white/20 rounded-md px-3 py-2 text-white text-xs focus:outline-none focus:border-[#84cc16]"
+                            placeholder="e.g. Terminal Commands"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <label className="text-[11px] font-medium text-gray-400 uppercase">Code Language</label>
+                          <select 
+                            value={block.language}
+                            onChange={(e) => updateEditManualBlock(block.id, 'language', e.target.value)}
+                            className="w-full bg-[#0a0a0a] border border-white/20 rounded-md px-3 py-2 text-white text-xs focus:outline-none focus:border-[#84cc16]"
+                          >
+                            <option value="bash">bash / shell</option>
+                            <option value="python">python</option>
+                            <option value="cpp">c++</option>
+                            <option value="ini">ini / config</option>
+                            <option value="text">plain text</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[11px] font-medium text-gray-400 uppercase">Commands / Source Code</label>
+                        <textarea 
+                          value={block.code}
+                          onChange={(e) => updateEditManualBlock(block.id, 'code', e.target.value)}
+                          rows={4}
+                          className="w-full bg-black/60 font-mono text-emerald-400 border border-white/20 rounded-md p-3 text-xs focus:outline-none focus:border-[#84cc16]"
+                          placeholder="Commands or code..."
+                        ></textarea>
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[11px] font-medium text-gray-400 uppercase">Step Note / Alert (Optional)</label>
+                        <input 
+                          type="text"
+                          value={block.note}
+                          onChange={(e) => updateEditManualBlock(block.id, 'note', e.target.value)}
+                          className="w-full bg-black/50 border border-white/20 rounded-md px-3 py-2 text-white text-xs focus:outline-none focus:border-[#84cc16]"
+                          placeholder="Optional note for this block..."
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[11px] font-medium text-gray-400 uppercase">Section Diagram / Image (Optional)</label>
+                        <label className="border border-dashed border-white/20 rounded-md p-4 text-center hover:border-[#84cc16] transition-colors cursor-pointer group flex flex-col items-center justify-center">
+                          <input 
+                            type="file" 
+                            className="hidden" 
+                            accept="image/*"
+                            onChange={(e) => {
+                              if (e.target.files && e.target.files[0]) {
+                                updateEditManualBlock(block.id, 'imageFile', e.target.files[0]);
+                              }
+                            }}
+                          />
+                          {block.imageFile ? (
+                            <div className="text-white flex flex-col items-center">
+                              <CheckCircle2 className="w-4 h-4 text-green-400 mb-1" />
+                              <p className="text-xs">{block.imageFile.name}</p>
+                              <p className="text-[10px] text-gray-400">Click to change</p>
+                            </div>
+                          ) : block.image_url ? (
+                            <div className="text-white flex flex-col items-center">
+                              <ImageIcon className="w-4 h-4 text-[#84cc16] mb-1" />
+                              <p className="text-xs text-gray-300">Existing Image Attached</p>
+                              <p className="text-[10px] text-gray-400">Click to upload replacement image</p>
+                            </div>
+                          ) : (
+                            <>
+                              <ImageIcon className="w-4 h-4 text-gray-400 mb-1 group-hover:text-[#84cc16]" />
+                              <p className="text-xs text-gray-400 group-hover:text-white">Click to upload diagram image (Optional)</p>
+                            </>
+                          )}
+                        </label>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={addEditManualBlock}
+                  className="w-full py-2.5 bg-white/5 border border-dashed border-white/20 hover:border-[#84cc16] hover:text-[#84cc16] text-gray-400 rounded-md font-semibold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" /> Add Execution Block #{editManualBlocks.length + 1}
+                </button>
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4 border-t border-white/10">
+                <button 
+                  type="button"
+                  onClick={() => setEditingManual(null)}
+                  className="px-4 py-2 bg-transparent text-white hover:bg-white/5 rounded-md text-sm transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  disabled={isManualSubmitting}
+                  className="px-6 py-2 bg-white text-black hover:bg-gray-200 disabled:opacity-50 rounded-md text-sm font-semibold transition-colors flex items-center gap-2"
+                >
+                  {isManualSubmitting ? 'Saving Changes...' : 'Save Manual Changes'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </AdminHeaderLayout>
   );
 }
