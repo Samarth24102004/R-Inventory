@@ -1221,7 +1221,7 @@ export default function AdminUploadPage() {
           </div>
           <Link
             href="/admin/inbox"
-            className="text-xs font-semibold text-[#84cc16] hover:underline flex items-center gap-1.5 shrink-0"
+            className="text-xs font-semibold text-[#FD7014] hover:underline flex items-center gap-1.5 shrink-0"
           >
             <span>Open Dedicated Inbox</span>
             <ExternalLink className="w-3.5 h-3.5" />

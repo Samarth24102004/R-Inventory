@@ -276,10 +276,10 @@ export default function AdminInboxPage() {
 
           <div className="bg-[#0a0a0a] border border-white/10 p-5 rounded-2xl flex items-center justify-between shadow-lg">
             <div>
-              <p className="text-xs font-mono uppercase tracking-wider text-[#84cc16]">Answered</p>
-              <h3 className="text-2xl font-bold text-[#84cc16] mt-1">{repliedCount}</h3>
+              <p className="text-xs font-mono uppercase tracking-wider text-[#FD7014]">Answered</p>
+              <h3 className="text-2xl font-bold text-[#FD7014] mt-1">{repliedCount}</h3>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-[#84cc16]/10 border border-[#84cc16]/20 flex items-center justify-center text-[#84cc16]">
+            <div className="w-10 h-10 rounded-xl bg-[#FD7014]/10 border border-[#FD7014]/20 flex items-center justify-center text-[#FD7014]">
               <CheckCircle2 className="w-5 h-5" />
             </div>
           </div>
@@ -295,7 +295,7 @@ export default function AdminInboxPage() {
             <div className="p-4 border-b border-white/10 space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
-                  <MessageSquare className="w-4 h-4 text-[#84cc16]" /> Conversations
+                  <MessageSquare className="w-4 h-4 text-[#FD7014]" /> Conversations
                 </h3>
                 <div className="flex items-center gap-1">
                   <button
@@ -325,7 +325,7 @@ export default function AdminInboxPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search by message or email..."
-                  className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-3 py-1.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-[#84cc16]/50"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-3 py-1.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-[#FD7014]/50"
                 />
               </div>
 
@@ -376,7 +376,7 @@ export default function AdminInboxPage() {
                       onClick={() => setSelectedSessionId(thread.session_id)}
                       className={`w-full p-3.5 text-left transition-all flex items-start gap-3 cursor-pointer ${
                         isSelected 
-                          ? 'bg-white/10 border-l-4 border-l-[#84cc16]' 
+                          ? 'bg-white/10 border-l-4 border-l-[#FD7014]' 
                           : 'hover:bg-white/5 border-l-4 border-l-transparent'
                       }`}
                     >
@@ -404,7 +404,7 @@ export default function AdminInboxPage() {
                               Needs Reply
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-[#84cc16]/15 text-[#84cc16] font-semibold">
+                            <span className="inline-flex items-center gap-1 text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-[#FD7014]/15 text-[#FD7014] font-semibold">
                               Replied
                             </span>
                           )}
@@ -494,7 +494,7 @@ export default function AdminInboxPage() {
                           <div
                             className={`p-3.5 sm:px-5 sm:py-3.5 rounded-2xl text-xs sm:text-sm leading-relaxed whitespace-pre-wrap break-words ${
                               isAdmin
-                                ? 'bg-[#84cc16] text-black rounded-br-xs font-medium shadow-lg'
+                                ? 'bg-[#FD7014] text-black rounded-br-xs font-medium shadow-lg'
                                 : 'bg-[#111] border border-white/10 text-white rounded-bl-xs shadow-md'
                             }`}
                           >
@@ -507,7 +507,7 @@ export default function AdminInboxPage() {
                           </div>
 
                           {isAdmin && (
-                            <div className="w-7 h-7 rounded-xl bg-[#84cc16]/20 border border-[#84cc16]/40 flex items-center justify-center text-[#84cc16] shrink-0 mb-1">
+                            <div className="w-7 h-7 rounded-xl bg-[#FD7014]/20 border border-[#FD7014]/40 flex items-center justify-center text-[#FD7014] shrink-0 mb-1">
                               <Bot className="w-3.5 h-3.5" />
                             </div>
                           )}
@@ -532,13 +532,13 @@ export default function AdminInboxPage() {
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
                     placeholder="Type your reply to this visitor... (Enter to send)"
-                    className="flex-1 bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-xs sm:text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-[#84cc16]/60 transition-all"
+                    className="flex-1 bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-xs sm:text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-[#FD7014]/60 transition-all"
                     autoFocus
                   />
                   <button
                     type="submit"
                     disabled={!replyText.trim() || sendingReply}
-                    className="px-5 py-3 rounded-2xl bg-[#84cc16] hover:bg-[#74b313] text-black font-semibold text-xs sm:text-sm flex items-center gap-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed shrink-0 shadow-lg"
+                    className="px-5 py-3 rounded-2xl bg-[#FD7014] hover:bg-[#74b313] text-black font-semibold text-xs sm:text-sm flex items-center gap-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed shrink-0 shadow-lg"
                   >
                     <span>Send Reply</span>
                     <Send className="w-3.5 h-3.5" />

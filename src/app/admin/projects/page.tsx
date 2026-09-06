@@ -934,7 +934,7 @@ export default function AdminProjectsPage() {
                           <div className="text-xs text-gray-500 truncate max-w-md">{manual.summary}</div>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-mono font-medium bg-[#84cc16]/10 text-[#84cc16] border border-[#84cc16]/20">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-mono font-medium bg-[#FD7014]/10 text-[#FD7014] border border-[#FD7014]/20">
                             {manual.category || 'SETUP'}
                           </span>
                         </td>
@@ -1573,7 +1573,7 @@ export default function AdminProjectsPage() {
             </button>
             
             <div className="flex items-center space-x-3 mb-6 border-b border-white/10 pb-4">
-              <BookOpen className="text-[#84cc16] w-6 h-6" />
+              <BookOpen className="text-[#FD7014] w-6 h-6" />
               <div>
                 <h2 className="text-xl font-bold text-white">Edit Manual / Guide</h2>
                 <p className="text-xs text-gray-400">Update title, category, summary, and manage execution blocks.</p>
@@ -1588,7 +1588,7 @@ export default function AdminProjectsPage() {
                     type="text"
                     value={editManualForm.title}
                     onChange={(e) => setEditManualForm({ ...editManualForm, title: e.target.value })}
-                    className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#84cc16]"
+                    className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#FD7014]"
                     required
                   />
                 </div>
@@ -1598,7 +1598,7 @@ export default function AdminProjectsPage() {
                   <select
                     value={editManualForm.category}
                     onChange={(e) => setEditManualForm({ ...editManualForm, category: e.target.value as any })}
-                    className="w-full bg-[#0a0a0a] border border-white/20 rounded-md px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#84cc16]"
+                    className="w-full bg-[#0a0a0a] border border-white/20 rounded-md px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#FD7014]"
                   >
                     <option value="SETUP">SETUP</option>
                     <option value="COMMANDS">USEFUL COMMANDS</option>
@@ -1615,7 +1615,7 @@ export default function AdminProjectsPage() {
                   value={editManualForm.summary}
                   onChange={(e) => setEditManualForm({ ...editManualForm, summary: e.target.value })}
                   rows={3}
-                  className="w-full bg-black/50 border border-white/20 rounded-md p-4 text-white text-sm focus:outline-none focus:border-[#84cc16]"
+                  className="w-full bg-black/50 border border-white/20 rounded-md p-4 text-white text-sm focus:outline-none focus:border-[#FD7014]"
                   required
                 ></textarea>
               </div>
@@ -1630,7 +1630,7 @@ export default function AdminProjectsPage() {
                   <button
                     type="button"
                     onClick={addEditManualBlock}
-                    className="px-3 py-1.5 bg-[#84cc16]/10 border border-[#84cc16]/30 text-[#84cc16] hover:bg-[#84cc16]/20 rounded text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer"
+                    className="px-3 py-1.5 bg-[#FD7014]/10 border border-[#FD7014]/30 text-[#FD7014] hover:bg-[#FD7014]/20 rounded text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer"
                   >
                     <Plus className="w-4 h-4" /> Add Execution Block
                   </button>
@@ -1640,7 +1640,7 @@ export default function AdminProjectsPage() {
                   {editManualBlocks.map((block, index) => (
                     <div key={block.id} className="p-5 bg-white/5 border border-white/10 rounded-lg space-y-4 relative">
                       <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                        <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#84cc16] flex items-center gap-2">
+                        <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#FD7014] flex items-center gap-2">
                           <Terminal className="w-4 h-4" /> Block #{index + 1}
                         </span>
                         <button
@@ -1661,7 +1661,7 @@ export default function AdminProjectsPage() {
                             type="text"
                             value={block.title}
                             onChange={(e) => updateEditManualBlock(block.id, 'title', e.target.value)}
-                            className="w-full bg-black/50 border border-white/20 rounded-md px-3 py-2 text-white text-xs focus:outline-none focus:border-[#84cc16]"
+                            className="w-full bg-black/50 border border-white/20 rounded-md px-3 py-2 text-white text-xs focus:outline-none focus:border-[#FD7014]"
                             placeholder="e.g. Terminal Commands"
                           />
                         </div>
@@ -1671,7 +1671,7 @@ export default function AdminProjectsPage() {
                           <select 
                             value={block.language}
                             onChange={(e) => updateEditManualBlock(block.id, 'language', e.target.value)}
-                            className="w-full bg-[#0a0a0a] border border-white/20 rounded-md px-3 py-2 text-white text-xs focus:outline-none focus:border-[#84cc16]"
+                            className="w-full bg-[#0a0a0a] border border-white/20 rounded-md px-3 py-2 text-white text-xs focus:outline-none focus:border-[#FD7014]"
                           >
                             <option value="bash">bash / shell</option>
                             <option value="python">python</option>
@@ -1688,7 +1688,7 @@ export default function AdminProjectsPage() {
                           value={block.code}
                           onChange={(e) => updateEditManualBlock(block.id, 'code', e.target.value)}
                           rows={4}
-                          className="w-full bg-black/60 font-mono text-emerald-400 border border-white/20 rounded-md p-3 text-xs focus:outline-none focus:border-[#84cc16]"
+                          className="w-full bg-black/60 font-mono text-emerald-400 border border-white/20 rounded-md p-3 text-xs focus:outline-none focus:border-[#FD7014]"
                           placeholder="Commands or code..."
                         ></textarea>
                       </div>
@@ -1699,14 +1699,14 @@ export default function AdminProjectsPage() {
                           type="text"
                           value={block.note}
                           onChange={(e) => updateEditManualBlock(block.id, 'note', e.target.value)}
-                          className="w-full bg-black/50 border border-white/20 rounded-md px-3 py-2 text-white text-xs focus:outline-none focus:border-[#84cc16]"
+                          className="w-full bg-black/50 border border-white/20 rounded-md px-3 py-2 text-white text-xs focus:outline-none focus:border-[#FD7014]"
                           placeholder="Optional note for this block..."
                         />
                       </div>
 
                       <div className="space-y-1">
                         <label className="text-[11px] font-medium text-gray-400 uppercase">Section Diagram / Image (Optional)</label>
-                        <label className="border border-dashed border-white/20 rounded-md p-4 text-center hover:border-[#84cc16] transition-colors cursor-pointer group flex flex-col items-center justify-center">
+                        <label className="border border-dashed border-white/20 rounded-md p-4 text-center hover:border-[#FD7014] transition-colors cursor-pointer group flex flex-col items-center justify-center">
                           <input 
                             type="file" 
                             className="hidden" 
@@ -1725,13 +1725,13 @@ export default function AdminProjectsPage() {
                             </div>
                           ) : block.image_url ? (
                             <div className="text-white flex flex-col items-center">
-                              <ImageIcon className="w-4 h-4 text-[#84cc16] mb-1" />
+                              <ImageIcon className="w-4 h-4 text-[#FD7014] mb-1" />
                               <p className="text-xs text-gray-300">Existing Image Attached</p>
                               <p className="text-[10px] text-gray-400">Click to upload replacement image</p>
                             </div>
                           ) : (
                             <>
-                              <ImageIcon className="w-4 h-4 text-gray-400 mb-1 group-hover:text-[#84cc16]" />
+                              <ImageIcon className="w-4 h-4 text-gray-400 mb-1 group-hover:text-[#FD7014]" />
                               <p className="text-xs text-gray-400 group-hover:text-white">Click to upload diagram image (Optional)</p>
                             </>
                           )}
@@ -1744,7 +1744,7 @@ export default function AdminProjectsPage() {
                 <button
                   type="button"
                   onClick={addEditManualBlock}
-                  className="w-full py-2.5 bg-white/5 border border-dashed border-white/20 hover:border-[#84cc16] hover:text-[#84cc16] text-gray-400 rounded-md font-semibold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-2.5 bg-white/5 border border-dashed border-white/20 hover:border-[#FD7014] hover:text-[#FD7014] text-gray-400 rounded-md font-semibold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Plus className="w-4 h-4" /> Add Execution Block #{editManualBlocks.length + 1}
                 </button>

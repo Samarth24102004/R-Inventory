@@ -172,32 +172,32 @@ export default function NeededProjectModal() {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-100 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
-      <div className="w-full max-w-xl h-[600px] max-h-[90vh] bg-[#0a0a0a] border border-white/15 rounded-3xl flex flex-col overflow-hidden shadow-2xl relative">
+    <div className="fixed inset-0 z-100 bg-[#222831]/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
+      <div className="w-full max-w-xl h-[600px] max-h-[90vh] bg-[#222831] border border-[#393E46] rounded-3xl flex flex-col overflow-hidden shadow-2xl relative">
         
         {/* Chat Header */}
-        <div className="p-4 sm:px-6 py-4 bg-white/[0.03] border-b border-white/10 flex items-center justify-between shrink-0">
+        <div className="p-4 sm:px-6 py-4 bg-[#393E46]/30 border-b border-[#393E46] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <div className="w-10 h-10 rounded-2xl bg-[#84cc16]/10 border border-[#84cc16]/20 flex items-center justify-center text-[#84cc16]">
+              <div className="w-10 h-10 rounded-2xl bg-[#FD7014]/10 border border-[#FD7014]/30 flex items-center justify-center text-[#FD7014]">
                 <MessageSquare className="w-5 h-5" />
               </div>
-              <span className="absolute bottom-0 right-0 w-3 h-3 bg-[#84cc16] border-2 border-[#0a0a0a] rounded-full"></span>
+              <span className="absolute bottom-0 right-0 w-3 h-3 bg-[#FD7014] border-2 border-[#222831] rounded-full"></span>
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-semibold text-white tracking-tight">Direct Support & Contact</h3>
-                <span className="px-1.5 py-0.5 rounded text-[10px] font-mono uppercase bg-[#84cc16]/10 text-[#84cc16] font-semibold">
+                <h3 className="text-base font-semibold text-[#EEEEEE] tracking-tight">Direct Support & Contact</h3>
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-mono uppercase bg-[#FD7014]/10 text-[#FD7014] font-semibold">
                   Online
                 </span>
               </div>
-              <p className="text-xs text-gray-400">Ask questions, request custom robotics projects, or get help</p>
+              <p className="text-xs text-[#EEEEEE]/70">Ask questions, request custom robotics projects, or get help</p>
             </div>
           </div>
 
           <button
             onClick={() => router.push(pathname)}
-            className="p-2 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+            className="p-2 rounded-xl text-[#EEEEEE]/70 hover:text-[#EEEEEE] hover:bg-[#393E46] transition-all cursor-pointer"
             title="Close chat"
           >
             <X className="w-5 h-5" />
@@ -205,15 +205,15 @@ export default function NeededProjectModal() {
         </div>
 
         {/* Optional Email Notification Bar */}
-        <div className="bg-[#111] px-4 py-2 border-b border-white/5 flex items-center justify-between text-xs text-gray-400 shrink-0">
+        <div className="bg-[#393E46]/40 px-4 py-2 border-b border-[#393E46] flex items-center justify-between text-xs text-[#EEEEEE]/70 shrink-0">
           {emailSaved ? (
             <div className="flex items-center justify-between w-full">
-              <span className="flex items-center gap-1.5 text-gray-300">
-                <Check className="w-3.5 h-3.5 text-[#84cc16]" /> Email linked: <span className="text-white font-mono">{userEmail}</span>
+              <span className="flex items-center gap-1.5 text-[#EEEEEE]/80">
+                <Check className="w-3.5 h-3.5 text-[#FD7014]" /> Email linked: <span className="text-[#EEEEEE] font-mono">{userEmail}</span>
               </span>
               <button 
                 onClick={() => setEmailSaved(false)}
-                className="text-[11px] text-gray-400 hover:text-white underline cursor-pointer"
+                className="text-[11px] text-[#EEEEEE]/70 hover:text-[#EEEEEE] underline cursor-pointer"
               >
                 Change
               </button>
@@ -285,7 +285,7 @@ export default function NeededProjectModal() {
                 >
                   <div className="flex items-end gap-2 max-w-[85%] sm:max-w-[75%]">
                     {!isUser && (
-                      <div className="w-7 h-7 rounded-xl bg-[#84cc16]/15 border border-[#84cc16]/30 flex items-center justify-center text-[#84cc16] shrink-0 mb-1">
+                      <div className="w-7 h-7 rounded-xl bg-[#FD7014]/15 border border-[#FD7014]/30 flex items-center justify-center text-[#FD7014] shrink-0 mb-1">
                         <Bot className="w-3.5 h-3.5" />
                       </div>
                     )}
@@ -293,13 +293,13 @@ export default function NeededProjectModal() {
                     <div
                       className={`p-3 sm:px-4 sm:py-3 rounded-2xl text-xs sm:text-sm leading-relaxed whitespace-pre-wrap break-words ${
                         isUser
-                          ? 'bg-neutral-800 text-white rounded-br-xs border border-white/10'
-                          : 'bg-[#121212] border border-[#84cc16]/30 text-gray-100 rounded-bl-xs shadow-lg'
+                          ? 'bg-[#393E46] text-[#EEEEEE] rounded-br-xs border border-[#393E46]'
+                          : 'bg-[#222831] border border-[#FD7014]/40 text-[#EEEEEE] rounded-bl-xs shadow-lg'
                       }`}
                     >
                       {!isUser && (
                         <div className="flex items-center gap-1.5 mb-1">
-                          <span className="text-[10px] font-mono uppercase tracking-wider font-bold text-[#84cc16]">
+                          <span className="text-[10px] font-mono uppercase tracking-wider font-bold text-[#FD7014]">
                             Admin / Support
                           </span>
                         </div>
@@ -308,13 +308,13 @@ export default function NeededProjectModal() {
                     </div>
 
                     {isUser && (
-                      <div className="w-7 h-7 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center text-white shrink-0 mb-1">
+                      <div className="w-7 h-7 rounded-xl bg-[#393E46] border border-[#393E46] flex items-center justify-center text-[#EEEEEE] shrink-0 mb-1">
                         <User className="w-3.5 h-3.5" />
                       </div>
                     )}
                   </div>
 
-                  <span className="text-[10px] text-gray-500 font-mono mt-1 px-9">
+                  <span className="text-[10px] text-[#EEEEEE]/50 font-mono mt-1 px-9">
                     {formattedTime}
                   </span>
                 </div>
@@ -327,7 +327,7 @@ export default function NeededProjectModal() {
         {/* Input Bar */}
         <form
           onSubmit={handleSendMessage}
-          className="p-3 sm:p-4 bg-white/[0.02] border-t border-white/10 flex items-center gap-2 shrink-0"
+          className="p-3 sm:p-4 bg-[#393E46]/20 border-t border-[#393E46] flex items-center gap-2 shrink-0"
         >
           <input
             type="text"
@@ -335,13 +335,13 @@ export default function NeededProjectModal() {
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Type your message... (Enter to send)"
-            className="flex-1 bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-xs sm:text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-[#84cc16]/60 transition-all"
+            className="flex-1 bg-[#222831] border border-[#393E46] rounded-2xl px-4 py-3 text-xs sm:text-sm text-[#EEEEEE] placeholder:text-[#EEEEEE]/40 focus:outline-none focus:border-[#FD7014] transition-all"
             autoFocus
           />
           <button
             type="submit"
             disabled={!inputText.trim() || sending}
-            className="w-11 h-11 rounded-2xl bg-[#84cc16] hover:bg-[#74b313] text-black flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed shrink-0 shadow-lg"
+            className="w-11 h-11 rounded-2xl bg-[#FD7014] hover:bg-[#FD7014]/80 text-black flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed shrink-0 shadow-lg"
             title="Send message"
           >
             <Send className="w-4 h-4" />

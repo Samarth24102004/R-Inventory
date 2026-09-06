@@ -2,8 +2,10 @@
 
 @layer base {
   :root {
-    --background: #000000;
-    --foreground: #ededed;
+    --background: #222831;
+    --surface: #393E46;
+    --primary: #FD7014;
+    --foreground: #EEEEEE;
   }
   
   html {
@@ -11,8 +13,9 @@
   }
 
   body {
-    background-color: var(--background);
-    color: var(--foreground);
+    background-color: #222831;
+    color: #EEEEEE;
     overscroll-behavior: none;
   }
 }
+

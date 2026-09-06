@@ -2,19 +2,19 @@ import React from 'react';
 
 export default function Footer() {
   return (
-    <footer className="relative z-20 bg-[#050505] border-t border-white/10 pt-16 pb-32 px-4 sm:px-6 lg:px-8">
+    <footer className="relative z-20 bg-[#1c2128] border-t border-[#393E46] pt-16 pb-32 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="flex flex-col items-center md:items-start max-w-sm">
           <div className="flex items-center gap-1 mb-2">
-            <span className="text-2xl font-black tracking-tighter text-white" style={{ fontFamily: 'sans-serif' }}>
+            <span className="text-2xl font-black tracking-tighter text-[#EEEEEE]" style={{ fontFamily: 'sans-serif' }}>
               RoS
             </span>
-            <span className="w-1.5 h-1.5 bg-[#84cc16] rounded-sm mt-2"></span>
+            <span className="w-1.5 h-1.5 bg-[#FD7014] rounded-sm mt-2"></span>
           </div>
-          <span className="text-[9px] font-bold tracking-[0.3em] text-gray-500 mt-[-4px] mb-4">
+          <span className="text-[9px] font-bold tracking-[0.3em] text-[#EEEEEE]/50 mt-[-4px] mb-4">
             INVENTORY
           </span>
-          <p className="text-gray-400 text-sm text-center md:text-left leading-relaxed">
+          <p className="text-[#EEEEEE]/70 text-sm text-center md:text-left leading-relaxed">
             RoS Inventory is your premier destination for ROS2 projects, autonomous robots, and AI robotics. We empower the open-source robotics community with production-ready code, 3D models, and developer resources for SLAM, Navigation2, MoveIt, and Gazebo robot simulation.
           </p>
           <div className="flex items-center gap-3 mt-4">
