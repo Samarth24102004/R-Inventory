@@ -100,11 +100,7 @@ export default async function Home() {
           </div>
 
           {/* Social Media Links */}
-          <div className="flex items-center gap-3.5 mt-6">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 mr-1">
-              Follow:
-            </span>
-
+          <div className="flex items-center gap-3 mt-6">
             {/* YouTube */}
             <a
               href="https://www.youtube.com/@RosInventory"
