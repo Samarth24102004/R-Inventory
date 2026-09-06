@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, ImageIcon, CircuitBoard, Plus, ShieldCheck } from 'lucide-react';
+import { BarChart3, ImageIcon, CircuitBoard, Plus, ShieldCheck, Mail } from 'lucide-react';
 
 interface AdminHeaderLayoutProps {
   title: string;
@@ -18,6 +18,7 @@ export default function AdminHeaderLayout({ title, subtitle, children }: AdminHe
     { name: 'Analytics Dashboard', path: '/admin/analytics', icon: BarChart3 },
     { name: 'Manage Content', path: '/admin/projects', icon: CircuitBoard },
     { name: 'Upload New', path: '/admin/upload', icon: Plus },
+    { name: 'Inbox', path: '/admin/inbox', icon: Mail },
   ];
 
   return (

@@ -3,7 +3,7 @@ import Footer from '@/components/Footer';
 import PremiumProjectCard from '@/components/PremiumProjectCard';
 import { supabase } from '@/lib/supabase';
 import { demoProjects, Project } from '@/lib/data';
-import { ArrowRight, Box, Cpu, FileCode, Layers, Star, Wrench, Sparkles } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, BookOpen, Box, Cpu, Layers, Star } from 'lucide-react';
 
 export const revalidate = 0; // Ensure data is fetched dynamically
 
@@ -46,48 +46,62 @@ export default async function Home() {
       <div className="relative z-10 grow max-w-7xl mx-auto px-6 md:px-12 pt-36 pb-24 w-full">
         
         {/* Brief / Hero Section */}
-        <section className="text-center max-w-4xl mx-auto mb-24">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#84cc16]/10 border border-[#84cc16]/30 text-[#84cc16] text-xs font-mono tracking-widest uppercase mb-6 shadow-[0_0_20px_rgba(132,204,22,0.15)]">
-            <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-            <span>Open Source Robotics & ROS 2</span>
-          </div>
-
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-6 leading-[1.15]">
+        <section className="text-left max-w-4xl mb-20">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-8 leading-[1.15]">
             Build Production-Ready <br className="hidden sm:block" />
             <span className="text-transparent bg-clip-text bg-linear-to-r from-[#84cc16] via-emerald-400 to-cyan-400">
               Robotics Solutions
             </span>
           </h1>
 
-          <div className="relative p-6 md:p-8 rounded-3xl bg-[#0a0a0a]/80 border border-white/10 backdrop-blur-xl shadow-2xl mb-10 text-left md:text-center">
-            <p className="text-base sm:text-lg md:text-xl text-gray-200 leading-relaxed font-normal">
-              ROS Inventory is a robotics project and ROS 2 workspace library that provides complete, build-ready robotics solutions including ROS packages, source code, workspace structures, hardware documentation, wiring diagrams, CAD files, and deployment guides.
-            </p>
-          </div>
+          {/* Quick Action Navigation Buttons */}
+          <div className="flex flex-wrap items-center gap-3.5 max-w-3xl">
+            {/* ROS Packages */}
+            <Link
+              href="/projects"
+              className="group relative inline-flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-[#0a0a0a]/90 hover:bg-white/[0.06] border border-white/10 hover:border-[#84cc16]/50 transition-all duration-300 backdrop-blur-xl shadow-lg hover:shadow-[0_0_25px_rgba(132,204,22,0.18)] hover:-translate-y-0.5 active:scale-[0.98]"
+            >
+              <div className="w-8 h-8 rounded-xl bg-[#84cc16]/10 border border-[#84cc16]/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-[#84cc16]/20 group-hover:border-[#84cc16]/40 transition-all duration-300 shrink-0">
+                <Cpu className="w-4 h-4 text-[#84cc16]" />
+              </div>
+              <span className="text-xs sm:text-sm font-semibold text-white tracking-tight">
+                ROS Packages
+              </span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-gray-500 group-hover:text-[#84cc16] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0" />
+            </Link>
 
-          {/* Quick Highlight Badges */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto">
-            <div className="flex items-center justify-center gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 text-xs font-medium text-gray-300">
-              <Cpu className="w-4 h-4 text-[#84cc16]" />
-              <span>ROS Packages</span>
-            </div>
-            <div className="flex items-center justify-center gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 text-xs font-medium text-gray-300">
-              <Wrench className="w-4 h-4 text-cyan-400" />
-              <span>Wiring Diagrams</span>
-            </div>
-            <div className="flex items-center justify-center gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 text-xs font-medium text-gray-300">
-              <Box className="w-4 h-4 text-purple-400" />
-              <span>CAD & 3D Models</span>
-            </div>
-            <div className="flex items-center justify-center gap-2 p-3 rounded-2xl bg-white/5 border border-white/10 text-xs font-medium text-gray-300">
-              <FileCode className="w-4 h-4 text-yellow-400" />
-              <span>Source Code</span>
-            </div>
+            {/* Manuals */}
+            <Link
+              href="/manuals"
+              className="group relative inline-flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-[#0a0a0a]/90 hover:bg-white/[0.06] border border-white/10 hover:border-cyan-400/50 transition-all duration-300 backdrop-blur-xl shadow-lg hover:shadow-[0_0_25px_rgba(34,211,238,0.18)] hover:-translate-y-0.5 active:scale-[0.98]"
+            >
+              <div className="w-8 h-8 rounded-xl bg-cyan-400/10 border border-cyan-400/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-cyan-400/20 group-hover:border-cyan-400/40 transition-all duration-300 shrink-0">
+                <BookOpen className="w-4 h-4 text-cyan-400" />
+              </div>
+              <span className="text-xs sm:text-sm font-semibold text-white tracking-tight">
+                Manuals
+              </span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-gray-500 group-hover:text-cyan-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0" />
+            </Link>
+
+            {/* CAD & 3D Models */}
+            <Link
+              href="/3d-models"
+              className="group relative inline-flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-[#0a0a0a]/90 hover:bg-white/[0.06] border border-white/10 hover:border-purple-400/50 transition-all duration-300 backdrop-blur-xl shadow-lg hover:shadow-[0_0_25px_rgba(168,85,247,0.18)] hover:-translate-y-0.5 active:scale-[0.98]"
+            >
+              <div className="w-8 h-8 rounded-xl bg-purple-400/10 border border-purple-400/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-purple-400/20 group-hover:border-purple-400/40 transition-all duration-300 shrink-0">
+                <Box className="w-4 h-4 text-purple-400" />
+              </div>
+              <span className="text-xs sm:text-sm font-semibold text-white tracking-tight">
+                CAD & 3D Models
+              </span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-gray-500 group-hover:text-purple-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0" />
+            </Link>
           </div>
         </section>
 
         {/* Projects Section */}
-        <section className="mb-28">
+        <section id="projects" className="mb-28">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
             <div>
               <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#84cc16] mb-2">
@@ -125,7 +139,7 @@ export default async function Home() {
         </section>
 
         {/* 3D Models Section */}
-        <section className="mb-16">
+        <section id="3d-models" className="mb-16">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
             <div>
               <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-blue-400 mb-2">

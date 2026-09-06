@@ -1,9 +1,10 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
-import { Upload, Plus, CircuitBoard, Lightbulb, CheckCircle2, Box, Image as ImageIcon, FileBox, Loader2, Video, Cpu, Code2, Film, BarChart3, Trash2, ExternalLink, BookOpen, Terminal } from 'lucide-react';
+import { Upload, Plus, CircuitBoard, Lightbulb, Mail, CheckCircle2, Box, Image as ImageIcon, FileBox, Loader2, Video, Cpu, Code2, Film, BarChart3, Trash2, ExternalLink, BookOpen, Terminal } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { formatProjectDescription } from '@/lib/data';
 import AdminHeaderLayout from '@/components/AdminHeaderLayout';
+import Link from 'next/link';
 
 export default function AdminUploadPage() {
   const [uploadType, setUploadType] = useState<'project' | 'model' | 'manual'>('project');
@@ -1211,17 +1212,26 @@ export default function AdminUploadPage() {
       </div>
 
       <div className="max-w-4xl mx-auto mt-12 bg-[#0a0a0a] p-10 rounded-xl border border-white/10 shadow-lg">
-        <div className="flex items-center space-x-4 mb-8 border-b border-white/10 pb-6">
-          <Lightbulb className="text-white w-6 h-6" strokeWidth={1.5} />
-          <h2 className="text-2xl font-semibold text-white tracking-tight">
-            User Requested Projects
-          </h2>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 border-b border-white/10 pb-6">
+          <div className="flex items-center space-x-4">
+            <Mail className="text-white w-6 h-6" strokeWidth={1.5} />
+            <h2 className="text-2xl font-semibold text-white tracking-tight">
+              Contact Messages & Inquiries
+            </h2>
+          </div>
+          <Link
+            href="/admin/inbox"
+            className="text-xs font-semibold text-[#84cc16] hover:underline flex items-center gap-1.5 shrink-0"
+          >
+            <span>Open Dedicated Inbox</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </Link>
         </div>
         
         {loadingIdeas ? (
-          <p className="text-sm text-gray-400">Loading ideas...</p>
+          <p className="text-sm text-gray-400">Loading messages...</p>
         ) : ideas.length === 0 ? (
-          <p className="text-sm text-gray-400 italic">No project ideas submitted yet.</p>
+          <p className="text-sm text-gray-400 italic">No contact messages received yet.</p>
         ) : (
           <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
             {ideas.map((idea) => (

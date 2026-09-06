@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import BottomNavbar from "@/components/BottomNavbar";
-import SearchModal from "@/components/SearchModal";
 import NeededProjectModal from "@/components/NeededProjectModal";
 import AuthButton from "@/components/AuthButton";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
@@ -176,9 +175,6 @@ export default function RootLayout({
         </Suspense>
         <Suspense fallback={null}>
           <BottomNavbar />
-        </Suspense>
-        <Suspense fallback={null}>
-          <SearchModal />
         </Suspense>
         <Suspense fallback={null}>
           <NeededProjectModal />

@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, ImageIcon, CircuitBoard, Plus } from 'lucide-react';
+import { BarChart3, ImageIcon, CircuitBoard, Plus, Mail } from 'lucide-react';
 
 export default function AdminNavHeader() {
   const pathname = usePathname();
@@ -13,6 +13,7 @@ export default function AdminNavHeader() {
     { name: 'Homepage Slideshow', path: '/admin/slideshow', icon: ImageIcon },
     { name: 'Manage Content', path: '/admin/projects', icon: CircuitBoard },
     { name: 'Upload New', path: '/admin/upload', icon: Plus },
+    { name: 'Inbox', path: '/admin/inbox', icon: Mail },
   ];
 
   return (

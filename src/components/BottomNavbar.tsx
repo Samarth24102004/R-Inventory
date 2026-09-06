@@ -1,9 +1,22 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Home, LayoutList, Search, MessageSquare, PlusSquare, Box, BookOpen } from 'lucide-react';
+import { Home, Mail, PlusSquare, Box, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
+
+function ProjectsBoardIcon({ className }: { className?: string; strokeWidth?: number }) {
+  return (
+    <span className="inline-flex items-center justify-center w-6 h-6 shrink-0">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/projects-icon.png"
+        alt="Projects"
+        className="w-[26px] h-[20px] max-w-none object-contain transition-all duration-300 filter group-hover:invert"
+      />
+    </span>
+  );
+}
 
 export default function BottomNavbar() {
   const pathname = usePathname();
@@ -29,11 +42,10 @@ export default function BottomNavbar() {
 
   const navItems = [
     { name: 'Home', path: '/', icon: Home },
-    { name: 'Projects', path: '/projects', icon: LayoutList },
+    { name: 'Projects', path: '/projects', icon: ProjectsBoardIcon },
     { name: '3D Models', path: '/3d-models', icon: Box },
     { name: 'Manuals', path: '/manuals', icon: BookOpen },
-    { name: 'Search', path: '?search=true', icon: Search },
-    { name: 'Idea', path: '?idea=true', icon: MessageSquare, hasBadge: true },
+    { name: 'Contact Me', path: '?contact=true', icon: Mail, hasBadge: true },
   ];
 
   return (
@@ -41,23 +53,20 @@ export default function BottomNavbar() {
       <nav className="bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] px-3 py-3 flex items-center gap-6 shadow-[0_20px_40px_rgba(0,0,0,0.8)]">
         {navItems.map((item) => {
           let isActive = false;
-          const isSearch = searchParams.get('search') === 'true';
-          const isIdea = searchParams.get('idea') === 'true';
+          const isContact = searchParams.get('contact') === 'true' || searchParams.get('idea') === 'true';
 
-          if (item.name === 'Search') {
-            isActive = isSearch;
-          } else if (item.name === 'Idea') {
-            isActive = isIdea;
+          if (item.name === 'Contact Me') {
+            isActive = isContact;
           } else if (item.name === 'Home') {
-            isActive = pathname === '/' && !isSearch && !isIdea && hash !== '#projects';
+            isActive = pathname === '/' && !isContact && hash !== '#projects';
           } else if (item.name === 'Projects') {
-            isActive = pathname === '/projects' || (hash === '#projects' && !isSearch && !isIdea);
+            isActive = pathname === '/projects' || (hash === '#projects' && !isContact);
           } else if (item.name === '3D Models') {
-            isActive = pathname === '/3d-models' && !isSearch && !isIdea;
+            isActive = pathname === '/3d-models' && !isContact;
           } else if (item.name === 'Manuals') {
-            isActive = (pathname === '/manuals' || pathname?.startsWith('/manuals/')) && !isSearch && !isIdea;
+            isActive = (pathname === '/manuals' || pathname?.startsWith('/manuals/')) && !isContact;
           } else {
-            isActive = pathname === item.path && !isSearch && !isIdea;
+            isActive = pathname === item.path && !isContact;
           }
 
           const Icon = item.icon;
