@@ -16,7 +16,17 @@ function getYouTubeEmbedUrl(url: string | undefined): string | null {
   return null;
 }
 
-export default function PremiumProjectCard({ project }: { project: Project }) {
+export default function PremiumProjectCard({ 
+  project,
+  className = "w-full h-96 shrink-0",
+  videoHeight = "h-40"
+}: { 
+  project: Project;
+  className?: string;
+  videoHeight?: string;
+}) {
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+
   // Use the first preview image if available, else null
   const coverImage = project.preview_images && project.preview_images.length > 0 
     ? project.preview_images[0] 
@@ -25,13 +35,23 @@ export default function PremiumProjectCard({ project }: { project: Project }) {
   const previewVideo = project.preview_video_url || (project as any).previewVideoUrl || project.video_url || (project as any).videoUrl;
   const ytEmbed = previewVideo ? getYouTubeEmbedUrl(previewVideo) : null;
 
+  React.useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.defaultMuted = true;
+      videoRef.current.muted = true;
+      videoRef.current.play().catch(() => {
+        // Autoplay may be restricted until user interacts, but defaultMuted helps prevent block
+      });
+    }
+  }, [previewVideo]);
+
   return (
     <Link href={`/projects/${project.slug}`}>
       <div
-        className="w-full h-96 shrink-0 relative rounded-xl bg-[#0a0a0a] border border-white/10 group hover:border-white/30 transition-colors shadow-lg overflow-hidden cursor-pointer flex flex-col"
+        className={`${className} relative rounded-2xl bg-[#0a0a0a] border border-white/10 group hover:border-white/30 transition-all shadow-lg overflow-hidden cursor-pointer flex flex-col`}
       >
         {/* Cover Section: Video or Image */}
-        <div className="h-40 w-full relative bg-[#111] overflow-hidden shrink-0 border-b border-white/10">
+        <div className={`${videoHeight} w-full relative bg-[#111] overflow-hidden shrink-0 border-b border-white/10`}>
           {ytEmbed ? (
             <div className="w-full h-full relative overflow-hidden pointer-events-none">
               <iframe
@@ -43,12 +63,14 @@ export default function PremiumProjectCard({ project }: { project: Project }) {
             </div>
           ) : previewVideo ? (
             <video 
+              ref={videoRef}
               src={previewVideo} 
               autoPlay 
               loop 
               muted 
               playsInline 
-              className="object-cover w-full h-full opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 pointer-events-none"
+              preload="auto"
+              className="object-cover w-full h-full opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 pointer-events-none"
             />
           ) : coverImage ? (
             <Image 
