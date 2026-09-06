@@ -68,7 +68,30 @@ export default function AuthButton() {
 
   return (
     <>
-      <div className="fixed top-8 right-[5%] z-50">
+      <div className="fixed top-8 right-[5%] z-50 flex items-center gap-3">
+        {/* Projects Section Header Button */}
+        <Link
+          href="/projects"
+          className={`h-11 px-4 rounded-full border text-xs sm:text-sm font-medium transition-all backdrop-blur-md flex items-center gap-2.5 group active:scale-95 ${
+            pathname === '/projects'
+              ? 'bg-[#84cc16]/15 border-[#84cc16]/60 text-white shadow-[0_0_20px_rgba(132,204,22,0.2)]'
+              : 'bg-[#0a0a0a]/80 hover:bg-white/10 border-white/20 hover:border-white/40 text-gray-200 hover:text-white shadow-[0_4px_20px_rgba(0,0,0,0.5)]'
+          }`}
+          title="ROS Projects"
+        >
+          <span className="inline-flex items-center justify-center shrink-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/projects-icon.png"
+              alt="Projects"
+              className={`w-[20px] h-[15px] object-contain transition-transform group-hover:scale-110 ${
+                pathname === '/projects' ? 'opacity-100' : 'opacity-85 group-hover:opacity-100'
+              }`}
+            />
+          </span>
+          <span className="font-semibold tracking-tight">Projects</span>
+        </Link>
+
         {user ? (
           <div className="relative">
             <button 
@@ -92,6 +115,20 @@ export default function AuthButton() {
 
             {isMenuOpen && (
               <div className="absolute right-0 mt-3 w-48 bg-[#0a0a0a] border border-white/20 rounded-xl shadow-xl overflow-hidden py-1">
+                <Link
+                  href="/projects"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-2.5 w-full text-left px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/projects-icon.png"
+                    alt="Projects"
+                    className="w-[18px] h-[13px] object-contain opacity-80"
+                  />
+                  <span>Projects</span>
+                </Link>
+                <div className="w-full h-px bg-white/10"></div>
                 <Link
                   href="/profile"
                   onClick={() => setIsMenuOpen(false)}
@@ -126,7 +163,7 @@ export default function AuthButton() {
         ) : (
           <button 
             onClick={() => setModalOpen(true)}
-            className="px-5 py-2 bg-white text-black rounded-full text-sm font-medium hover:bg-gray-200 transition-colors shadow-[0_4px_20px_rgba(255,255,255,0.2)]"
+            className="px-5 py-2.5 bg-white text-black rounded-full text-sm font-medium hover:bg-gray-200 transition-colors shadow-[0_4px_20px_rgba(255,255,255,0.2)]"
           >
             Log In
           </button>
