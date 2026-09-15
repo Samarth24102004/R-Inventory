@@ -48,16 +48,16 @@ export default function PremiumProjectCard({
   return (
     <Link href={`/projects/${project.slug}`}>
       <div
-        className={`${className} relative rounded-2xl bg-[#0a0a0a] border border-white/10 group hover:border-white/30 transition-all shadow-lg overflow-hidden cursor-pointer flex flex-col`}
+        className={`${className} relative rounded-2xl bg-[#F7F5EE] border border-[#32012F]/15 group hover:border-[#32012F]/40 transition-all shadow-md hover:shadow-xl overflow-hidden cursor-pointer flex flex-col`}
       >
         {/* Cover Section: Video or Image */}
-        <div className={`${videoHeight} w-full relative bg-[#111] overflow-hidden shrink-0 border-b border-white/10`}>
+        <div className={`${videoHeight} w-full relative bg-[#EAE6D8] overflow-hidden shrink-0 border-b border-[#32012F]/10`}>
           {ytEmbed ? (
             <div className="w-full h-full relative overflow-hidden pointer-events-none">
               <iframe
                 src={ytEmbed}
                 title={project.title}
-                className="w-[160%] h-[160%] absolute -top-[30%] -left-[30%] object-cover opacity-80 group-hover:opacity-100 transition-all duration-500 border-0"
+                className="w-[160%] h-[160%] absolute -top-[30%] -left-[30%] object-cover opacity-90 group-hover:opacity-100 transition-all duration-500 border-0"
                 allow="autoplay; encrypted-media"
               />
             </div>
@@ -77,49 +77,49 @@ export default function PremiumProjectCard({
               src={coverImage} 
               alt={project.title} 
               fill
-              className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" 
+              className="object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" 
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-white/20">
+            <div className="w-full h-full flex items-center justify-center text-[#32012F]/40">
               No Preview
             </div>
           )}
           {/* Subtle gradient overlay to blend into the card body */}
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-[#0a0a0a] to-transparent pointer-events-none"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-[#F7F5EE] to-transparent pointer-events-none"></div>
         </div>
 
         {/* Animated Glow on Hover */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-white/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20"></div>
+        <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-[#32012F]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20"></div>
         
         {/* Card Body */}
         <div className="relative z-10 flex flex-col grow p-6">
           
           <div className="flex justify-between items-start mb-3">
-            <h3 className="text-xl font-medium text-white leading-tight group-hover:text-gray-300 transition-colors line-clamp-2">
+            <h3 className="text-xl font-semibold text-[#32012F] leading-tight group-hover:text-[#32012F]/80 transition-colors line-clamp-2">
               {project.title}
             </h3>
-            <span className="text-lg font-semibold text-white ml-4 shrink-0">₹{project.price}</span>
+            <span className="text-lg font-bold text-[#32012F] ml-4 shrink-0">₹{project.price}</span>
           </div>
 
           {project.tags && Array.isArray(project.tags) && project.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-3">
               {project.tags.map((tag: string, idx: number) => (
-                <span key={idx} className="bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-1 rounded text-[10px] font-sans tracking-wide uppercase">
+                <span key={idx} className="bg-[#32012F]/10 text-[#32012F] border border-[#32012F]/20 px-2 py-0.5 rounded text-[10px] font-sans font-semibold tracking-wide uppercase">
                   {tag}
                 </span>
               ))}
             </div>
           )}
 
-          <p className="text-gray-400 text-xs leading-relaxed line-clamp-2 mb-4">
+          <p className="text-[#32012F]/70 text-xs leading-relaxed line-clamp-2 mb-4">
             {(project as any).short_description || project.shortDescription}
           </p>
 
-          <div className="mt-auto grid grid-cols-2 gap-y-2 pt-4 border-t border-white/10">
-            <div className="flex items-center text-[10px] text-gray-400"><span className="text-white mr-1 text-xs">✓</span> Components</div>
-            <div className="flex items-center text-[10px] text-gray-400"><span className="text-white mr-1 text-xs">✓</span> Circuit</div>
-            <div className="flex items-center text-[10px] text-gray-400"><span className="text-white mr-1 text-xs">✓</span> Commands</div>
-            <div className="flex items-center text-[10px] text-gray-400"><span className="text-white mr-1 text-xs">✓</span> Code</div>
+          <div className="mt-auto grid grid-cols-2 gap-y-2 pt-4 border-t border-[#32012F]/10">
+            <div className="flex items-center text-[10px] text-[#32012F]/70"><span className="text-[#32012F] mr-1 text-xs font-bold">✓</span> Components</div>
+            <div className="flex items-center text-[10px] text-[#32012F]/70"><span className="text-[#32012F] mr-1 text-xs font-bold">✓</span> Circuit</div>
+            <div className="flex items-center text-[10px] text-[#32012F]/70"><span className="text-[#32012F] mr-1 text-xs font-bold">✓</span> Commands</div>
+            <div className="flex items-center text-[10px] text-[#32012F]/70"><span className="text-[#32012F] mr-1 text-xs font-bold">✓</span> Code</div>
           </div>
 
         </div>

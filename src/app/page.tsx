@@ -41,10 +41,10 @@ export default async function Home() {
   const displayModels = dbModels || [];
 
   return (
-    <main className="relative bg-black min-h-screen text-white selection:bg-[#84cc16]/30 flex flex-col">
+    <main className="relative bg-[#E2DFD0] min-h-screen text-[#32012F] selection:bg-[#32012F]/20 flex flex-col">
       {/* Background Image Overlay */}
       <div
-        className="fixed inset-0 z-0 opacity-30 pointer-events-none mix-blend-screen"
+        className="fixed inset-0 z-0 opacity-15 pointer-events-none mix-blend-multiply"
         style={{
           backgroundImage: 'url("/drone-bg.png")',
           backgroundSize: 'cover',
@@ -52,7 +52,7 @@ export default async function Home() {
           backgroundAttachment: 'fixed',
         }}
       />
-      <div className="fixed inset-0 bg-linear-to-b from-black/80 via-black/60 to-black z-0 pointer-events-none"></div>
+      <div className="fixed inset-0 bg-linear-to-b from-[#E2DFD0]/90 via-[#E2DFD0]/80 to-[#E2DFD0] z-0 pointer-events-none"></div>
 
       {/* Main Content Container */}
       <div className="relative z-10 grow max-w-7xl mx-auto px-6 md:px-12 pt-36 pb-24 w-full">
@@ -62,9 +62,9 @@ export default async function Home() {
           
           {/* Left Column: Heading, Quick Action Navigation & Social Links */}
           <div className="text-left max-w-2xl lg:max-w-xl xl:max-w-2xl">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-8 leading-[1.15]">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[#32012F] mb-8 leading-[1.15]">
               Build Production-Ready <br className="hidden sm:block" />
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-[#84cc16] via-emerald-400 to-cyan-400">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-[#32012F] via-[#522546] to-[#88304E]">
                 Robotics Solutions
               </span>
             </h1>
@@ -74,43 +74,43 @@ export default async function Home() {
               {/* ROS Packages */}
               <Link
                 href="/projects"
-                className="group relative inline-flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-[#0a0a0a]/90 hover:bg-white/[0.06] border border-white/10 hover:border-[#84cc16]/50 transition-all duration-300 backdrop-blur-xl shadow-lg hover:shadow-[0_0_25px_rgba(132,204,22,0.18)] hover:-translate-y-0.5 active:scale-[0.98]"
+                className="group relative inline-flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-[#F7F5EE] hover:bg-white border border-[#32012F]/15 hover:border-[#32012F]/40 transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98]"
               >
-                <div className="w-8 h-8 rounded-xl bg-[#84cc16]/10 border border-[#84cc16]/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-[#84cc16]/20 group-hover:border-[#84cc16]/40 transition-all duration-300 shrink-0">
-                  <Cpu className="w-4 h-4 text-[#84cc16]" />
+                <div className="w-8 h-8 rounded-xl bg-[#32012F]/10 border border-[#32012F]/15 flex items-center justify-center group-hover:scale-110 group-hover:bg-[#32012F] group-hover:text-[#E2DFD0] transition-all duration-300 shrink-0 text-[#32012F]">
+                  <Cpu className="w-4 h-4" />
                 </div>
-                <span className="text-xs sm:text-sm font-semibold text-white tracking-tight">
+                <span className="text-xs sm:text-sm font-semibold text-[#32012F] tracking-tight">
                   ROS Packages
                 </span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-gray-500 group-hover:text-[#84cc16] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#32012F]/50 group-hover:text-[#32012F] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0" />
               </Link>
 
               {/* Manuals */}
               <Link
                 href="/manuals"
-                className="group relative inline-flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-[#0a0a0a]/90 hover:bg-white/[0.06] border border-white/10 hover:border-cyan-400/50 transition-all duration-300 backdrop-blur-xl shadow-lg hover:shadow-[0_0_25px_rgba(34,211,238,0.18)] hover:-translate-y-0.5 active:scale-[0.98]"
+                className="group relative inline-flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-[#F7F5EE] hover:bg-white border border-[#32012F]/15 hover:border-[#32012F]/40 transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98]"
               >
-                <div className="w-8 h-8 rounded-xl bg-cyan-400/10 border border-cyan-400/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-cyan-400/20 group-hover:border-cyan-400/40 transition-all duration-300 shrink-0">
-                  <BookOpen className="w-4 h-4 text-cyan-400" />
+                <div className="w-8 h-8 rounded-xl bg-[#32012F]/10 border border-[#32012F]/15 flex items-center justify-center group-hover:scale-110 group-hover:bg-[#32012F] group-hover:text-[#E2DFD0] transition-all duration-300 shrink-0 text-[#32012F]">
+                  <BookOpen className="w-4 h-4" />
                 </div>
-                <span className="text-xs sm:text-sm font-semibold text-white tracking-tight">
+                <span className="text-xs sm:text-sm font-semibold text-[#32012F] tracking-tight">
                   Manuals
                 </span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-gray-500 group-hover:text-cyan-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#32012F]/50 group-hover:text-[#32012F] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0" />
               </Link>
 
               {/* CAD & 3D Models */}
               <Link
                 href="/3d-models"
-                className="group relative inline-flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-[#0a0a0a]/90 hover:bg-white/[0.06] border border-white/10 hover:border-purple-400/50 transition-all duration-300 backdrop-blur-xl shadow-lg hover:shadow-[0_0_25px_rgba(168,85,247,0.18)] hover:-translate-y-0.5 active:scale-[0.98]"
+                className="group relative inline-flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-[#F7F5EE] hover:bg-white border border-[#32012F]/15 hover:border-[#32012F]/40 transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98]"
               >
-                <div className="w-8 h-8 rounded-xl bg-purple-400/10 border border-purple-400/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-purple-400/20 group-hover:border-purple-400/40 transition-all duration-300 shrink-0">
-                  <Box className="w-4 h-4 text-purple-400" />
+                <div className="w-8 h-8 rounded-xl bg-[#32012F]/10 border border-[#32012F]/15 flex items-center justify-center group-hover:scale-110 group-hover:bg-[#32012F] group-hover:text-[#E2DFD0] transition-all duration-300 shrink-0 text-[#32012F]">
+                  <Box className="w-4 h-4" />
                 </div>
-                <span className="text-xs sm:text-sm font-semibold text-white tracking-tight">
+                <span className="text-xs sm:text-sm font-semibold text-[#32012F] tracking-tight">
                   CAD & 3D Models
                 </span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-gray-500 group-hover:text-purple-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#32012F]/50 group-hover:text-[#32012F] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0" />
               </Link>
             </div>
 
@@ -122,7 +122,7 @@ export default async function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="YouTube Channel"
-                className="group p-2.5 rounded-xl bg-[#0a0a0a]/90 hover:bg-[#ff0000]/10 border border-white/10 hover:border-[#ff0000]/50 text-gray-400 hover:text-[#ff0000] transition-all duration-300 backdrop-blur-xl shadow-md hover:shadow-[0_0_20px_rgba(255,0,0,0.3)] hover:-translate-y-0.5 active:scale-95 flex items-center justify-center"
+                className="group p-2.5 rounded-xl bg-[#F7F5EE] hover:bg-[#ff0000]/10 border border-[#32012F]/15 hover:border-[#ff0000]/50 text-[#32012F]/70 hover:text-[#ff0000] transition-all duration-300 shadow-sm hover:-translate-y-0.5 active:scale-95 flex items-center justify-center"
                 title="YouTube"
               >
                 <svg
@@ -145,7 +145,7 @@ export default async function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram Profile"
-                className="group p-2.5 rounded-xl bg-[#0a0a0a]/90 hover:bg-[#e1306c]/10 border border-white/10 hover:border-[#e1306c]/50 text-gray-400 hover:text-[#e1306c] transition-all duration-300 backdrop-blur-xl shadow-md hover:shadow-[0_0_20px_rgba(225,48,108,0.3)] hover:-translate-y-0.5 active:scale-95 flex items-center justify-center"
+                className="group p-2.5 rounded-xl bg-[#F7F5EE] hover:bg-[#e1306c]/10 border border-[#32012F]/15 hover:border-[#e1306c]/50 text-[#32012F]/70 hover:text-[#e1306c] transition-all duration-300 shadow-sm hover:-translate-y-0.5 active:scale-95 flex items-center justify-center"
                 title="Instagram"
               >
                 <svg
@@ -169,7 +169,7 @@ export default async function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn Profile"
-                className="group p-2.5 rounded-xl bg-[#0a0a0a]/90 hover:bg-[#0a66c2]/10 border border-white/10 hover:border-[#0a66c2]/50 text-gray-400 hover:text-[#0a66c2] transition-all duration-300 backdrop-blur-xl shadow-md hover:shadow-[0_0_20px_rgba(10,102,194,0.3)] hover:-translate-y-0.5 active:scale-95 flex items-center justify-center"
+                className="group p-2.5 rounded-xl bg-[#F7F5EE] hover:bg-[#0a66c2]/10 border border-[#32012F]/15 hover:border-[#0a66c2]/50 text-[#32012F]/70 hover:text-[#0a66c2] transition-all duration-300 shadow-sm hover:-translate-y-0.5 active:scale-95 flex items-center justify-center"
                 title="LinkedIn"
               >
                 <svg
@@ -193,14 +193,14 @@ export default async function Home() {
           {featuredVitaBot && (
             <div className="w-full sm:w-[380px] lg:w-[390px] xl:w-[410px] shrink-0 mx-auto lg:mx-0 mt-6 lg:mt-0">
               <div className="relative group">
-                {/* Cyberpunk ambient glow behind card */}
-                <div className="absolute -inset-1.5 rounded-3xl bg-linear-to-r from-[#84cc16]/25 via-cyan-500/20 to-purple-500/25 opacity-70 blur-xl group-hover:opacity-100 transition-all duration-500 pointer-events-none"></div>
+                {/* Ambient glow behind card */}
+                <div className="absolute -inset-1.5 rounded-3xl bg-linear-to-r from-[#32012F]/15 via-[#522546]/20 to-[#32012F]/10 opacity-70 blur-xl group-hover:opacity-100 transition-all duration-500 pointer-events-none"></div>
 
                 {/* Floating live badge */}
-                <div className="absolute -top-3.5 left-6 z-30 inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-black/90 border border-[#84cc16]/50 text-[11px] font-semibold text-[#84cc16] shadow-xl backdrop-blur-md">
+                <div className="absolute -top-3.5 left-6 z-30 inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#32012F] border border-[#32012F] text-[11px] font-semibold text-[#E2DFD0] shadow-xl backdrop-blur-md">
                   <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#84cc16] opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#84cc16]"></span>
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E2DFD0] opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#E2DFD0]"></span>
                   </span>
                   <span className="tracking-wide uppercase">Featured Robot</span>
                 </div>
@@ -221,15 +221,15 @@ export default async function Home() {
         <section id="projects" className="mb-28">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
             <div>
-              <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#84cc16] mb-2">
+              <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#32012F]/80 mb-2">
                 <Layers className="w-3.5 h-3.5" />
                 <span>Featured Collection</span>
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">ROS 2 Projects</h2>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-[#32012F]">ROS 2 Projects</h2>
             </div>
             <Link
               href="/projects"
-              className="hidden sm:inline-flex group items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-[#84cc16] text-white hover:text-black border border-white/15 hover:border-[#84cc16] text-sm font-semibold transition-all duration-300 shadow-md"
+              className="hidden sm:inline-flex group items-center gap-2 px-5 py-2.5 rounded-full bg-[#32012F] text-[#E2DFD0] hover:bg-[#32012F]/90 text-sm font-semibold transition-all duration-300 shadow-md"
             >
               <span>View More Projects</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -247,7 +247,7 @@ export default async function Home() {
           <div className="mt-8 text-center sm:hidden">
             <Link
               href="/projects"
-              className="inline-flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-[#84cc16] text-black font-semibold shadow-lg shadow-[#84cc16]/20 active:scale-[0.98] transition-all"
+              className="inline-flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-[#32012F] text-[#E2DFD0] font-semibold shadow-md active:scale-[0.98] transition-all"
             >
               <span>View More Projects</span>
               <ArrowRight className="w-4 h-4" />
@@ -259,15 +259,15 @@ export default async function Home() {
         <section id="3d-models" className="mb-16">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
             <div>
-              <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-blue-400 mb-2">
+              <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#32012F]/80 mb-2">
                 <Box className="w-3.5 h-3.5" />
                 <span>Print-Ready CAD</span>
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">3D Models</h2>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-[#32012F]">3D Models</h2>
             </div>
             <Link
               href="/3d-models"
-              className="hidden sm:inline-flex group items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-blue-500 text-white hover:text-white border border-white/15 hover:border-blue-500 text-sm font-semibold transition-all duration-300 shadow-md"
+              className="hidden sm:inline-flex group items-center gap-2 px-5 py-2.5 rounded-full bg-[#32012F] text-[#E2DFD0] hover:bg-[#32012F]/90 text-sm font-semibold transition-all duration-300 shadow-md"
             >
               <span>View More 3D Models</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -279,37 +279,37 @@ export default async function Home() {
               {displayModels.map((model, idx) => (
                 <div
                   key={model.id}
-                  className={`group relative flex flex-col bg-[#0a0a0a] rounded-2xl overflow-hidden border border-white/10 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/10 ${
+                  className={`group relative flex flex-col bg-[#F7F5EE] rounded-2xl overflow-hidden border border-[#32012F]/15 hover:border-[#32012F]/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
                     idx >= 3 ? 'hidden sm:flex' : 'flex'
                   }`}
                 >
-                  <div className="relative h-48 overflow-hidden bg-neutral-900">
-                    <div className="absolute inset-0 bg-linear-to-t from-[#0a0a0a] to-transparent z-10 opacity-60"></div>
+                  <div className="relative h-48 overflow-hidden bg-[#EAE6D8]">
+                    <div className="absolute inset-0 bg-linear-to-t from-[#F7F5EE] to-transparent z-10 opacity-60"></div>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={model.image_url || '/placeholder.jpg'}
                       alt={model.title}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute top-3 right-3 z-20 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-xs">
-                      <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-                      <span className="font-medium text-white">{model.rating || '5.0'}</span>
+                    <div className="absolute top-3 right-3 z-20 flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#32012F] text-[#E2DFD0] border border-[#32012F] text-xs">
+                      <Star className="w-3 h-3 text-[#E2DFD0] fill-[#E2DFD0]" />
+                      <span className="font-medium text-[#E2DFD0]">{model.rating || '5.0'}</span>
                     </div>
                   </div>
 
                   <div className="flex flex-col flex-1 p-5 z-20 relative">
                     <div className="flex justify-between items-start gap-2 mb-2">
-                      <h3 className="text-lg font-medium text-white tracking-tight line-clamp-1 group-hover:text-blue-400 transition-colors">{model.title}</h3>
-                      <span className="text-base font-semibold text-blue-400 shrink-0">₹{model.price}</span>
+                      <h3 className="text-lg font-semibold text-[#32012F] tracking-tight line-clamp-1 group-hover:text-[#32012F]/80 transition-colors">{model.title}</h3>
+                      <span className="text-base font-bold text-[#32012F] shrink-0">₹{model.price}</span>
                     </div>
 
-                    <p className="text-xs text-neutral-400 line-clamp-2 mb-4 flex-1">
+                    <p className="text-xs text-[#32012F]/70 line-clamp-2 mb-4 flex-1">
                       {model.description}
                     </p>
 
                     <Link
                       href="/3d-models"
-                      className="w-full mt-auto bg-white/5 border border-white/10 hover:bg-blue-600 hover:text-white hover:border-blue-500 text-white text-xs font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all duration-300"
+                      className="w-full mt-auto bg-[#32012F] hover:bg-[#32012F]/90 text-[#E2DFD0] text-xs font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 shadow-sm"
                     >
                       View 3D Models
                     </Link>
@@ -318,10 +318,10 @@ export default async function Home() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 px-4 rounded-2xl bg-[#0a0a0a] border border-white/10 text-gray-400">
-              <Box className="w-10 h-10 text-gray-600 mx-auto mb-3" />
+            <div className="text-center py-12 px-4 rounded-2xl bg-[#F7F5EE] border border-[#32012F]/15 text-[#32012F]/70">
+              <Box className="w-10 h-10 text-[#32012F]/40 mx-auto mb-3" />
               <p className="text-sm">Explore our collection of 3D printable robotics models.</p>
-              <Link href="/3d-models" className="inline-block mt-4 text-xs font-semibold text-blue-400 hover:underline">
+              <Link href="/3d-models" className="inline-block mt-4 text-xs font-semibold text-[#32012F] hover:underline">
                 Go to 3D Models Inventory &rarr;
               </Link>
             </div>
@@ -330,7 +330,7 @@ export default async function Home() {
           <div className="mt-8 text-center sm:hidden">
             <Link
               href="/3d-models"
-              className="inline-flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-blue-600 text-white font-semibold shadow-lg shadow-blue-600/20 active:scale-[0.98] transition-all"
+              className="inline-flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-[#32012F] text-[#E2DFD0] font-semibold shadow-md active:scale-[0.98] transition-all"
             >
               <span>View More 3D Models</span>
               <ArrowRight className="w-4 h-4" />
