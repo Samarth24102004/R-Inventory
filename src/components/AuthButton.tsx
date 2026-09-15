@@ -74,8 +74,8 @@ export default function AuthButton() {
           href="/projects"
           className={`h-11 px-4 rounded-full border text-xs sm:text-sm font-medium transition-all backdrop-blur-md flex items-center gap-2.5 group active:scale-95 ${
             pathname === '/projects'
-              ? 'bg-[#9400FF] text-white border-[#9400FF] shadow-[0_0_20px_rgba(148,0,255,0.4)]'
-              : 'bg-[#18003a]/80 hover:bg-[#9400FF]/20 border border-[#9400FF]/30 hover:border-[#9400FF]/60 text-white shadow-[0_4px_20px_rgba(0,0,0,0.5)]'
+              ? 'bg-[#E26EE5] text-white border-[#E26EE5] shadow-[0_0_20px_rgba(226,110,229,0.4)]'
+              : 'bg-[#49108B] hover:bg-[#7E30E1] text-[#F3F8FF] border border-[#49108B]/20 shadow-[0_4px_20px_rgba(73,16,139,0.2)]'
           }`}
           title="ROS Projects"
         >
@@ -96,14 +96,14 @@ export default function AuthButton() {
           <div className="relative">
             <button 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-1 bg-[#18003a]/80 border border-[#9400FF]/30 text-white rounded-full text-sm font-medium hover:bg-[#9400FF]/20 transition-colors backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex items-center gap-2 group relative"
+              className="p-1 bg-[#49108B] border border-[#E26EE5]/30 text-[#F3F8FF] rounded-full text-sm font-medium hover:bg-[#7E30E1] transition-colors backdrop-blur-md shadow-[0_4px_20px_rgba(73,16,139,0.2)] flex items-center gap-2 group relative"
             >
-              <div className="absolute inset-0 rounded-full bg-[#9400FF]/20 animate-ping opacity-20"></div>
+              <div className="absolute inset-0 rounded-full bg-[#E26EE5]/30 animate-ping opacity-20"></div>
               {avatarUrl ? (
-                <Image src={avatarUrl} alt="Avatar" width={36} height={36} className="w-9 h-9 rounded-full bg-[#18003a] border border-[#9400FF]/30 group-hover:border-[#9400FF] transition-colors object-cover" />
+                <Image src={avatarUrl} alt="Avatar" width={36} height={36} className="w-9 h-9 rounded-full bg-[#49108B] border border-[#E26EE5]/30 group-hover:border-[#E26EE5] transition-colors object-cover" />
               ) : (
-                <div className="w-9 h-9 rounded-full bg-[#18003a] border border-[#9400FF]/30 flex items-center justify-center group-hover:border-[#9400FF] transition-colors">
-                  <svg className="w-5 h-5 text-white/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="w-9 h-9 rounded-full bg-[#49108B] border border-[#E26EE5]/30 flex items-center justify-center group-hover:border-[#E26EE5] transition-colors">
+                  <svg className="w-5 h-5 text-[#F3F8FF]/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </div>
@@ -114,11 +114,11 @@ export default function AuthButton() {
             </button>
 
             {isMenuOpen && (
-              <div className="absolute right-0 mt-3 w-48 bg-[#18003a] border border-[#9400FF]/30 rounded-xl shadow-2xl overflow-hidden py-1">
+              <div className="absolute right-0 mt-3 w-48 bg-[#49108B] border border-[#E26EE5]/30 rounded-xl shadow-2xl overflow-hidden py-1">
                 <Link
                   href="/projects"
                   onClick={() => setIsMenuOpen(false)}
-                  className="flex items-center gap-2.5 w-full text-left px-4 py-3 text-sm text-white/80 hover:text-white hover:bg-[#9400FF]/20 transition-colors"
+                  className="flex items-center gap-2.5 w-full text-left px-4 py-3 text-sm text-[#F3F8FF]/80 hover:text-white hover:bg-[#E26EE5]/20 transition-colors"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -128,29 +128,29 @@ export default function AuthButton() {
                   />
                   <span>Projects</span>
                 </Link>
-                <div className="w-full h-px bg-[#9400FF]/20"></div>
+                <div className="w-full h-px bg-[#E26EE5]/20"></div>
                 <Link
                   href="/profile"
                   onClick={() => setIsMenuOpen(false)}
-                  className="block w-full text-left px-4 py-3 text-sm text-white/80 hover:text-white hover:bg-[#9400FF]/20 transition-colors"
+                  className="block w-full text-left px-4 py-3 text-sm text-[#F3F8FF]/80 hover:text-white hover:bg-[#E26EE5]/20 transition-colors"
                 >
                   My Profile
                 </Link>
                 <Link
                   href="/profile"
                   onClick={() => setIsMenuOpen(false)}
-                  className="block w-full text-left px-4 py-3 text-sm text-white/80 hover:text-white hover:bg-[#9400FF]/20 transition-colors"
+                  className="block w-full text-left px-4 py-3 text-sm text-[#F3F8FF]/80 hover:text-white hover:bg-[#E26EE5]/20 transition-colors"
                 >
                   My Products
                 </Link>
-                <div className="w-full h-px bg-[#9400FF]/20"></div>
+                <div className="w-full h-px bg-[#E26EE5]/20"></div>
                 <button
                   onClick={handleSignOut}
-                  className="w-full text-left px-4 py-3 text-sm text-white/80 hover:text-white hover:bg-[#9400FF]/20 transition-colors"
+                  className="w-full text-left px-4 py-3 text-sm text-[#F3F8FF]/80 hover:text-white hover:bg-[#E26EE5]/20 transition-colors"
                 >
                   Sign Out
                 </button>
-                <div className="w-full h-px bg-[#9400FF]/20"></div>
+                <div className="w-full h-px bg-[#E26EE5]/20"></div>
                 <button
                   onClick={handleDeleteAccount}
                   className="w-full text-left px-4 py-3 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors font-medium"
@@ -163,7 +163,7 @@ export default function AuthButton() {
         ) : (
           <button 
             onClick={() => setModalOpen(true)}
-            className="px-5 py-2.5 bg-[#9400FF] text-white rounded-full text-sm font-semibold hover:bg-[#9400FF]/90 transition-colors shadow-[0_0_20px_rgba(148,0,255,0.4)]"
+            className="px-5 py-2.5 bg-[#E26EE5] text-white rounded-full text-sm font-semibold hover:bg-[#E26EE5]/90 transition-colors shadow-[0_4px_20px_rgba(226,110,229,0.35)]"
           >
             Log In
           </button>

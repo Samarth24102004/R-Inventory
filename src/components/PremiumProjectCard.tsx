@@ -48,16 +48,16 @@ export default function PremiumProjectCard({
   return (
     <Link href={`/projects/${project.slug}`}>
       <div
-        className={`${className} relative rounded-2xl bg-[#1d0046] border border-[#9400FF]/30 group hover:border-[#9400FF] transition-all shadow-xl hover:shadow-[0_10px_30px_rgba(148,0,255,0.25)] overflow-hidden cursor-pointer flex flex-col`}
+        className={`${className} relative rounded-2xl bg-white border border-[#49108B]/15 group hover:border-[#E26EE5]/60 transition-all shadow-md hover:shadow-xl hover:shadow-[#E26EE5]/10 overflow-hidden cursor-pointer flex flex-col`}
       >
         {/* Cover Section: Video or Image */}
-        <div className={`${videoHeight} w-full relative bg-[#130030] overflow-hidden shrink-0 border-b border-[#9400FF]/30`}>
+        <div className={`${videoHeight} w-full relative bg-[#EDF2F9] overflow-hidden shrink-0 border-b border-[#49108B]/10`}>
           {ytEmbed ? (
             <div className="w-full h-full relative overflow-hidden pointer-events-none">
               <iframe
                 src={ytEmbed}
                 title={project.title}
-                className="w-[160%] h-[160%] absolute -top-[30%] -left-[30%] object-cover opacity-85 group-hover:opacity-100 transition-all duration-500 border-0"
+                className="w-[160%] h-[160%] absolute -top-[30%] -left-[30%] object-cover opacity-90 group-hover:opacity-100 transition-all duration-500 border-0"
                 allow="autoplay; encrypted-media"
               />
             </div>
@@ -77,49 +77,49 @@ export default function PremiumProjectCard({
               src={coverImage} 
               alt={project.title} 
               fill
-              className="object-cover opacity-85 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" 
+              className="object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" 
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-white/30">
+            <div className="w-full h-full flex items-center justify-center text-[#49108B]/40">
               No Preview
             </div>
           )}
           {/* Subtle gradient overlay to blend into the card body */}
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-[#1d0046] to-transparent pointer-events-none"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-white to-transparent pointer-events-none"></div>
         </div>
 
         {/* Animated Glow on Hover */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-[#9400FF] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20"></div>
+        <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-[#E26EE5] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20"></div>
         
         {/* Card Body */}
         <div className="relative z-10 flex flex-col grow p-6">
           
           <div className="flex justify-between items-start mb-3">
-            <h3 className="text-xl font-semibold text-white leading-tight group-hover:text-[#9400FF] transition-colors line-clamp-2">
+            <h3 className="text-xl font-semibold text-[#49108B] leading-tight group-hover:text-[#E26EE5] transition-colors line-clamp-2">
               {project.title}
             </h3>
-            <span className="text-lg font-bold text-[#9400FF] ml-4 shrink-0">₹{project.price}</span>
+            <span className="text-lg font-bold text-[#49108B] ml-4 shrink-0">₹{project.price}</span>
           </div>
 
           {project.tags && Array.isArray(project.tags) && project.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-3">
               {project.tags.map((tag: string, idx: number) => (
-                <span key={idx} className="bg-[#9400FF]/15 text-[#9400FF] border border-[#9400FF]/30 px-2 py-0.5 rounded text-[10px] font-sans font-semibold tracking-wide uppercase">
+                <span key={idx} className="bg-[#E26EE5]/10 text-[#7E30E1] border border-[#E26EE5]/25 px-2 py-0.5 rounded text-[10px] font-sans font-semibold tracking-wide uppercase">
                   {tag}
                 </span>
               ))}
             </div>
           )}
 
-          <p className="text-white/70 text-xs leading-relaxed line-clamp-2 mb-4">
+          <p className="text-[#49108B]/70 text-xs leading-relaxed line-clamp-2 mb-4">
             {(project as any).short_description || project.shortDescription}
           </p>
 
-          <div className="mt-auto grid grid-cols-2 gap-y-2 pt-4 border-t border-[#9400FF]/20">
-            <div className="flex items-center text-[10px] text-white/70"><span className="text-[#9400FF] mr-1.5 text-xs font-bold">✓</span> Components</div>
-            <div className="flex items-center text-[10px] text-white/70"><span className="text-[#9400FF] mr-1.5 text-xs font-bold">✓</span> Circuit</div>
-            <div className="flex items-center text-[10px] text-white/70"><span className="text-[#9400FF] mr-1.5 text-xs font-bold">✓</span> Commands</div>
-            <div className="flex items-center text-[10px] text-white/70"><span className="text-[#9400FF] mr-1.5 text-xs font-bold">✓</span> Code</div>
+          <div className="mt-auto grid grid-cols-2 gap-y-2 pt-4 border-t border-[#49108B]/10">
+            <div className="flex items-center text-[10px] text-[#49108B]/70"><span className="text-[#E26EE5] mr-1.5 text-xs font-bold">✓</span> Components</div>
+            <div className="flex items-center text-[10px] text-[#49108B]/70"><span className="text-[#E26EE5] mr-1.5 text-xs font-bold">✓</span> Circuit</div>
+            <div className="flex items-center text-[10px] text-[#49108B]/70"><span className="text-[#E26EE5] mr-1.5 text-xs font-bold">✓</span> Commands</div>
+            <div className="flex items-center text-[10px] text-[#49108B]/70"><span className="text-[#E26EE5] mr-1.5 text-xs font-bold">✓</span> Code</div>
           </div>
 
         </div>
