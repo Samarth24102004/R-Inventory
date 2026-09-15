@@ -50,7 +50,7 @@ export default function BottomNavbar() {
 
   return (
     <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
-      <nav className="bg-[#49108B]/95 backdrop-blur-lg border border-[#E26EE5]/30 rounded-[2.5rem] px-3 py-3 flex items-center gap-6 shadow-[0_20px_40px_rgba(73,16,139,0.35)]">
+      <nav className="bg-[#0B2447]/95 backdrop-blur-lg border border-[#687EFF]/30 rounded-[2.5rem] px-3 py-3 flex items-center gap-6 shadow-[0_20px_40px_rgba(11,36,71,0.35)]">
         {navItems.map((item) => {
           let isActive = false;
           const isContact = searchParams.get('contact') === 'true' || searchParams.get('idea') === 'true';
@@ -73,22 +73,22 @@ export default function BottomNavbar() {
 
           return (
             <div key={item.name} className="relative group flex items-center justify-center">
-              <div className="absolute -top-12 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 px-3 py-1.5 bg-[#E26EE5] text-white text-xs font-bold rounded-md shadow-lg pointer-events-none whitespace-nowrap z-50 transform translate-y-2 group-hover:translate-y-0">
+              <div className="absolute -top-12 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 px-3 py-1.5 bg-[#687EFF] text-white text-xs font-bold rounded-md shadow-lg pointer-events-none whitespace-nowrap z-50 transform translate-y-2 group-hover:translate-y-0">
                 {item.name}
               </div>
               <Link
                 href={item.path}
-                className={`flex items-center justify-center transition-all duration-300 rounded-full hover:scale-125 relative p-3 hover:bg-[#E26EE5] hover:text-white hover:shadow-[0_0_20px_rgba(226,110,229,0.6)] ${
+                className={`flex items-center justify-center transition-all duration-300 rounded-full hover:scale-125 relative p-3 hover:bg-[#687EFF] hover:text-white hover:shadow-[0_0_20px_rgba(104,126,255,0.6)] ${
                   isActive
-                    ? 'bg-transparent text-[#E26EE5]'
-                    : 'bg-transparent text-[#F3F8FF]'
+                    ? 'bg-transparent text-[#B6FFFA]'
+                    : 'bg-transparent text-[#B6FFFA]/80'
                 }`}
               >
                 <Icon className="w-6 h-6" strokeWidth={isActive ? 2.5 : 2} />
                 {item.hasBadge && (
                   <span
                     className={`absolute top-[10px] right-[10px] w-2.5 h-2.5 rounded-full border-2 ${
-                      isActive ? 'border-[#E26EE5] bg-[#49108B]' : 'border-[#49108B] bg-[#E26EE5]'
+                      isActive ? 'border-[#687EFF] bg-[#0B2447]' : 'border-[#0B2447] bg-[#687EFF]'
                     }`}
                   ></span>
                 )}

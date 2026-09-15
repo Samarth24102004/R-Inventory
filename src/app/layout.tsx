@@ -151,18 +151,18 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className={`${inter.className} min-h-screen bg-[#F3F8FF] text-[#49108B] antialiased`}>
+      <body className={`${inter.className} min-h-screen bg-[#B6FFFA] text-[#0B2447] antialiased`}>
         {/* Header Background */}
-        <div className="fixed top-0 left-0 right-0 h-28 bg-transparent backdrop-blur-md z-40 mask-[linear-gradient(to_bottom,#F3F8FF_60%,transparent_100%)] pointer-events-none"></div>
+        <div className="fixed top-0 left-0 right-0 h-28 bg-transparent backdrop-blur-md z-40 mask-[linear-gradient(to_bottom,#B6FFFA_60%,transparent_100%)] pointer-events-none"></div>
 
         <div className="fixed top-8 left-[5%] z-50 pointer-events-none flex flex-col items-center">
           <div className="flex items-center gap-1">
-            <span className="text-3xl font-black tracking-tighter text-[#49108B] drop-shadow-[0_2px_10px_rgba(226,110,229,0.2)]" style={{ fontFamily: 'sans-serif' }}>
+            <span className="text-3xl font-black tracking-tighter text-[#0B2447] drop-shadow-[0_2px_10px_rgba(104,126,255,0.25)]" style={{ fontFamily: 'sans-serif' }}>
               ROS
             </span>
-            <span className="w-2 h-2 bg-[#E26EE5] rounded-sm mt-3 animate-pulse shadow-[0_0_10px_#E26EE5]"></span>
+            <span className="w-2 h-2 bg-[#687EFF] rounded-sm mt-3 animate-pulse shadow-[0_0_10px_#687EFF]"></span>
           </div>
-          <span className="text-[10px] font-bold tracking-[0.3em] text-[#49108B]/80 mt-[-2px]">
+          <span className="text-[10px] font-bold tracking-[0.3em] text-[#0B2447]/80 mt-[-2px]">
             INVENTORY
           </span>
         </div>

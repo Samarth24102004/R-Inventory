@@ -48,10 +48,10 @@ export default function PremiumProjectCard({
   return (
     <Link href={`/projects/${project.slug}`}>
       <div
-        className={`${className} relative rounded-2xl bg-white border border-[#49108B]/15 group hover:border-[#E26EE5]/60 transition-all shadow-md hover:shadow-xl hover:shadow-[#E26EE5]/10 overflow-hidden cursor-pointer flex flex-col`}
+        className={`${className} relative rounded-2xl bg-white border border-[#687EFF]/20 group hover:border-[#687EFF] transition-all shadow-md hover:shadow-xl hover:shadow-[#687EFF]/15 overflow-hidden cursor-pointer flex flex-col`}
       >
         {/* Cover Section: Video or Image */}
-        <div className={`${videoHeight} w-full relative bg-[#EDF2F9] overflow-hidden shrink-0 border-b border-[#49108B]/10`}>
+        <div className={`${videoHeight} w-full relative bg-[#EAF8FF] overflow-hidden shrink-0 border-b border-[#687EFF]/15`}>
           {ytEmbed ? (
             <div className="w-full h-full relative overflow-hidden pointer-events-none">
               <iframe
@@ -80,7 +80,7 @@ export default function PremiumProjectCard({
               className="object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" 
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-[#49108B]/40">
+            <div className="w-full h-full flex items-center justify-center text-[#0B2447]/40">
               No Preview
             </div>
           )}
@@ -89,37 +89,37 @@ export default function PremiumProjectCard({
         </div>
 
         {/* Animated Glow on Hover */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-[#E26EE5] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20"></div>
+        <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-[#687EFF] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20"></div>
         
         {/* Card Body */}
         <div className="relative z-10 flex flex-col grow p-6">
           
           <div className="flex justify-between items-start mb-3">
-            <h3 className="text-xl font-semibold text-[#49108B] leading-tight group-hover:text-[#E26EE5] transition-colors line-clamp-2">
+            <h3 className="text-xl font-semibold text-[#0B2447] leading-tight group-hover:text-[#687EFF] transition-colors line-clamp-2">
               {project.title}
             </h3>
-            <span className="text-lg font-bold text-[#49108B] ml-4 shrink-0">₹{project.price}</span>
+            <span className="text-lg font-bold text-[#0B2447] ml-4 shrink-0">₹{project.price}</span>
           </div>
 
           {project.tags && Array.isArray(project.tags) && project.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-3">
               {project.tags.map((tag: string, idx: number) => (
-                <span key={idx} className="bg-[#E26EE5]/10 text-[#7E30E1] border border-[#E26EE5]/25 px-2 py-0.5 rounded text-[10px] font-sans font-semibold tracking-wide uppercase">
+                <span key={idx} className="bg-[#687EFF]/10 text-[#687EFF] border border-[#687EFF]/25 px-2 py-0.5 rounded text-[10px] font-sans font-semibold tracking-wide uppercase">
                   {tag}
                 </span>
               ))}
             </div>
           )}
 
-          <p className="text-[#49108B]/70 text-xs leading-relaxed line-clamp-2 mb-4">
+          <p className="text-[#0B2447]/70 text-xs leading-relaxed line-clamp-2 mb-4">
             {(project as any).short_description || project.shortDescription}
           </p>
 
-          <div className="mt-auto grid grid-cols-2 gap-y-2 pt-4 border-t border-[#49108B]/10">
-            <div className="flex items-center text-[10px] text-[#49108B]/70"><span className="text-[#E26EE5] mr-1.5 text-xs font-bold">✓</span> Components</div>
-            <div className="flex items-center text-[10px] text-[#49108B]/70"><span className="text-[#E26EE5] mr-1.5 text-xs font-bold">✓</span> Circuit</div>
-            <div className="flex items-center text-[10px] text-[#49108B]/70"><span className="text-[#E26EE5] mr-1.5 text-xs font-bold">✓</span> Commands</div>
-            <div className="flex items-center text-[10px] text-[#49108B]/70"><span className="text-[#E26EE5] mr-1.5 text-xs font-bold">✓</span> Code</div>
+          <div className="mt-auto grid grid-cols-2 gap-y-2 pt-4 border-t border-[#687EFF]/15">
+            <div className="flex items-center text-[10px] text-[#0B2447]/70"><span className="text-[#687EFF] mr-1.5 text-xs font-bold">✓</span> Components</div>
+            <div className="flex items-center text-[10px] text-[#0B2447]/70"><span className="text-[#687EFF] mr-1.5 text-xs font-bold">✓</span> Circuit</div>
+            <div className="flex items-center text-[10px] text-[#0B2447]/70"><span className="text-[#687EFF] mr-1.5 text-xs font-bold">✓</span> Commands</div>
+            <div className="flex items-center text-[10px] text-[#0B2447]/70"><span className="text-[#687EFF] mr-1.5 text-xs font-bold">✓</span> Code</div>
           </div>
 
         </div>

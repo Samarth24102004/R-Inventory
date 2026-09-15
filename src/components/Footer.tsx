@@ -2,19 +2,19 @@ import React from 'react';
 
 export default function Footer() {
   return (
-    <footer className="relative z-20 bg-[#49108B] border-t border-[#49108B]/20 pt-16 pb-32 px-4 sm:px-6 lg:px-8 text-[#F3F8FF]">
+    <footer className="relative z-20 bg-[#0B2447] border-t border-[#687EFF]/20 pt-16 pb-32 px-4 sm:px-6 lg:px-8 text-[#B6FFFA]">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="flex flex-col items-center md:items-start max-w-sm">
           <div className="flex items-center gap-1 mb-2">
-            <span className="text-2xl font-black tracking-tighter text-[#F3F8FF]" style={{ fontFamily: 'sans-serif' }}>
+            <span className="text-2xl font-black tracking-tighter text-[#B6FFFA]" style={{ fontFamily: 'sans-serif' }}>
               RoS
             </span>
-            <span className="w-1.5 h-1.5 bg-[#E26EE5] rounded-sm mt-2 shadow-[0_0_8px_#E26EE5]"></span>
+            <span className="w-1.5 h-1.5 bg-[#687EFF] rounded-sm mt-2 shadow-[0_0_8px_#687EFF]"></span>
           </div>
-          <span className="text-[9px] font-bold tracking-[0.3em] text-[#F3F8FF]/60 mt-[-4px] mb-4">
+          <span className="text-[9px] font-bold tracking-[0.3em] text-[#B6FFFA]/60 mt-[-4px] mb-4">
             INVENTORY
           </span>
-          <p className="text-[#F3F8FF]/80 text-sm text-center md:text-left leading-relaxed">
+          <p className="text-[#B6FFFA]/80 text-sm text-center md:text-left leading-relaxed">
             RoS Inventory is your premier destination for ROS2 projects, autonomous robots, and AI robotics. We empower the open-source robotics community with production-ready code, 3D models, and developer resources for SLAM, Navigation2, MoveIt, and Gazebo robot simulation.
           </p>
           <div className="flex items-center gap-3 mt-4">
@@ -23,7 +23,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="YouTube Channel"
-              className="w-8 h-8 rounded-lg bg-[#F3F8FF]/10 border border-[#F3F8FF]/20 hover:border-[#ff0000]/50 hover:bg-[#ff0000]/20 flex items-center justify-center text-[#F3F8FF]/80 hover:text-white transition-all"
+              className="w-8 h-8 rounded-lg bg-[#B6FFFA]/10 border border-[#B6FFFA]/20 hover:border-[#ff0000]/50 hover:bg-[#ff0000]/20 flex items-center justify-center text-[#B6FFFA]/80 hover:text-white transition-all"
               title="YouTube"
             >
               <svg
@@ -44,7 +44,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram Profile"
-              className="w-8 h-8 rounded-lg bg-[#F3F8FF]/10 border border-[#F3F8FF]/20 hover:border-[#e1306c]/50 hover:bg-[#e1306c]/20 flex items-center justify-center text-[#F3F8FF]/80 hover:text-white transition-all"
+              className="w-8 h-8 rounded-lg bg-[#B6FFFA]/10 border border-[#B6FFFA]/20 hover:border-[#e1306c]/50 hover:bg-[#e1306c]/20 flex items-center justify-center text-[#B6FFFA]/80 hover:text-white transition-all"
               title="Instagram"
             >
               <svg
@@ -66,7 +66,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn Profile"
-              className="w-8 h-8 rounded-lg bg-[#F3F8FF]/10 border border-[#F3F8FF]/20 hover:border-[#0a66c2]/50 hover:bg-[#0a66c2]/20 flex items-center justify-center text-[#F3F8FF]/80 hover:text-white transition-all"
+              className="w-8 h-8 rounded-lg bg-[#B6FFFA]/10 border border-[#B6FFFA]/20 hover:border-[#0a66c2]/50 hover:bg-[#0a66c2]/20 flex items-center justify-center text-[#B6FFFA]/80 hover:text-white transition-all"
               title="LinkedIn"
             >
               <svg
@@ -86,21 +86,21 @@ export default function Footer() {
           </div>
         </div>
         
-        <div className="flex flex-col md:flex-row items-center gap-6 text-sm text-[#F3F8FF]/70 mt-8 md:mt-0">
+        <div className="flex flex-col md:flex-row items-center gap-6 text-sm text-[#B6FFFA]/70 mt-8 md:mt-0">
           <div className="flex flex-col gap-2 text-center md:text-right">
-            <span className="font-semibold text-[#F3F8FF]">Resources</span>
-            <a href="/projects" className="hover:text-[#E26EE5] transition-colors">ROS Projects</a>
-            <a href="/3d-models" className="hover:text-[#E26EE5] transition-colors">3D Models</a>
-            <a href="/manuals" className="hover:text-[#E26EE5] transition-colors">ROS Manuals</a>
+            <span className="font-semibold text-[#B6FFFA]">Resources</span>
+            <a href="/projects" className="hover:text-[#687EFF] transition-colors">ROS Projects</a>
+            <a href="/3d-models" className="hover:text-[#687EFF] transition-colors">3D Models</a>
+            <a href="/manuals" className="hover:text-[#687EFF] transition-colors">ROS Manuals</a>
           </div>
           <div className="flex flex-col gap-2 text-center md:text-right">
-            <span className="font-semibold text-[#F3F8FF]">Legal</span>
-            <a href="#" className="hover:text-[#E26EE5] transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-[#E26EE5] transition-colors">Privacy Policy</a>
+            <span className="font-semibold text-[#B6FFFA]">Legal</span>
+            <a href="#" className="hover:text-[#687EFF] transition-colors">Terms of Service</a>
+            <a href="#" className="hover:text-[#687EFF] transition-colors">Privacy Policy</a>
           </div>
         </div>
       </div>
-      <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-[#F3F8FF]/15 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#F3F8FF]/60">
+      <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-[#B6FFFA]/15 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#B6FFFA]/60">
         <div>&copy; {new Date().getFullYear()} RoS Inventory. All rights reserved.</div>
         <div className="flex gap-4">
           <span>Powered by ROS2</span>
