@@ -77,23 +77,23 @@ export default function ManualsPage() {
   const nextManual = currentIndex < manuals.length - 1 ? manuals[currentIndex + 1] : null;
 
   return (
-    <div className="min-h-screen bg-[#E2DFD0] text-[#32012F] selection:bg-[#32012F]/20 flex flex-col">
+    <div className="min-h-screen bg-[#27005D] text-white selection:bg-[#9400FF]/40 flex flex-col">
       {/* Top Header Background Mask */}
-      <div className="fixed top-0 left-0 right-0 h-28 bg-transparent backdrop-blur-md z-40 mask-[linear-gradient(to_bottom,#E2DFD0_60%,transparent_100%)] pointer-events-none" />
+      <div className="fixed top-0 left-0 right-0 h-28 bg-transparent backdrop-blur-md z-40 mask-[linear-gradient(to_bottom,#27005D_60%,transparent_100%)] pointer-events-none" />
 
       {/* Main Documentation Container */}
       <div className="pt-28 grow flex flex-col md:flex-row w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Mobile Sidebar Toggle Button */}
         {manuals.length > 0 && (
-          <div className="md:hidden flex items-center justify-between py-3 px-4 mb-4 bg-[#F7F5EE] border border-[#32012F]/15 rounded-2xl shadow-sm">
-            <div className="flex items-center gap-2 text-xs font-mono text-[#32012F]">
+          <div className="md:hidden flex items-center justify-between py-3 px-4 mb-4 bg-[#1a003f] border border-[#9400FF]/30 rounded-2xl shadow-lg">
+            <div className="flex items-center gap-2 text-xs font-mono text-[#9400FF]">
               <BookOpen className="w-4 h-4" />
               <span className="font-semibold">ROS Manuals Navigation</span>
             </div>
             <button
               onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-              className="p-2 text-[#32012F]/70 hover:text-[#32012F] rounded-lg bg-[#32012F]/5 border border-[#32012F]/10"
+              className="p-2 text-white/70 hover:text-white rounded-lg bg-[#9400FF]/20 border border-[#9400FF]/30"
             >
               {mobileSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -103,20 +103,20 @@ export default function ManualsPage() {
         {/* Left Documentation Sidebar Navigation */}
         {manuals.length > 0 && (
           <aside
-            className={`w-full md:w-72 shrink-0 md:border-r border-[#32012F]/15 pr-0 md:pr-6 py-4 md:block transition-all ${
+            className={`w-full md:w-72 shrink-0 md:border-r border-[#9400FF]/25 pr-0 md:pr-6 py-4 md:block transition-all ${
               mobileSidebarOpen ? 'block' : 'hidden md:block'
             }`}
           >
             <div className="sticky top-32 space-y-6">
               {/* Docs Search Box */}
               <div className="relative group">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#32012F]/50 group-focus-within:text-[#32012F] transition-colors" />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50 group-focus-within:text-[#9400FF] transition-colors" />
                 <input
                   type="text"
                   placeholder="Search docs..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-[#F7F5EE] border border-[#32012F]/15 rounded-xl py-2.5 pl-10 pr-3 text-xs text-[#32012F] placeholder:text-[#32012F]/40 focus:outline-none focus:ring-1 focus:ring-[#32012F] transition-all"
+                  className="w-full bg-[#1a003f] border border-[#9400FF]/30 rounded-xl py-2.5 pl-10 pr-3 text-xs text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-[#9400FF] transition-all"
                 />
               </div>
 
@@ -128,7 +128,7 @@ export default function ManualsPage() {
 
                   return (
                     <div key={category.id} className="space-y-2">
-                      <h4 className="text-[11px] font-mono tracking-widest text-[#32012F]/70 uppercase font-bold px-2">
+                      <h4 className="text-[11px] font-mono tracking-widest text-[#9400FF] uppercase font-bold px-2">
                         {category.label}
                       </h4>
                       <ul className="space-y-1">
@@ -144,14 +144,14 @@ export default function ManualsPage() {
                                 }}
                                 className={`w-full text-left px-3 py-2 rounded-xl text-xs font-medium transition-all flex items-center justify-between group ${
                                   isActive
-                                    ? 'bg-[#32012F] text-[#E2DFD0] font-semibold shadow-sm'
-                                    : 'text-[#32012F]/70 hover:text-[#32012F] hover:bg-[#32012F]/10 border border-transparent'
+                                    ? 'bg-[#9400FF] text-white font-semibold shadow-[0_0_15px_rgba(148,0,255,0.4)]'
+                                    : 'text-white/70 hover:text-white hover:bg-[#9400FF]/20 border border-transparent'
                                 }`}
                               >
                                 <span className="line-clamp-1">
                                   {idx + 1}. {post.title}
                                 </span>
-                                {isActive && <ChevronRight className="w-3.5 h-3.5 text-[#E2DFD0] shrink-0 ml-1" />}
+                                {isActive && <ChevronRight className="w-3.5 h-3.5 text-white shrink-0 ml-1" />}
                               </button>
                             </li>
                           );
@@ -168,29 +168,29 @@ export default function ManualsPage() {
         {/* Right Main Manual Article Content */}
         <main className={`grow ${manuals.length > 0 ? 'md:pl-8' : ''} py-4 pb-24 min-w-0`}>
           {loading ? (
-            <div className="text-center py-20 text-[#32012F]/50 font-mono text-xs animate-pulse">
+            <div className="text-center py-20 text-white/50 font-mono text-xs animate-pulse">
               Loading ROS manuals...
             </div>
           ) : activeManual ? (
             <article className="space-y-8 animate-fadeIn">
               
               {/* Breadcrumbs */}
-              <div className="flex items-center gap-2 text-xs font-mono text-[#32012F]/60">
+              <div className="flex items-center gap-2 text-xs font-mono text-white/60">
                 <span>software</span>
                 <span>/</span>
-                <span className="text-[#32012F] font-bold">{activeManual.breadcrumbs.join(' / ')}</span>
+                <span className="text-[#9400FF] font-bold">{activeManual.breadcrumbs.join(' / ')}</span>
               </div>
 
               {/* Document Header */}
-              <div className="border-b border-[#32012F]/15 pb-6">
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#32012F]/10 border border-[#32012F]/20 text-[#32012F] text-[10px] font-mono uppercase tracking-widest mb-3 font-semibold">
+              <div className="border-b border-[#9400FF]/25 pb-6">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#9400FF]/20 border border-[#9400FF]/40 text-[#9400FF] text-[10px] font-mono uppercase tracking-widest mb-3 font-semibold">
                   <Terminal className="w-3 h-3" />
                   <span>{activeManual.categoryLabel}</span>
                 </div>
-                <h1 className="text-3xl sm:text-4xl font-extrabold text-[#32012F] tracking-tight mb-3">
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">
                   {activeManual.title}
                 </h1>
-                <p className="text-sm text-[#32012F]/80 leading-relaxed max-w-3xl">
+                <p className="text-sm text-white/80 leading-relaxed max-w-3xl">
                   {activeManual.summary}
                 </p>
               </div>
@@ -199,23 +199,23 @@ export default function ManualsPage() {
               <div className="space-y-10">
                 {activeManual.sections.map((section, sIdx) => (
                   <section key={sIdx} className="space-y-4">
-                    <h2 className="text-xl sm:text-2xl font-bold text-[#32012F] tracking-tight flex items-center gap-2">
-                      <span className="text-[#32012F] font-mono text-base font-bold">{sIdx + 1}.</span>
+                    <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+                      <span className="text-[#9400FF] font-mono text-base font-bold">{sIdx + 1}.</span>
                       <span>{section.title}</span>
                     </h2>
 
                     {section.description && (
-                      <p className="text-sm text-[#32012F]/80 leading-relaxed">
+                      <p className="text-sm text-white/80 leading-relaxed">
                         {section.description}
                       </p>
                     )}
 
                     {/* Info Callout Box */}
                     {section.note && (
-                      <div className="p-4 rounded-xl bg-[#32012F]/10 border border-[#32012F]/20 text-[#32012F] text-xs sm:text-sm leading-relaxed flex items-start gap-3 shadow-sm">
-                        <Info className="w-5 h-5 text-[#32012F] shrink-0 mt-0.5" />
+                      <div className="p-4 rounded-xl bg-[#9400FF]/15 border border-[#9400FF]/30 text-white text-xs sm:text-sm leading-relaxed flex items-start gap-3 shadow-lg">
+                        <Info className="w-5 h-5 text-[#9400FF] shrink-0 mt-0.5" />
                         <div>
-                          <strong className="font-semibold text-[#32012F] block mb-0.5">Note</strong>
+                          <strong className="font-semibold text-white block mb-0.5">Note</strong>
                           {section.note}
                         </div>
                       </div>
@@ -223,7 +223,7 @@ export default function ManualsPage() {
 
                     {/* Optional Section Image */}
                     {section.image_url && (
-                      <div className="relative my-4 rounded-xl overflow-hidden border border-[#32012F]/15 bg-[#F7F5EE] shadow-md">
+                      <div className="relative my-4 rounded-xl overflow-hidden border border-[#9400FF]/30 bg-[#130030] shadow-xl">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={section.image_url}
@@ -236,12 +236,12 @@ export default function ManualsPage() {
                     {/* Subsections with Version Tabs */}
                     {section.subsections && section.subsections.map((sub, subIdx) => (
                       <div key={subIdx} className="space-y-3 pt-2">
-                        {sub.title && <h3 className="text-base font-semibold text-[#32012F]">{sub.title}</h3>}
+                        {sub.title && <h3 className="text-base font-semibold text-white">{sub.title}</h3>}
                         
                         {sub.tabs && sub.snippets && (
                           <div className="space-y-2">
                             {/* Version Tabs Bar */}
-                            <div className="flex border-b border-[#32012F]/15 gap-2">
+                            <div className="flex border-b border-[#9400FF]/25 gap-2">
                               {sub.tabs.map((tabName) => {
                                 const activeTab = activeTabMap[`${sIdx}-${subIdx}`] || sub.tabs![0];
                                 const isSelected = activeTab === tabName;
@@ -256,8 +256,8 @@ export default function ManualsPage() {
                                     }
                                     className={`px-4 py-2 text-xs font-mono tracking-wider font-semibold border-b-2 transition-all ${
                                       isSelected
-                                        ? 'border-[#32012F] text-[#32012F] bg-[#32012F]/10'
-                                        : 'border-transparent text-[#32012F]/60 hover:text-[#32012F]'
+                                        ? 'border-[#9400FF] text-[#9400FF] bg-[#9400FF]/15'
+                                        : 'border-transparent text-white/60 hover:text-white'
                                     }`}
                                   >
                                     {tabName}
@@ -273,12 +273,12 @@ export default function ManualsPage() {
                               if (!snippet) return null;
 
                               return (
-                                <div className="relative group rounded-xl bg-[#240022] border border-[#32012F]/30 overflow-hidden mt-3 shadow-md">
-                                  <div className="flex justify-between items-center px-4 py-2 bg-[#1a0018] border-b border-[#32012F]/40 text-xs font-mono text-[#E2DFD0]/70">
+                                <div className="relative group rounded-xl bg-[#130030] border border-[#9400FF]/30 overflow-hidden mt-3 shadow-lg">
+                                  <div className="flex justify-between items-center px-4 py-2 bg-[#0e0024] border-b border-[#9400FF]/30 text-xs font-mono text-white/70">
                                     <span>{snippet.language || 'bash'}</span>
                                     <button
                                       onClick={() => handleCopy(snippet.code)}
-                                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#E2DFD0]/10 hover:bg-[#E2DFD0]/20 text-[#E2DFD0] transition-colors"
+                                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#9400FF]/20 hover:bg-[#9400FF]/40 text-white transition-colors"
                                     >
                                       {copiedCode === snippet.code ? (
                                         <>
@@ -293,7 +293,7 @@ export default function ManualsPage() {
                                       )}
                                     </button>
                                   </div>
-                                  <pre className="p-4 text-xs sm:text-sm font-mono text-[#E2DFD0] overflow-x-auto leading-relaxed">
+                                  <pre className="p-4 text-xs sm:text-sm font-mono text-[#D8B4FE] overflow-x-auto leading-relaxed">
                                     <code>{snippet.code}</code>
                                   </pre>
                                 </div>
@@ -306,12 +306,12 @@ export default function ManualsPage() {
 
                     {/* Standard Code Snippet Block */}
                     {section.code && (
-                      <div className="relative group rounded-xl bg-[#240022] border border-[#32012F]/30 overflow-hidden mt-3 shadow-lg">
-                        <div className="flex justify-between items-center px-4 py-2 bg-[#1a0018] border-b border-[#32012F]/40 text-xs font-mono text-[#E2DFD0]/70">
+                      <div className="relative group rounded-xl bg-[#130030] border border-[#9400FF]/30 overflow-hidden mt-3 shadow-lg">
+                        <div className="flex justify-between items-center px-4 py-2 bg-[#0e0024] border-b border-[#9400FF]/30 text-xs font-mono text-white/70">
                           <span>{section.language || 'bash'}</span>
                           <button
                             onClick={() => handleCopy(section.code!)}
-                            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#E2DFD0]/10 hover:bg-[#E2DFD0]/20 text-[#E2DFD0] transition-colors"
+                            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#9400FF]/20 hover:bg-[#9400FF]/40 text-white transition-colors"
                           >
                             {copiedCode === section.code ? (
                               <>
@@ -326,7 +326,7 @@ export default function ManualsPage() {
                             )}
                           </button>
                         </div>
-                        <pre className="p-4 text-xs sm:text-sm font-mono text-[#E2DFD0] overflow-x-auto leading-relaxed">
+                        <pre className="p-4 text-xs sm:text-sm font-mono text-[#D8B4FE] overflow-x-auto leading-relaxed">
                           <code>{section.code}</code>
                         </pre>
                       </div>
@@ -336,17 +336,17 @@ export default function ManualsPage() {
               </div>
 
               {/* Prev / Next Manual Navigation Buttons */}
-              <div className="pt-10 border-t border-[#32012F]/15 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="pt-10 border-t border-[#9400FF]/25 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {prevManual ? (
                   <button
                     onClick={() => {
                       setSelectedSlug(prevManual.slug);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
-                    className="p-4 rounded-2xl bg-[#F7F5EE] border border-[#32012F]/15 hover:border-[#32012F]/40 text-left transition-all group shadow-sm hover:shadow-md"
+                    className="p-4 rounded-2xl bg-[#1a003f] border border-[#9400FF]/30 hover:border-[#9400FF] text-left transition-all group shadow-md hover:shadow-[0_0_15px_rgba(148,0,255,0.25)]"
                   >
-                    <div className="text-[10px] font-mono uppercase text-[#32012F]/60 mb-1">Previous Manual</div>
-                    <div className="text-sm font-semibold text-[#32012F] group-hover:underline transition-colors line-clamp-1">
+                    <div className="text-[10px] font-mono uppercase text-white/60 mb-1">Previous Manual</div>
+                    <div className="text-sm font-semibold text-white group-hover:text-[#9400FF] transition-colors line-clamp-1">
                       &larr; {prevManual.title}
                     </div>
                   </button>
@@ -358,10 +358,10 @@ export default function ManualsPage() {
                       setSelectedSlug(nextManual.slug);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
-                    className="p-4 rounded-2xl bg-[#F7F5EE] border border-[#32012F]/15 hover:border-[#32012F]/40 text-right transition-all group shadow-sm hover:shadow-md"
+                    className="p-4 rounded-2xl bg-[#1a003f] border border-[#9400FF]/30 hover:border-[#9400FF] text-right transition-all group shadow-md hover:shadow-[0_0_15px_rgba(148,0,255,0.25)]"
                   >
-                    <div className="text-[10px] font-mono uppercase text-[#32012F]/60 mb-1">Next Manual</div>
-                    <div className="text-sm font-semibold text-[#32012F] group-hover:underline transition-colors line-clamp-1">
+                    <div className="text-[10px] font-mono uppercase text-white/60 mb-1">Next Manual</div>
+                    <div className="text-sm font-semibold text-white group-hover:text-[#9400FF] transition-colors line-clamp-1">
                       {nextManual.title} &rarr;
                     </div>
                   </button>
@@ -370,10 +370,10 @@ export default function ManualsPage() {
 
             </article>
           ) : (
-            <div className="text-center py-24 px-6 rounded-3xl bg-[#F7F5EE] border border-[#32012F]/15 max-w-xl mx-auto shadow-sm">
-              <BookOpen className="w-12 h-12 text-[#32012F]/40 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-[#32012F] mb-2">No Manuals Published Yet</h3>
-              <p className="text-sm text-[#32012F]/70 mb-6">
+            <div className="text-center py-24 px-6 rounded-3xl bg-[#1a003f] border border-[#9400FF]/30 max-w-xl mx-auto shadow-xl">
+              <BookOpen className="w-12 h-12 text-[#9400FF]/50 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-white mb-2">No Manuals Published Yet</h3>
+              <p className="text-sm text-white/70 mb-6">
                 Manuals and ROS setup commands can be created and managed by administrators through the Admin Portal.
               </p>
             </div>
