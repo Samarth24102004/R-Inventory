@@ -173,7 +173,7 @@ export default function NeededProjectModal() {
 
   return (
     <div className="fixed inset-0 z-100 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
-      <div className="w-full max-w-xl h-[600px] max-h-[90vh] bg-[#B6FFFA] border border-[#687EFF]/30 rounded-3xl flex flex-col overflow-hidden shadow-[0_20px_50px_rgba(11,36,71,0.25)] relative text-[#0B2447]">
+      <div className="w-full max-w-xl h-150 max-h-[90vh] bg-[#B6FFFA] border border-[#687EFF]/30 rounded-3xl flex flex-col overflow-hidden shadow-[0_20px_50px_rgba(11,36,71,0.25)] relative text-[#0B2447]">
         
         {/* Chat Header */}
         <div className="p-4 sm:px-6 py-4 bg-white border-b border-[#687EFF]/15 flex items-center justify-between shrink-0">
@@ -291,7 +291,7 @@ export default function NeededProjectModal() {
                     )}
 
                     <div
-                      className={`p-3 sm:px-4 sm:py-3 rounded-2xl text-xs sm:text-sm leading-relaxed whitespace-pre-wrap break-words ${
+                      className={`p-3 sm:px-4 sm:py-3 rounded-2xl text-xs sm:text-sm leading-relaxed whitespace-pre-wrap wrap-break-word ${
                         isUser
                           ? 'bg-[#687EFF] text-white rounded-br-xs border border-[#687EFF] shadow-md'
                           : 'bg-white border border-[#687EFF]/20 text-[#0B2447] rounded-bl-xs shadow-md'

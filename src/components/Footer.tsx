@@ -11,7 +11,7 @@ export default function Footer() {
             </span>
             <span className="w-1.5 h-1.5 bg-[#687EFF] rounded-sm mt-2 shadow-[0_0_8px_#687EFF]"></span>
           </div>
-          <span className="text-[9px] font-bold tracking-[0.3em] text-[#B6FFFA]/60 mt-[-4px] mb-4">
+          <span className="text-[9px] font-bold tracking-[0.3em] text-[#B6FFFA]/60 -mt-1 mb-4">
             INVENTORY
           </span>
           <p className="text-[#B6FFFA]/80 text-sm text-center md:text-left leading-relaxed">

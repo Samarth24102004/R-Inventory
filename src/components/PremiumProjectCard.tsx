@@ -57,7 +57,7 @@ export default function PremiumProjectCard({
               <iframe
                 src={ytEmbed}
                 title={project.title}
-                className="w-[160%] h-[160%] absolute -top-[30%] -left-[30%] object-cover opacity-90 group-hover:opacity-100 transition-all duration-500 border-0"
+                className="w-[160%] h-[160%] absolute top-[-30%] left-[-30%] object-cover opacity-90 group-hover:opacity-100 transition-all duration-500 border-0"
                 allow="autoplay; encrypted-media"
               />
             </div>

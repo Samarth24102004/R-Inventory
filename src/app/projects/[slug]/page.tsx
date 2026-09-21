@@ -239,7 +239,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
               <p className="text-[#0B2447]/70 text-lg max-w-2xl leading-relaxed">{project.short_description}</p>
             </div>
             
-            <div className="bg-white border border-[#687EFF]/20 p-6 rounded-2xl min-w-[300px] shrink-0 shadow-md">
+            <div className="bg-white border border-[#687EFF]/20 p-6 rounded-2xl min-w-75 shrink-0 shadow-md">
               <div className="text-3xl font-bold text-[#0B2447] mb-6">₹{project.price}</div>
               {hasPurchased ? (
                 <div className="w-full py-3 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl font-semibold text-center flex items-center justify-center">
@@ -473,7 +473,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
                             alt="Circuit Diagram"
                             width={800}
                             height={350} 
-                            className="w-full h-auto max-h-[350px] object-contain rounded-lg"
+                            className="w-full h-auto max-h-87.5 object-contain rounded-lg"
                           />
                         </div>
                       ) : (

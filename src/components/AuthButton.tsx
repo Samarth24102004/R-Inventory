@@ -84,7 +84,7 @@ export default function AuthButton() {
             <img
               src="/projects-icon.png"
               alt="Projects"
-              className={`w-[20px] h-[15px] object-contain transition-transform group-hover:scale-110 ${
+              className={`w-5 h-3.75 object-contain transition-transform group-hover:scale-110 ${
                 pathname === '/projects' ? 'opacity-100' : 'opacity-85 group-hover:opacity-100'
               }`}
             />
@@ -100,9 +100,9 @@ export default function AuthButton() {
           >
             {user && <div className="absolute inset-0 rounded-full bg-[#687EFF]/30 animate-ping opacity-20 pointer-events-none"></div>}
             {user && avatarUrl ? (
-              <Image src={avatarUrl} alt="Avatar" width={30} height={30} className="w-[30px] h-[30px] rounded-full bg-[#0B2447] border border-[#687EFF]/30 group-hover:border-[#687EFF] transition-colors object-cover" />
+              <Image src={avatarUrl} alt="Avatar" width={30} height={30} className="w-7.5 h-7.5 rounded-full bg-[#0B2447] border border-[#687EFF]/30 group-hover:border-[#687EFF] transition-colors object-cover" />
             ) : (
-              <div className="w-[28px] h-[28px] rounded-full bg-[#0B2447] border border-[#687EFF]/30 flex items-center justify-center group-hover:border-[#687EFF] transition-colors">
+              <div className="w-7 h-7 rounded-full bg-[#0B2447] border border-[#687EFF]/30 flex items-center justify-center group-hover:border-[#687EFF] transition-colors">
                 <svg className="w-4 h-4 text-[#B6FFFA]/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
@@ -124,7 +124,7 @@ export default function AuthButton() {
                 <img
                   src="/projects-icon.png"
                   alt="Projects"
-                  className="w-[18px] h-[13px] object-contain opacity-80"
+                  className="w-4.5 h-3.25 object-contain opacity-80"
                 />
                 <span>Projects</span>
               </Link>

@@ -186,7 +186,7 @@ export default async function Home() {
 
           {/* Right Column: Featured VitaBot Card Playing Video */}
           {featuredVitaBot && (
-            <div className="w-full sm:w-[380px] lg:w-[390px] xl:w-[410px] shrink-0 mx-auto lg:mx-0 mt-6 lg:mt-0">
+            <div className="w-full sm:w-95 lg:w-97.5 xl:w-102.5 shrink-0 mx-auto lg:mx-0 mt-6 lg:mt-0">
               <div className="relative group">
                 {/* Ambient glow behind card */}
                 <div className="absolute -inset-1.5 rounded-3xl bg-linear-to-r from-[#687EFF]/25 via-[#98E4FF]/20 to-[#687EFF]/15 opacity-70 blur-xl group-hover:opacity-100 transition-all duration-500 pointer-events-none"></div>
@@ -203,7 +203,7 @@ export default async function Home() {
                 <div className="relative rounded-2xl overflow-hidden shadow-xl">
                   <PremiumProjectCard 
                     project={featuredVitaBot} 
-                    className="w-full h-[410px] shrink-0" 
+                    className="w-full h-102.5 shrink-0" 
                     videoHeight="h-48"
                   />
                 </div>
