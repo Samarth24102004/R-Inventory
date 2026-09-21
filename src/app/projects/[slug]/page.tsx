@@ -7,6 +7,7 @@ import { Lock, Code, CheckCircle, ArrowLeft, ChevronLeft, ChevronRight, ImageIco
 import Link from 'next/link';
 import Image from 'next/image';
 import AuthModal from '@/components/AuthModal';
+import Footer from '@/components/Footer';
 import { parseProjectDescription } from '@/lib/data';
 
 function renderVideoPlayer(url: string) {
@@ -214,41 +215,41 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
   }
 
   return (
-    <div className="min-h-screen bg-black text-white pb-32">
+    <div className="min-h-screen bg-[#B6FFFA] text-[#0B2447] pb-32 flex flex-col justify-between">
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} onSuccess={fetchData} />
 
       {/* Header */}
-      <div className="border-b border-white/10 bg-[#050505] pt-24 pb-12 px-[5%]">
+      <div className="border-b border-[#687EFF]/20 bg-white/70 backdrop-blur-md pt-28 pb-12 px-[5%]">
         <div className="max-w-5xl mx-auto">
-          <Link href="/#projects" className="inline-flex items-center text-sm text-gray-400 hover:text-white mb-8 transition-colors">
+          <Link href="/projects" className="inline-flex items-center text-sm font-semibold text-[#0B2447]/70 hover:text-[#0B2447] mb-8 transition-colors">
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Projects
           </Link>
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-8">
             <div>
-              <h1 className="text-4xl md:text-5xl font-semibold tracking-tight mb-4">{project.title}</h1>
+              <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-[#0B2447] mb-4">{project.title}</h1>
               {project.tags && Array.isArray(project.tags) && project.tags.length > 0 && (
                 <div className="flex flex-wrap gap-3 mb-6">
                   {project.tags.map((tag: string, idx: number) => (
-                    <span key={idx} className="bg-purple-500/10 text-purple-300 border border-purple-500/20 px-3 py-1 rounded text-xs font-medium uppercase tracking-wide">
+                    <span key={idx} className="bg-[#687EFF]/10 text-[#687EFF] border border-[#687EFF]/25 px-3 py-1 rounded-lg text-xs font-semibold uppercase tracking-wide">
                       {tag}
                     </span>
                   ))}
                 </div>
               )}
-              <p className="text-gray-400 text-lg max-w-2xl">{project.short_description}</p>
+              <p className="text-[#0B2447]/70 text-lg max-w-2xl leading-relaxed">{project.short_description}</p>
             </div>
             
-            <div className="bg-[#0a0a0a] border border-white/10 p-6 rounded-xl min-w-[300px] shrink-0">
-              <div className="text-3xl font-semibold mb-6">₹{project.price}</div>
+            <div className="bg-white border border-[#687EFF]/20 p-6 rounded-2xl min-w-[300px] shrink-0 shadow-md">
+              <div className="text-3xl font-bold text-[#0B2447] mb-6">₹{project.price}</div>
               {hasPurchased ? (
-                <div className="w-full py-3 bg-green-900/20 text-green-400 border border-green-500/30 rounded-md font-medium text-center flex items-center justify-center">
-                  <CheckCircle className="w-5 h-5 mr-2" /> Purchased
+                <div className="w-full py-3 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl font-semibold text-center flex items-center justify-center">
+                  <CheckCircle className="w-5 h-5 mr-2 text-emerald-600" /> Purchased
                 </div>
               ) : (
                 <button 
                   onClick={handleBuy}
                   disabled={purchasing}
-                  className="w-full py-3 bg-white text-black hover:bg-gray-200 rounded-md font-medium transition-colors disabled:opacity-50"
+                  className="w-full py-3.5 bg-[#0B2447] hover:bg-[#19376D] text-[#B6FFFA] rounded-xl font-bold transition-colors disabled:opacity-50 shadow-md cursor-pointer"
                 >
                   {purchasing ? "Processing..." : "Buy Lifetime Access"}
                 </button>
@@ -263,8 +264,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
         
         {/* 1. Project Overview */}
         <div>
-          <h2 className="text-2xl font-semibold mb-6">Project Overview</h2>
-          <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg text-gray-200 leading-relaxed text-base md:text-lg space-y-4">
+          <h2 className="text-2xl font-extrabold mb-6 text-[#0B2447]">Project Overview</h2>
+          <div className="bg-white border border-[#687EFF]/20 p-6 md:p-8 rounded-2xl shadow-md text-[#0B2447] leading-relaxed text-base md:text-lg space-y-4">
             {(() => {
               let displayOverview = project.description || project.short_description || '';
               if (displayOverview.includes('SOFTWARE:') || displayOverview.includes('[SOFTWARE]')) {
@@ -283,7 +284,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
                     paragraph.trim() ? <p key={idx}>{paragraph}</p> : null
                   )
               ) : (
-                <p className="text-gray-500 italic">No description available for this project.</p>
+                <p className="text-[#0B2447]/60 italic">No description available for this project.</p>
               );
             })()}
           </div>
@@ -292,10 +293,10 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
         {/* 2. Project Video Section */}
         {(project.video_url || project.videoUrl) && (
           <div>
-            <h2 className="text-2xl font-semibold mb-6 flex items-center text-purple-400">
-              <Video className="w-6 h-6 mr-3 text-purple-400" /> Project-VIDEO
+            <h2 className="text-2xl font-extrabold mb-6 flex items-center text-[#0B2447]">
+              <Video className="w-6 h-6 mr-3 text-[#687EFF]" /> Project Video
             </h2>
-            <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg">
+            <div className="bg-white border border-[#687EFF]/20 p-6 md:p-8 rounded-2xl shadow-md">
               {renderVideoPlayer(project.video_url || project.videoUrl)}
             </div>
           </div>
@@ -304,24 +305,24 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
         {/* 3. Components Section */}
         {project.hardware && Array.isArray(project.hardware) && project.hardware.length > 0 && (
           <div>
-            <h2 className="text-2xl font-semibold mb-6 flex items-center text-white">
-              <Cpu className="w-6 h-6 mr-3 text-white" /> Components
+            <h2 className="text-2xl font-extrabold mb-6 flex items-center text-[#0B2447]">
+              <Cpu className="w-6 h-6 mr-3 text-[#687EFF]" /> Components
             </h2>
-            <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg">
+            <div className="bg-white border border-[#687EFF]/20 p-6 md:p-8 rounded-2xl shadow-md">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {project.hardware.map((item: any, idx: number) => (
-                  <div key={idx} className="p-4 bg-white/5 border border-white/10 rounded-lg flex flex-col justify-between space-y-3">
+                  <div key={idx} className="p-4 bg-[#EAF8FF] border border-[#687EFF]/20 rounded-xl flex flex-col justify-between space-y-3">
                     <div>
                       <div className="flex items-start justify-between gap-2">
-                        <h3 className="font-semibold text-white text-base md:text-lg">{item.component}</h3>
+                        <h3 className="font-bold text-[#0B2447] text-base md:text-lg">{item.component}</h3>
                         {item.quantity && (
-                          <span className="px-2 py-0.5 bg-white/10 text-gray-300 rounded text-xs font-mono font-medium shrink-0">
+                          <span className="px-2 py-0.5 bg-[#687EFF]/15 text-[#0B2447] border border-[#687EFF]/25 rounded text-xs font-mono font-semibold shrink-0">
                             Qty: {item.quantity}
                           </span>
                         )}
                       </div>
                       {item.description && (
-                        <p className="text-xs text-gray-400 mt-1">{item.description}</p>
+                        <p className="text-xs text-[#0B2447]/70 mt-1">{item.description}</p>
                       )}
                     </div>
                     
@@ -330,7 +331,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
                         href={item.buy_url || item.buyUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center px-4 py-2 bg-white text-black hover:bg-gray-200 rounded text-xs font-medium transition-colors w-full gap-2 mt-2 shadow-sm"
+                        className="inline-flex items-center justify-center px-4 py-2 bg-[#0B2447] hover:bg-[#19376D] text-[#B6FFFA] rounded-lg text-xs font-bold transition-colors w-full gap-2 mt-2 shadow-sm"
                       >
                         <span>Buy Component</span>
                         <ExternalLink className="w-3.5 h-3.5" />
@@ -345,11 +346,11 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
 
         {/* 2. Project Gallery (Always visible if images exist) */}
         {project.preview_images && project.preview_images.length > 0 && (
-          <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 flex items-center">
-              <ImageIcon className="w-6 h-6 mr-3 text-gray-300" /> Project Gallery
+          <div className="bg-white border border-[#687EFF]/20 p-6 md:p-8 rounded-2xl shadow-md">
+            <h3 className="text-xl font-bold mb-4 flex items-center text-[#0B2447]">
+              <ImageIcon className="w-6 h-6 mr-3 text-[#687EFF]" /> Project Gallery
             </h3>
-            <div className="relative rounded-lg overflow-hidden border border-white/10 bg-black/50 aspect-video group flex items-center justify-center">
+            <div className="relative rounded-xl overflow-hidden border border-[#687EFF]/20 bg-[#EAF8FF] aspect-video group flex items-center justify-center">
               <Image 
                 src={project.preview_images[currentImageIndex]} 
                 alt={`Preview ${currentImageIndex + 1}`}
@@ -361,13 +362,13 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
                 <>
                   <button 
                     onClick={prevImage}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-[#0B2447]/80 hover:bg-[#0B2447] text-[#B6FFFA] p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                   >
                     <ChevronLeft className="w-6 h-6" />
                   </button>
                   <button 
                     onClick={nextImage}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-[#0B2447]/80 hover:bg-[#0B2447] text-[#B6FFFA] p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                   >
                     <ChevronRight className="w-6 h-6" />
                   </button>
@@ -377,7 +378,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
                       <button
                         key={idx}
                         onClick={() => setCurrentImageIndex(idx)}
-                        className={`w-2.5 h-2.5 rounded-full transition-colors ${idx === currentImageIndex ? 'bg-white' : 'bg-white/30 hover:bg-white/50'}`}
+                        className={`w-2.5 h-2.5 rounded-full transition-colors ${idx === currentImageIndex ? 'bg-[#0B2447]' : 'bg-[#0B2447]/30 hover:bg-[#0B2447]/50'}`}
                       />
                     ))}
                   </div>
@@ -398,45 +399,45 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
                 
                 {/* Left Column: SOFTWARE Overview */}
-                <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg flex flex-col h-full">
-                  <h3 className="text-xl font-semibold mb-4 flex items-center text-white">
-                    <Code2 className="w-6 h-6 mr-3 text-white" /> SOFTWARE Architecture
+                <div className="bg-white border border-[#687EFF]/20 p-6 md:p-8 rounded-2xl shadow-md flex flex-col h-full">
+                  <h3 className="text-xl font-bold mb-4 flex items-center text-[#0B2447]">
+                    <Code2 className="w-6 h-6 mr-3 text-[#687EFF]" /> Software Architecture
                   </h3>
-                  <div className="text-gray-300 mb-6 grow space-y-3">
+                  <div className="text-[#0B2447]/80 mb-6 grow space-y-3">
                     {softwareText ? (
                       softwareText.split('\n').map((paragraph: string, idx: number) => (
                         <p key={idx} className="text-sm md:text-base leading-relaxed">{paragraph}</p>
                       ))
                     ) : (
-                      <p className="text-gray-500 italic text-sm">No software details specified.</p>
+                      <p className="text-[#0B2447]/60 italic text-sm">No software details specified.</p>
                     )}
                   </div>
 
                   {/* Source Code Section (Visible if purchased, else helper badge) */}
-                  <div className="pt-6 border-t border-white/10 mt-auto">
-                    <h4 className="text-lg font-medium mb-3 flex items-center text-white">
-                      <Code className="w-5 h-5 mr-2 text-white" /> Source Code (.ZIP)
+                  <div className="pt-6 border-t border-[#687EFF]/15 mt-auto">
+                    <h4 className="text-lg font-bold mb-3 flex items-center text-[#0B2447]">
+                      <Code className="w-5 h-5 mr-2 text-[#687EFF]" /> Source Code (.ZIP)
                     </h4>
                     
                     {hasPurchased ? (
                       <div>
-                        <p className="text-gray-400 text-sm mb-4">You have full access to the source code for this project.</p>
+                        <p className="text-[#0B2447]/70 text-sm mb-4">You have full access to the source code for this project.</p>
                         {project.github_link ? (
                           <a 
                             href={project.github_link} 
                             target="_blank" 
                             rel="noreferrer"
-                            className="inline-flex items-center w-full justify-center px-6 py-3 bg-white text-black rounded-md font-medium hover:bg-gray-200 transition-colors"
+                            className="inline-flex items-center w-full justify-center px-6 py-3 bg-[#0B2447] hover:bg-[#19376D] text-[#B6FFFA] rounded-xl font-bold transition-colors shadow-sm"
                           >
                             Download .ZIP
                           </a>
                         ) : (
-                          <p className="text-sm text-gray-500 italic">No source code URL attached yet.</p>
+                          <p className="text-sm text-[#0B2447]/60 italic">No source code URL attached yet.</p>
                         )}
                       </div>
                     ) : (
-                      <div className="p-3 bg-white/5 border border-white/10 rounded-lg text-xs text-gray-400 flex items-center gap-2">
-                        <Lock className="w-4 h-4 text-gray-400 shrink-0" />
+                      <div className="p-3 bg-[#EAF8FF] border border-[#687EFF]/20 rounded-xl text-xs text-[#0B2447]/70 flex items-center gap-2 font-medium">
+                        <Lock className="w-4 h-4 text-[#687EFF] shrink-0" />
                         <span>Source code repository (.ZIP) is included with full project unlock.</span>
                       </div>
                     )}
@@ -444,43 +445,43 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
                 </div>
 
                 {/* Right Column: HARDWARE Overview */}
-                <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-xl shadow-lg flex flex-col h-full">
-                  <h3 className="text-xl font-semibold mb-4 flex items-center text-white">
-                    <Cpu className="w-6 h-6 mr-3 text-white" /> HARDWARE Architecture
+                <div className="bg-white border border-[#687EFF]/20 p-6 md:p-8 rounded-2xl shadow-md flex flex-col h-full">
+                  <h3 className="text-xl font-bold mb-4 flex items-center text-[#0B2447]">
+                    <Cpu className="w-6 h-6 mr-3 text-[#687EFF]" /> Hardware Architecture
                   </h3>
-                  <div className="text-gray-300 mb-6 grow space-y-3">
+                  <div className="text-[#0B2447]/80 mb-6 grow space-y-3">
                     {hardwareText ? (
                       hardwareText.split('\n').map((paragraph: string, idx: number) => (
                         <p key={idx} className="text-sm md:text-base leading-relaxed">{paragraph}</p>
                       ))
                     ) : (
-                      <p className="text-gray-500 italic text-sm">No hardware details specified.</p>
+                      <p className="text-[#0B2447]/60 italic text-sm">No hardware details specified.</p>
                     )}
                   </div>
 
                   {/* Circuit Diagram Section (Visible if purchased, else helper badge) */}
-                  <div className="pt-6 border-t border-white/10 mt-auto">
-                    <h4 className="text-sm font-medium mb-3 flex items-center text-gray-300">
-                      <CheckCircle className="w-4 h-4 mr-2 text-white" /> Circuit & Wiring Diagram
+                  <div className="pt-6 border-t border-[#687EFF]/15 mt-auto">
+                    <h4 className="text-sm font-bold mb-3 flex items-center text-[#0B2447]">
+                      <CheckCircle className="w-4 h-4 mr-2 text-emerald-600" /> Circuit & Wiring Diagram
                     </h4>
                     
                     {hasPurchased ? (
                       project.circuit_diagram_url ? (
-                        <div className="rounded-lg overflow-hidden border border-white/10 bg-black/50 p-2 flex items-center justify-center">
+                        <div className="rounded-xl overflow-hidden border border-[#687EFF]/20 bg-[#EAF8FF] p-2 flex items-center justify-center">
                           <Image 
                             src={project.circuit_diagram_url} 
                             alt="Circuit Diagram"
                             width={800}
                             height={350} 
-                            className="w-full h-auto max-h-[350px] object-contain rounded-md"
+                            className="w-full h-auto max-h-[350px] object-contain rounded-lg"
                           />
                         </div>
                       ) : (
-                        <p className="text-sm text-gray-500 italic">No circuit diagram provided for this project.</p>
+                        <p className="text-sm text-[#0B2447]/60 italic">No circuit diagram provided for this project.</p>
                       )
                     ) : (
-                      <div className="p-3 bg-white/5 border border-white/10 rounded-lg text-xs text-gray-400 flex items-center gap-2">
-                        <Lock className="w-4 h-4 text-gray-400 shrink-0" />
+                      <div className="p-3 bg-[#EAF8FF] border border-[#687EFF]/20 rounded-xl text-xs text-[#0B2447]/70 flex items-center gap-2 font-medium">
+                        <Lock className="w-4 h-4 text-[#687EFF] shrink-0" />
                         <span>High-res circuit & wiring diagrams are included with full project unlock.</span>
                       </div>
                     )}
@@ -491,19 +492,19 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
 
               {/* Single Unified Lock Section */}
               {!hasPurchased && (
-                <div className="bg-[#0a0a0a] border border-white/10 p-8 md:p-10 rounded-xl text-center shadow-2xl space-y-4">
-                  <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-2">
-                    <Lock className="w-6 h-6 text-white" strokeWidth={1.5} />
+                <div className="bg-white border border-[#687EFF]/20 p-8 md:p-10 rounded-3xl text-center shadow-lg space-y-4">
+                  <div className="w-12 h-12 rounded-full bg-[#687EFF]/10 border border-[#687EFF]/30 flex items-center justify-center mx-auto mb-2">
+                    <Lock className="w-6 h-6 text-[#687EFF]" strokeWidth={1.8} />
                   </div>
-                  <h3 className="text-2xl font-semibold text-white">Unlock Full Project Access</h3>
-                  <p className="text-sm text-gray-400 max-w-lg mx-auto leading-relaxed">
+                  <h3 className="text-2xl font-extrabold text-[#0B2447]">Unlock Full Project Access</h3>
+                  <p className="text-sm text-[#0B2447]/70 max-w-lg mx-auto leading-relaxed">
                     Get instant lifetime access to the complete source code repository (.ZIP) and high-resolution circuit & wiring diagrams with a single purchase.
                   </p>
                   <div className="pt-3">
                     <button 
                       onClick={handleBuy}
                       disabled={purchasing}
-                      className="px-8 py-3.5 bg-white text-black hover:bg-gray-200 rounded-md font-semibold text-sm md:text-base transition-colors shadow-lg"
+                      className="px-8 py-3.5 bg-[#0B2447] hover:bg-[#19376D] text-[#B6FFFA] rounded-full font-bold text-sm md:text-base transition-colors shadow-md cursor-pointer"
                     >
                       {purchasing ? "Processing..." : `Unlock Full Project for ₹${project.price}`}
                     </button>
@@ -515,6 +516,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
         })()}
       </div>
 
+      <Footer />
     </div>
   );
 }

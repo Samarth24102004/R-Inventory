@@ -58,11 +58,10 @@ export default async function Home() {
           
           {/* Left Column: Heading, Quick Action Navigation & Social Links */}
           <div className="text-left max-w-2xl lg:max-w-xl xl:max-w-2xl">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[#0B2447] mb-8 leading-[1.15]">
-              Build Production-Ready <br className="hidden sm:block" />
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-[#0B2447] via-[#19376D] to-[#687EFF]">
-                Robotics Solutions
-              </span>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[#0B2447] mb-8 leading-[1.12]">
+              Build Production-<br />
+              Ready<br />
+              Robotics <span className="text-[#687EFF]">Solutions</span>
             </h1>
 
             {/* Quick Action Navigation Buttons */}
@@ -70,7 +69,7 @@ export default async function Home() {
               {/* ROS Packages */}
               <Link
                 href="/projects"
-                className="group relative inline-flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/90 hover:bg-white border border-[#687EFF]/20 hover:border-[#687EFF] transition-all duration-300 backdrop-blur-xl shadow-sm hover:shadow-[0_0_25px_rgba(104,126,255,0.25)] hover:-translate-y-0.5 active:scale-[0.98]"
+                className="group relative inline-flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white hover:bg-white/90 border border-white/80 hover:border-[#687EFF] transition-all duration-300 shadow-sm hover:shadow-[0_4px_20px_rgba(104,126,255,0.2)] hover:-translate-y-0.5 active:scale-[0.98]"
               >
                 <div className="w-8 h-8 rounded-xl bg-[#687EFF]/15 border border-[#687EFF]/30 flex items-center justify-center group-hover:scale-110 group-hover:bg-[#687EFF] group-hover:text-white transition-all duration-300 shrink-0 text-[#687EFF]">
                   <Cpu className="w-4 h-4" />
@@ -78,13 +77,13 @@ export default async function Home() {
                 <span className="text-xs sm:text-sm font-semibold text-[#0B2447] tracking-tight">
                   ROS Packages
                 </span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-[#0B2447]/50 group-hover:text-[#687EFF] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#0B2447]/40 group-hover:text-[#687EFF] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0" />
               </Link>
 
               {/* Manuals */}
               <Link
                 href="/manuals"
-                className="group relative inline-flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/90 hover:bg-white border border-[#687EFF]/20 hover:border-[#687EFF] transition-all duration-300 backdrop-blur-xl shadow-sm hover:shadow-[0_0_25px_rgba(104,126,255,0.25)] hover:-translate-y-0.5 active:scale-[0.98]"
+                className="group relative inline-flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white hover:bg-white/90 border border-white/80 hover:border-[#687EFF] transition-all duration-300 shadow-sm hover:shadow-[0_4px_20px_rgba(104,126,255,0.2)] hover:-translate-y-0.5 active:scale-[0.98]"
               >
                 <div className="w-8 h-8 rounded-xl bg-[#687EFF]/15 border border-[#687EFF]/30 flex items-center justify-center group-hover:scale-110 group-hover:bg-[#687EFF] group-hover:text-white transition-all duration-300 shrink-0 text-[#687EFF]">
                   <BookOpen className="w-4 h-4" />
@@ -92,13 +91,13 @@ export default async function Home() {
                 <span className="text-xs sm:text-sm font-semibold text-[#0B2447] tracking-tight">
                   Manuals
                 </span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-[#0B2447]/50 group-hover:text-[#687EFF] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#0B2447]/40 group-hover:text-[#687EFF] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0" />
               </Link>
 
               {/* CAD & 3D Models */}
               <Link
                 href="/3d-models"
-                className="group relative inline-flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/90 hover:bg-white border border-[#687EFF]/20 hover:border-[#687EFF] transition-all duration-300 backdrop-blur-xl shadow-sm hover:shadow-[0_0_25px_rgba(104,126,255,0.25)] hover:-translate-y-0.5 active:scale-[0.98]"
+                className="group relative inline-flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white hover:bg-white/90 border border-white/80 hover:border-[#687EFF] transition-all duration-300 shadow-sm hover:shadow-[0_4px_20px_rgba(104,126,255,0.2)] hover:-translate-y-0.5 active:scale-[0.98]"
               >
                 <div className="w-8 h-8 rounded-xl bg-[#687EFF]/15 border border-[#687EFF]/30 flex items-center justify-center group-hover:scale-110 group-hover:bg-[#687EFF] group-hover:text-white transition-all duration-300 shrink-0 text-[#687EFF]">
                   <Box className="w-4 h-4" />
@@ -106,7 +105,7 @@ export default async function Home() {
                 <span className="text-xs sm:text-sm font-semibold text-[#0B2447] tracking-tight">
                   CAD & 3D Models
                 </span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-[#0B2447]/50 group-hover:text-[#687EFF] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#0B2447]/40 group-hover:text-[#687EFF] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0" />
               </Link>
             </div>
 
@@ -118,7 +117,7 @@ export default async function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="YouTube Channel"
-                className="group p-2.5 rounded-xl bg-white/90 hover:bg-[#ff0000]/10 border border-[#687EFF]/20 hover:border-[#ff0000]/50 text-[#0B2447]/70 hover:text-[#ff0000] transition-all duration-300 backdrop-blur-xl shadow-sm hover:shadow-[0_0_20px_rgba(255,0,0,0.2)] hover:-translate-y-0.5 active:scale-95 flex items-center justify-center"
+                className="group w-10 h-10 rounded-xl bg-white hover:bg-white border border-white/80 hover:border-[#ff0000]/40 text-[#0B2447]/70 hover:text-[#ff0000] transition-all duration-300 shadow-sm hover:shadow-[0_4px_15px_rgba(255,0,0,0.15)] hover:-translate-y-0.5 active:scale-95 flex items-center justify-center"
                 title="YouTube"
               >
                 <svg
@@ -141,7 +140,7 @@ export default async function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram Profile"
-                className="group p-2.5 rounded-xl bg-white/90 hover:bg-[#e1306c]/10 border border-[#687EFF]/20 hover:border-[#e1306c]/50 text-[#0B2447]/70 hover:text-[#e1306c] transition-all duration-300 backdrop-blur-xl shadow-sm hover:shadow-[0_0_20px_rgba(225,48,108,0.2)] hover:-translate-y-0.5 active:scale-95 flex items-center justify-center"
+                className="group w-10 h-10 rounded-xl bg-white hover:bg-white border border-white/80 hover:border-[#e1306c]/40 text-[#0B2447]/70 hover:text-[#e1306c] transition-all duration-300 shadow-sm hover:shadow-[0_4px_15px_rgba(225,48,108,0.15)] hover:-translate-y-0.5 active:scale-95 flex items-center justify-center"
                 title="Instagram"
               >
                 <svg
@@ -165,7 +164,7 @@ export default async function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn Profile"
-                className="group p-2.5 rounded-xl bg-white/90 hover:bg-[#0a66c2]/10 border border-[#687EFF]/20 hover:border-[#0a66c2]/50 text-[#0B2447]/70 hover:text-[#0a66c2] transition-all duration-300 backdrop-blur-xl shadow-sm hover:shadow-[0_0_20px_rgba(10,102,194,0.2)] hover:-translate-y-0.5 active:scale-95 flex items-center justify-center"
+                className="group w-10 h-10 rounded-xl bg-white hover:bg-white border border-white/80 hover:border-[#0a66c2]/40 text-[#0B2447]/70 hover:text-[#0a66c2] transition-all duration-300 shadow-sm hover:shadow-[0_4px_15px_rgba(10,102,194,0.15)] hover:-translate-y-0.5 active:scale-95 flex items-center justify-center"
                 title="LinkedIn"
               >
                 <svg

@@ -68,7 +68,7 @@ export default function AuthButton() {
 
   return (
     <>
-      <div className="fixed top-8 right-[5%] z-50 flex items-center gap-3">
+      <div className="relative flex items-center gap-2.5 sm:gap-3">
         {/* Projects Section Header Button */}
         <Link
           href="/projects"
@@ -92,82 +92,74 @@ export default function AuthButton() {
           <span className="font-semibold tracking-tight">Projects</span>
         </Link>
 
-        {user ? (
-          <div className="relative">
-            <button 
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-1 bg-[#0B2447] border border-[#687EFF]/30 text-[#B6FFFA] rounded-full text-sm font-medium hover:bg-[#19376D] transition-colors backdrop-blur-md shadow-[0_4px_20px_rgba(11,36,71,0.2)] flex items-center gap-2 group relative"
-            >
-              <div className="absolute inset-0 rounded-full bg-[#687EFF]/30 animate-ping opacity-20"></div>
-              {avatarUrl ? (
-                <Image src={avatarUrl} alt="Avatar" width={36} height={36} className="w-9 h-9 rounded-full bg-[#0B2447] border border-[#687EFF]/30 group-hover:border-[#687EFF] transition-colors object-cover" />
-              ) : (
-                <div className="w-9 h-9 rounded-full bg-[#0B2447] border border-[#687EFF]/30 flex items-center justify-center group-hover:border-[#687EFF] transition-colors">
-                  <svg className="w-5 h-5 text-[#B6FFFA]/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </div>
-              )}
-              <svg className={`w-4 h-4 mr-2 transition-transform ${isMenuOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-
-            {isMenuOpen && (
-              <div className="absolute right-0 mt-3 w-48 bg-[#0B2447] border border-[#687EFF]/30 rounded-xl shadow-2xl overflow-hidden py-1">
-                <Link
-                  href="/projects"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="flex items-center gap-2.5 w-full text-left px-4 py-3 text-sm text-[#B6FFFA]/80 hover:text-white hover:bg-[#687EFF]/20 transition-colors"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/projects-icon.png"
-                    alt="Projects"
-                    className="w-[18px] h-[13px] object-contain opacity-80"
-                  />
-                  <span>Projects</span>
-                </Link>
-                <div className="w-full h-px bg-[#687EFF]/20"></div>
-                <Link
-                  href="/profile"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block w-full text-left px-4 py-3 text-sm text-[#B6FFFA]/80 hover:text-white hover:bg-[#687EFF]/20 transition-colors"
-                >
-                  My Profile
-                </Link>
-                <Link
-                  href="/profile"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block w-full text-left px-4 py-3 text-sm text-[#B6FFFA]/80 hover:text-white hover:bg-[#687EFF]/20 transition-colors"
-                >
-                  My Products
-                </Link>
-                <div className="w-full h-px bg-[#687EFF]/20"></div>
-                <button
-                  onClick={handleSignOut}
-                  className="w-full text-left px-4 py-3 text-sm text-[#B6FFFA]/80 hover:text-white hover:bg-[#687EFF]/20 transition-colors"
-                >
-                  Sign Out
-                </button>
-                <div className="w-full h-px bg-[#687EFF]/20"></div>
-                <button
-                  onClick={handleDeleteAccount}
-                  className="w-full text-left px-4 py-3 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors font-medium"
-                >
-                  Delete Account
-                </button>
+        <div className="relative">
+          <button 
+            onClick={() => user ? setIsMenuOpen(!isMenuOpen) : setModalOpen(true)}
+            className="h-11 px-2.5 bg-[#0B2447] hover:bg-[#19376D] border border-[#0B2447]/20 text-[#B6FFFA] rounded-full text-sm font-medium transition-all backdrop-blur-md shadow-[0_4px_20px_rgba(11,36,71,0.2)] flex items-center gap-2 group relative cursor-pointer"
+            title={user ? "Account" : "Sign In"}
+          >
+            {user && <div className="absolute inset-0 rounded-full bg-[#687EFF]/30 animate-ping opacity-20 pointer-events-none"></div>}
+            {user && avatarUrl ? (
+              <Image src={avatarUrl} alt="Avatar" width={30} height={30} className="w-[30px] h-[30px] rounded-full bg-[#0B2447] border border-[#687EFF]/30 group-hover:border-[#687EFF] transition-colors object-cover" />
+            ) : (
+              <div className="w-[28px] h-[28px] rounded-full bg-[#0B2447] border border-[#687EFF]/30 flex items-center justify-center group-hover:border-[#687EFF] transition-colors">
+                <svg className="w-4 h-4 text-[#B6FFFA]/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
               </div>
             )}
-          </div>
-        ) : (
-          <button 
-            onClick={() => setModalOpen(true)}
-            className="px-5 py-2.5 bg-[#687EFF] text-white rounded-full text-sm font-semibold hover:bg-[#687EFF]/90 transition-colors shadow-[0_4px_20px_rgba(104,126,255,0.35)]"
-          >
-            Log In
+            <svg className={`w-3.5 h-3.5 mr-0.5 text-[#B6FFFA]/70 transition-transform ${isMenuOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+            </svg>
           </button>
-        )}
+
+          {user && isMenuOpen && (
+            <div className="absolute right-0 mt-3 w-48 bg-[#0B2447] border border-[#687EFF]/30 rounded-xl shadow-2xl overflow-hidden py-1 z-50">
+              <Link
+                href="/projects"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center gap-2.5 w-full text-left px-4 py-3 text-sm text-[#B6FFFA]/80 hover:text-white hover:bg-[#687EFF]/20 transition-colors"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/projects-icon.png"
+                  alt="Projects"
+                  className="w-[18px] h-[13px] object-contain opacity-80"
+                />
+                <span>Projects</span>
+              </Link>
+              <div className="w-full h-px bg-[#687EFF]/20"></div>
+              <Link
+                href="/profile"
+                onClick={() => setIsMenuOpen(false)}
+                className="block w-full text-left px-4 py-3 text-sm text-[#B6FFFA]/80 hover:text-white hover:bg-[#687EFF]/20 transition-colors"
+              >
+                My Profile
+              </Link>
+              <Link
+                href="/profile"
+                onClick={() => setIsMenuOpen(false)}
+                className="block w-full text-left px-4 py-3 text-sm text-[#B6FFFA]/80 hover:text-white hover:bg-[#687EFF]/20 transition-colors"
+              >
+                My Products
+              </Link>
+              <div className="w-full h-px bg-[#687EFF]/20"></div>
+              <button
+                onClick={handleSignOut}
+                className="w-full text-left px-4 py-3 text-sm text-[#B6FFFA]/80 hover:text-white hover:bg-[#687EFF]/20 transition-colors cursor-pointer"
+              >
+                Sign Out
+              </button>
+              <div className="w-full h-px bg-[#687EFF]/20"></div>
+              <button
+                onClick={handleDeleteAccount}
+                className="w-full text-left px-4 py-3 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors font-medium cursor-pointer"
+              >
+                Delete Account
+              </button>
+            </div>
+          )}
+        </div>
       </div>
       <AuthModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
       <OnboardingModal isOpen={isOnboardingOpen} userId={user?.id || null} onClose={() => setIsOnboardingOpen(false)} />

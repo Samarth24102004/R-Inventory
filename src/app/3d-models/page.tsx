@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Search, Download, ShoppingCart, Star, CheckCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import AuthModal from '@/components/AuthModal';
+import Footer from '@/components/Footer';
 
 export default function ThreeDModelsPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -178,10 +179,10 @@ export default function ThreeDModelsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pt-24 pb-32 px-6 relative">
+    <div className="min-h-screen bg-[#B6FFFA] text-[#0B2447] pt-24 relative flex flex-col justify-between">
       {/* Background Image */}
       <div 
-        className="fixed inset-0 z-0 opacity-30 pointer-events-none mix-blend-screen"
+        className="fixed inset-0 z-0 opacity-15 pointer-events-none"
         style={{
           backgroundImage: 'url("/models-bg.png")',
           backgroundSize: 'cover',
@@ -189,32 +190,32 @@ export default function ThreeDModelsPage() {
           backgroundAttachment: 'fixed',
         }}
       />
-      <div className="fixed inset-0 bg-linear-to-b from-[#050505]/80 via-[#050505]/60 to-[#050505] z-0 pointer-events-none"></div>
+      <div className="fixed inset-0 bg-linear-to-b from-transparent via-[#B6FFFA]/50 to-[#B6FFFA] z-0 pointer-events-none"></div>
 
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} onSuccess={fetchData} />
-      <div className="max-w-6xl mx-auto flex flex-col gap-12 relative z-10">
+      <div className="max-w-6xl mx-auto flex flex-col gap-12 relative z-10 px-6 pb-28 w-full grow">
 
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mt-8">
           <div className="flex flex-col gap-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 w-fit">
-              <Box className="w-4 h-4 text-blue-400" />
-              <span className="text-xs font-medium tracking-wider text-neutral-300 uppercase">Premium Models</span>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0B2447] border border-[#687EFF]/30 w-fit shadow-sm">
+              <Box className="w-4 h-4 text-[#687EFF]" />
+              <span className="text-xs font-semibold tracking-wider text-[#B6FFFA] uppercase">Premium Models</span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">3D Print <span className="text-neutral-500">Inventory</span></h1>
-            <p className="text-neutral-400 max-w-lg text-lg">
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-[#0B2447]">3D Print <span className="text-[#687EFF]">Inventory</span></h1>
+            <p className="text-[#0B2447]/70 max-w-lg text-lg">
               Download high-quality, print-ready STL files for your next 3D printing project.
             </p>
           </div>
 
           <div className="relative w-full md:w-80 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-500 group-focus-within:text-white transition-colors" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#0B2447]/40 group-focus-within:text-[#687EFF] transition-colors" />
             <input
               type="text"
               placeholder="Search models..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white placeholder:text-neutral-600 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all"
+              className="w-full bg-white border border-[#687EFF]/20 rounded-2xl py-3 pl-12 pr-4 text-[#0B2447] placeholder:text-[#0B2447]/40 focus:outline-none focus:border-[#687EFF] shadow-sm transition-all"
             />
           </div>
         </div>
@@ -224,31 +225,31 @@ export default function ThreeDModelsPage() {
           {filteredModels.map((model) => (
             <div
               key={model.id}
-              className="group relative flex flex-col bg-[#0a0a0a] rounded-3xl overflow-hidden border border-white/5 hover:border-white/15 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/10"
+              className="group relative flex flex-col bg-white rounded-3xl overflow-hidden border border-[#687EFF]/20 hover:border-[#687EFF] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#687EFF]/15 shadow-md"
             >
               {/* Image Container */}
-              <div className="relative h-64 overflow-hidden bg-neutral-900">
-                <div className="absolute inset-0 bg-linear-to-t from-[#0a0a0a] to-transparent z-10 opacity-60"></div>
+              <div className="relative h-64 overflow-hidden bg-[#EAF8FF]">
+                <div className="absolute inset-0 bg-linear-to-t from-white to-transparent z-10 opacity-60"></div>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={model.image_url}
                   alt={model.title}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute top-4 right-4 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/10">
-                  <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
-                  <span className="text-xs font-medium">{model.rating || '5.0'}</span>
+                <div className="absolute top-4 right-4 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#0B2447] border border-[#0B2447] shadow-sm">
+                  <Star className="w-3.5 h-3.5 text-[#687EFF] fill-[#687EFF]" />
+                  <span className="text-xs font-semibold text-[#B6FFFA]">{model.rating || '5.0'}</span>
                 </div>
               </div>
 
               {/* Content Container */}
               <div className="flex flex-col flex-1 p-6 z-20 relative">
                 <div className="flex justify-between items-start gap-4 mb-3">
-                  <h3 className="text-xl font-medium tracking-tight line-clamp-1">{model.title}</h3>
-                  <span className="text-lg font-semibold whitespace-nowrap text-blue-400">₹{model.price}</span>
+                  <h3 className="text-xl font-bold tracking-tight text-[#0B2447] line-clamp-1">{model.title}</h3>
+                  <span className="text-lg font-bold whitespace-nowrap text-[#0B2447]">₹{model.price}</span>
                 </div>
 
-                <p className="text-sm text-neutral-400 line-clamp-2 mb-6 flex-1">
+                <p className="text-sm text-[#0B2447]/70 line-clamp-2 mb-6 flex-1">
                   {model.description}
                 </p>
 
@@ -257,7 +258,7 @@ export default function ThreeDModelsPage() {
                     <button
                       onClick={() => handleDownload(model.id, model.title)}
                       disabled={downloadingModelId === model.id}
-                      className="w-full bg-green-500/10 text-green-400 border border-green-500/30 font-medium py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-green-500/20 transition-colors disabled:opacity-50"
+                      className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-colors disabled:opacity-50 shadow-md cursor-pointer"
                     >
                       {downloadingModelId === model.id ? (
                         "Preparing..."
@@ -273,7 +274,7 @@ export default function ThreeDModelsPage() {
                       <button
                         onClick={() => handlePurchase(model)}
                         disabled={purchasingModelId === model.id}
-                        className="flex-1 bg-white text-black font-medium py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-neutral-200 transition-colors disabled:opacity-50"
+                        className="flex-1 bg-[#0B2447] hover:bg-[#19376D] text-[#B6FFFA] font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-all disabled:opacity-50 shadow-sm cursor-pointer"
                       >
                         {purchasingModelId === model.id ? "Processing..." : (
                           <>
@@ -282,7 +283,7 @@ export default function ThreeDModelsPage() {
                           </>
                         )}
                       </button>
-                      <button className="p-3 rounded-xl bg-white/5 border border-white/10 text-neutral-300 hover:text-white hover:bg-white/10 transition-colors" title="Add to wishlist (coming soon)">
+                      <button className="p-3 rounded-xl bg-white border border-[#687EFF]/30 text-[#0B2447]/60 hover:text-[#0B2447] hover:bg-[#687EFF]/10 transition-colors cursor-pointer" title="Add to wishlist (coming soon)">
                         <CheckCircle className="w-4 h-4" />
                       </button>
                     </div>
@@ -294,18 +295,19 @@ export default function ThreeDModelsPage() {
         </div>
 
         {filteredModels.length === 0 && (
-          <div className="text-center py-20">
-            <Box className="w-12 h-12 text-neutral-700 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-neutral-400">No models found</h3>
-            <p className="text-neutral-600 mt-2">Try adjusting your search terms.</p>
+          <div className="text-center py-20 bg-white rounded-3xl border border-[#687EFF]/20 shadow-sm">
+            <Box className="w-12 h-12 text-[#0B2447]/40 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-[#0B2447]">No models found</h3>
+            <p className="text-[#0B2447]/60 mt-2">Try adjusting your search terms.</p>
           </div>
         )}
 
         {loading && (
-          <div className="text-center py-20 text-neutral-400">Loading models...</div>
+          <div className="text-center py-20 text-[#0B2447]/60">Loading models...</div>
         )}
 
       </div>
+      <Footer />
     </div>
   );
 }

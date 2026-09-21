@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import BottomNavbar from "@/components/BottomNavbar";
+import Navbar from "@/components/Navbar";
 import NeededProjectModal from "@/components/NeededProjectModal";
-import AuthButton from "@/components/AuthButton";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
 import React, { Suspense } from "react";
 import Script from "next/script";
+import Link from "next/link";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -152,29 +152,12 @@ export default function RootLayout({
         </Script>
       </head>
       <body className={`${inter.className} min-h-screen bg-[#B6FFFA] text-[#0B2447] antialiased`}>
-        {/* Header Background */}
-        <div className="fixed top-0 left-0 right-0 h-28 bg-transparent backdrop-blur-md z-40 mask-[linear-gradient(to_bottom,#B6FFFA_60%,transparent_100%)] pointer-events-none"></div>
-
-        <div className="fixed top-8 left-[5%] z-50 pointer-events-none flex flex-col items-center">
-          <div className="flex items-center gap-1">
-            <span className="text-3xl font-black tracking-tighter text-[#0B2447] drop-shadow-[0_2px_10px_rgba(104,126,255,0.25)]" style={{ fontFamily: 'sans-serif' }}>
-              ROS
-            </span>
-            <span className="w-2 h-2 bg-[#687EFF] rounded-sm mt-3 animate-pulse shadow-[0_0_10px_#687EFF]"></span>
-          </div>
-          <span className="text-[10px] font-bold tracking-[0.3em] text-[#0B2447]/80 mt-[-2px]">
-            INVENTORY
-          </span>
-        </div>
+        <Suspense fallback={null}>
+          <Navbar />
+        </Suspense>
         {children}
         <Suspense fallback={null}>
           <AnalyticsTracker />
-        </Suspense>
-        <Suspense fallback={null}>
-          <AuthButton />
-        </Suspense>
-        <Suspense fallback={null}>
-          <BottomNavbar />
         </Suspense>
         <Suspense fallback={null}>
           <NeededProjectModal />
