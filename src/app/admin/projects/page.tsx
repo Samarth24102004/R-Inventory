@@ -293,46 +293,56 @@ export default function AdminProjectsPage() {
     fetchManualsList();
   }, []);
 
+  const deleteItemViaApi = async (id: string, type: 'project' | 'model' | 'manual') => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
+    if (!token) {
+      throw new Error("You must be logged in as admin to perform this action.");
+    }
+
+    const res = await fetch('/api/admin/delete-item', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ id, type })
+    });
+
+    const result = await res.json();
+    if (!res.ok || result.error) {
+      throw new Error(result.error || `Failed to delete ${type}`);
+    }
+    return result;
+  };
+
   const handleDeleteProject = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this project? This action cannot be undone.")) return;
-    
-    // First, delete related purchases so we don't hit foreign key constraints
-    await supabase.from('purchases').delete().eq('project_id', id);
-    
-    // Then delete the project
-    const { error } = await supabase.from('projects').delete().eq('id', id);
-    
-    if (error) {
-      alert(`Delete failed: ${error.message}`);
-    } else {
-      setProjects(projects.filter(p => p.id !== id));
+    try {
+      await deleteItemViaApi(id, 'project');
+      setProjects(prev => prev.filter(p => p.id !== id));
+    } catch (err: any) {
+      alert(`Delete failed: ${err.message}`);
     }
   };
 
   const handleDeleteModel = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this 3D model? This cannot be undone.")) return;
-    
-    // Also delete purchases for models if they exist
-    await supabase.from('purchases').delete().eq('model_id', id);
-
-    const { error } = await supabase.from('stl_models').delete().eq('id', id);
-    
-    if (error) {
-      alert(`Delete failed: ${error.message}`);
-    } else {
-      setModels(models.filter(m => m.id !== id));
+    try {
+      await deleteItemViaApi(id, 'model');
+      setModels(prev => prev.filter(m => m.id !== id));
+    } catch (err: any) {
+      alert(`Delete failed: ${err.message}`);
     }
   };
 
   const handleDeleteManual = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this manual guide? This cannot be undone.")) return;
-
-    const { error } = await supabase.from('manuals').delete().eq('id', id);
-
-    if (error) {
-      alert(`Delete failed: ${error.message}`);
-    } else {
-      setManualsList(manualsList.filter(m => m.id !== id));
+    try {
+      await deleteItemViaApi(id, 'manual');
+      setManualsList(prev => prev.filter(m => m.id !== id));
+    } catch (err: any) {
+      alert(`Delete failed: ${err.message}`);
     }
   };
 
