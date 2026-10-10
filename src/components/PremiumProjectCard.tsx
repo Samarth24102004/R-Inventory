@@ -98,7 +98,9 @@ export default function PremiumProjectCard({
             <h3 className="text-xl font-semibold text-[#0B2447] leading-tight group-hover:text-[#687EFF] transition-colors line-clamp-2">
               {project.title}
             </h3>
-            <span className="text-lg font-bold text-[#0B2447] ml-4 shrink-0">₹{project.price}</span>
+            <span className="text-lg font-bold text-[#0B2447] ml-4 shrink-0">
+              {Number(project.price || 0) <= 0 ? 'Free' : `₹${project.price}`}
+            </span>
           </div>
 
           {project.tags && Array.isArray(project.tags) && project.tags.length > 0 && (

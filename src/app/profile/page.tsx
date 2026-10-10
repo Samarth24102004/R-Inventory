@@ -15,6 +15,40 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<any>(null);
   const [purchases, setPurchases] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [downloadingModelId, setDownloadingModelId] = useState<string | null>(null);
+
+  const handleDownloadStl = async (modelId: string, modelTitle: string) => {
+    setDownloadingModelId(modelId);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      if (!token) throw new Error("No auth token");
+
+      const res = await fetch('/api/download-stl', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ modelId })
+      });
+
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+
+      const link = document.createElement('a');
+      link.href = data.signedUrl;
+      link.download = `${(modelTitle || 'model').replace(/\s+/g, '_')}.stl`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message || "Failed to download file");
+    } finally {
+      setDownloadingModelId(null);
+    }
+  };
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -204,14 +238,14 @@ export default function ProfilePage() {
                               <span>Download ZIP</span>
                             </a>
                           ) : stlModelId ? (
-                            <a 
-                              href={`/api/download-stl?modelId=${stlModelId}`}
-                              download
-                              className="px-4 py-2 bg-[#0B2447] hover:bg-[#19376D] text-[#B6FFFA] rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm"
+                            <button 
+                              onClick={() => handleDownloadStl(stlModelId, itemTitle)}
+                              disabled={downloadingModelId === stlModelId}
+                              className="px-4 py-2 bg-[#0B2447] hover:bg-[#19376D] text-[#B6FFFA] rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm disabled:opacity-50 cursor-pointer"
                             >
                               <Download className="w-3.5 h-3.5" />
-                              <span>Download STL</span>
-                            </a>
+                              <span>{downloadingModelId === stlModelId ? "Downloading..." : "Download STL"}</span>
+                            </button>
                           ) : (
                             <span className="px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-semibold">
                               Unlocked

@@ -77,6 +77,11 @@ export default function ThreeDModelsPage() {
       return;
     }
 
+    if (Number(model.price || 0) <= 0) {
+      handleDownload(model.id, model.title);
+      return;
+    }
+
     setPurchasingModelId(model.id);
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -144,11 +149,19 @@ export default function ThreeDModelsPage() {
   };
 
   const handleDownload = async (modelId: string, modelTitle: string) => {
+    if (!user) {
+      setAuthModalOpen(true);
+      return;
+    }
+
     setDownloadingModelId(modelId);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
-      if (!token) throw new Error("No auth token");
+      if (!token) {
+        setAuthModalOpen(true);
+        return;
+      }
 
       const res = await fetch('/api/download-stl', {
         method: 'POST',
@@ -169,6 +182,9 @@ export default function ThreeDModelsPage() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+
+      // Mark model as owned in local state
+      setPurchases(prev => (prev.includes(modelId) ? prev : [...prev, modelId]));
 
     } catch (err: any) {
       console.error(err);
@@ -246,7 +262,9 @@ export default function ThreeDModelsPage() {
               <div className="flex flex-col flex-1 p-6 z-20 relative">
                 <div className="flex justify-between items-start gap-4 mb-3">
                   <h3 className="text-xl font-bold tracking-tight text-[#0B2447] line-clamp-1">{model.title}</h3>
-                  <span className="text-lg font-bold whitespace-nowrap text-[#0B2447]">₹{model.price}</span>
+                  <span className="text-lg font-bold whitespace-nowrap text-[#0B2447]">
+                    {Number(model.price || 0) <= 0 ? 'Free' : `₹${model.price}`}
+                  </span>
                 </div>
 
                 <p className="text-sm text-[#0B2447]/70 line-clamp-2 mb-6 flex-1">
@@ -254,7 +272,7 @@ export default function ThreeDModelsPage() {
                 </p>
 
                 <div className="flex flex-col gap-3 mt-auto">
-                  {purchases.includes(model.id) ? (
+                  {purchases.includes(model.id) || Number(model.price || 0) <= 0 ? (
                     <button
                       onClick={() => handleDownload(model.id, model.title)}
                       disabled={downloadingModelId === model.id}
@@ -265,7 +283,7 @@ export default function ThreeDModelsPage() {
                       ) : (
                         <>
                           <Download className="w-4 h-4" />
-                          Download STL
+                          {Number(model.price || 0) <= 0 && !purchases.includes(model.id) ? "Download Free STL" : "Download STL"}
                         </>
                       )}
                     </button>

@@ -30,22 +30,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Model ID is required' }, { status: 400 });
     }
 
-    // Check if the user has actually purchased this model
-    const { data: purchase, error: purchaseError } = await supabaseAuth
-      .from('purchases')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('model_id', modelId)
-      .single();
-
-    if (purchaseError || !purchase) {
-      return NextResponse.json({ error: 'You have not purchased this item' }, { status: 403 });
-    }
-
-    // Get the model details to find the file path
+    // Get the model details to find the file path and price
     const { data: model, error: modelError } = await supabaseAuth
       .from('stl_models')
-      .select('stl_file_path')
+      .select('stl_file_path, price')
       .eq('id', modelId)
       .single();
 
@@ -53,11 +41,54 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Model not found' }, { status: 404 });
     }
 
+    const isFree = Number(model.price || 0) <= 0;
+
+    // Check if the user has actually purchased this model if it's not free
+    if (!isFree) {
+      const { data: purchase, error: purchaseError } = await supabaseAuth
+        .from('purchases')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('model_id', modelId)
+        .single();
+
+      if (purchaseError || !purchase) {
+        return NextResponse.json({ error: 'You have not purchased this item' }, { status: 403 });
+      }
+    }
+
     // Now use the Service Role Key to generate a secure signed URL from the private bucket
     const supabaseAdmin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY! // REQUIRES SERVICE ROLE KEY in .env.local
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
+
+    // If free, optionally record it in purchases so it shows in their profile
+    if (isFree) {
+      try {
+        const { data: existingPurchase } = await supabaseAdmin
+          .from('purchases')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('model_id', modelId)
+          .maybeSingle();
+
+        if (!existingPurchase) {
+          await supabaseAdmin
+            .from('purchases')
+            .insert([
+              {
+                user_id: user.id,
+                model_id: modelId,
+                amount: 0,
+                status: 'completed'
+              }
+            ]);
+        }
+      } catch (logErr) {
+        console.warn('Could not record free purchase entry:', logErr);
+      }
+    }
 
     // Create a signed URL that expires in 60 seconds
     const { data: signedUrlData, error: signedUrlError } = await supabaseAdmin.storage

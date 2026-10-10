@@ -108,8 +108,10 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
     const { data: { user: currentUser } } = await supabase.auth.getUser();
     setUser(currentUser);
 
-    // 3. Check Purchase if User logged in
-    if (currentUser) {
+    // 3. Check Purchase or Free Status
+    if (Number(projectData.price || 0) <= 0) {
+      setHasPurchased(true);
+    } else if (currentUser) {
       const { data: purchaseData } = await supabase
         .from('purchases')
         .select('*')
@@ -132,6 +134,11 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
   const handleBuy = async () => {
     if (!user) {
       setAuthModalOpen(true);
+      return;
+    }
+
+    if (Number(project.price || 0) <= 0) {
+      setHasPurchased(true);
       return;
     }
 
