@@ -88,9 +88,29 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
   return (
     <div className="fixed inset-0 z-100 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-md bg-[#0a0a0a] border border-white/20 rounded-xl p-8 relative shadow-lg">
+        {/* Back Navigation Button */}
+        {(!isLogin || isAwaitingOtp) && (
+          <button 
+            type="button"
+            onClick={() => {
+              if (isAwaitingOtp) {
+                setIsAwaitingOtp(false);
+              } else {
+                setIsLogin(true);
+                setError(null);
+              }
+            }} 
+            className="absolute top-6 left-6 flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors cursor-pointer"
+            title="Go back"
+          >
+            <span className="text-base">&larr;</span> Back
+          </button>
+        )}
+
         <button 
           onClick={onClose} 
           className="absolute top-6 right-6 p-2 rounded-full border border-transparent hover:border-white/20 text-gray-400 hover:text-white transition-colors cursor-pointer"
+          aria-label="Close modal"
         >
           <X className="w-5 h-5" />
         </button>

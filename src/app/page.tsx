@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import Footer from '@/components/Footer';
 import PremiumProjectCard from '@/components/PremiumProjectCard';
+import LockedProjectCard from '@/components/LockedProjectCard';
 import { supabase } from '@/lib/supabase';
 import { demoProjects, Project } from '@/lib/data';
-import { ArrowRight, Cpu, BookOpen, Box, ArrowUpRight, Star, Layers } from 'lucide-react';
+import { ArrowRight, Cpu, BookOpen, Box, ArrowUpRight, Star, Layers, Play } from 'lucide-react';
 
 export const revalidate = 0; // Ensure data is fetched dynamically
 
@@ -66,7 +67,7 @@ export default async function Home() {
 
             {/* Quick Action Navigation Buttons */}
             <div className="flex flex-wrap items-center gap-3.5 max-w-3xl">
-              {/* ROS Packages */}
+              {/* Projects */}
               <Link
                 href="/projects"
                 className="group relative inline-flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white hover:bg-white/90 border border-white/80 hover:border-[#687EFF] transition-all duration-300 shadow-sm hover:shadow-[0_4px_20px_rgba(104,126,255,0.2)] hover:-translate-y-0.5 active:scale-[0.98]"
@@ -75,21 +76,21 @@ export default async function Home() {
                   <Cpu className="w-4 h-4" />
                 </div>
                 <span className="text-xs sm:text-sm font-semibold text-[#0B2447] tracking-tight">
-                  ROS Packages
+                  Projects
                 </span>
                 <ArrowUpRight className="w-3.5 h-3.5 text-[#0B2447]/40 group-hover:text-[#687EFF] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0" />
               </Link>
 
-              {/* Manuals */}
+              {/* Simulation */}
               <Link
-                href="/manuals"
+                href="/simulation"
                 className="group relative inline-flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white hover:bg-white/90 border border-white/80 hover:border-[#687EFF] transition-all duration-300 shadow-sm hover:shadow-[0_4px_20px_rgba(104,126,255,0.2)] hover:-translate-y-0.5 active:scale-[0.98]"
               >
                 <div className="w-8 h-8 rounded-xl bg-[#687EFF]/15 border border-[#687EFF]/30 flex items-center justify-center group-hover:scale-110 group-hover:bg-[#687EFF] group-hover:text-white transition-all duration-300 shrink-0 text-[#687EFF]">
-                  <BookOpen className="w-4 h-4" />
+                  <Layers className="w-4 h-4" />
                 </div>
                 <span className="text-xs sm:text-sm font-semibold text-[#0B2447] tracking-tight">
-                  Manuals
+                  Simulation
                 </span>
                 <ArrowUpRight className="w-3.5 h-3.5 text-[#0B2447]/40 group-hover:text-[#687EFF] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0" />
               </Link>
@@ -104,6 +105,20 @@ export default async function Home() {
                 </div>
                 <span className="text-xs sm:text-sm font-semibold text-[#0B2447] tracking-tight">
                   CAD & 3D Models
+                </span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#0B2447]/40 group-hover:text-[#687EFF] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0" />
+              </Link>
+
+              {/* Manuals */}
+              <Link
+                href="/manuals"
+                className="group relative inline-flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white hover:bg-white/90 border border-white/80 hover:border-[#687EFF] transition-all duration-300 shadow-sm hover:shadow-[0_4px_20px_rgba(104,126,255,0.2)] hover:-translate-y-0.5 active:scale-[0.98]"
+              >
+                <div className="w-8 h-8 rounded-xl bg-[#687EFF]/15 border border-[#687EFF]/30 flex items-center justify-center group-hover:scale-110 group-hover:bg-[#687EFF] group-hover:text-white transition-all duration-300 shrink-0 text-[#687EFF]">
+                  <BookOpen className="w-4 h-4" />
+                </div>
+                <span className="text-xs sm:text-sm font-semibold text-[#0B2447] tracking-tight">
+                  Manuals
                 </span>
                 <ArrowUpRight className="w-3.5 h-3.5 text-[#0B2447]/40 group-hover:text-[#687EFF] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0" />
               </Link>
@@ -234,7 +249,11 @@ export default async function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {displayProjects.map((project, idx) => (
               <div key={project.id} className={idx >= 2 ? 'hidden sm:block' : 'block'}>
-                <PremiumProjectCard project={project} />
+                {idx === 1 ? (
+                  <LockedProjectCard project={project} />
+                ) : (
+                  <PremiumProjectCard project={project} />
+                )}
               </div>
             ))}
           </div>
@@ -251,73 +270,91 @@ export default async function Home() {
         </section>
 
         {/* 3D Models Section */}
-        <section id="3d-models" className="mb-16">
+        <section id="3d-models" className="mb-20">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
             <div>
-              <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#687EFF] mb-2">
+              <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#687EFF] mb-2 font-semibold">
                 <Box className="w-3.5 h-3.5" />
-                <span>Print-Ready CAD</span>
+                <span>Print-Ready CAD & Hardware</span>
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-[#0B2447]">3D Models</h2>
+              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-[#0B2447]">3D Models</h2>
+              <p className="text-xs sm:text-sm text-[#0B2447]/70 mt-1 max-w-xl">
+                Download verified, high-precision STL files and CAD assemblies for custom robotics chassis, brackets, and sensor enclosures.
+              </p>
             </div>
             <Link
               href="/3d-models"
-              className="hidden sm:inline-flex group items-center gap-2 px-5 py-2.5 rounded-full bg-[#0B2447] text-[#B6FFFA] hover:bg-[#19376D] text-sm font-semibold transition-all duration-300 shadow-[0_4px_20px_rgba(11,36,71,0.2)]"
+              className="hidden sm:inline-flex group items-center gap-2 px-5 py-2.5 rounded-full bg-[#0B2447] text-[#B6FFFA] hover:bg-[#19376D] text-sm font-semibold transition-all duration-300 shadow-[0_4px_20px_rgba(11,36,71,0.2)] active:scale-95"
             >
-              <span>View More 3D Models</span>
+              <span>Explore All 3D Models</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
 
           {displayModels.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {displayModels.map((model, idx) => (
+              {displayModels.slice(0, 4).map((model) => (
                 <div
                   key={model.id}
-                  className={`group relative flex flex-col bg-white rounded-2xl overflow-hidden border border-[#687EFF]/20 hover:border-[#687EFF] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#687EFF]/15 ${
-                    idx >= 3 ? 'hidden sm:flex' : 'flex'
-                  }`}
+                  className="group relative flex flex-col bg-white rounded-2xl overflow-hidden border border-[#687EFF]/20 hover:border-[#687EFF] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-[#687EFF]/15 cursor-pointer"
                 >
-                  <div className="relative h-48 overflow-hidden bg-[#EAF8FF]">
-                    <div className="absolute inset-0 bg-linear-to-t from-white to-transparent z-10 opacity-60"></div>
+                  {/* Thumbnail */}
+                  <div className="relative h-48 sm:h-52 overflow-hidden bg-[#EAF8FF] shrink-0 border-b border-[#687EFF]/15">
+                    <div className="absolute inset-0 bg-linear-to-t from-white/90 via-transparent to-transparent z-10 pointer-events-none"></div>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={model.image_url || '/placeholder.jpg'}
                       alt={model.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-108"
                     />
-                    <div className="absolute top-3 right-3 z-20 flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#0B2447] text-[#B6FFFA] border border-[#0B2447] text-xs">
+                    <div className="absolute top-3 right-3 z-20 flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#0B2447]/90 text-[#B6FFFA] border border-[#687EFF]/40 text-xs backdrop-blur-md shadow-sm">
                       <Star className="w-3 h-3 text-[#687EFF] fill-[#687EFF]" />
-                      <span className="font-medium text-[#B6FFFA]">{model.rating || '5.0'}</span>
+                      <span className="font-mono font-semibold text-[#B6FFFA]">{model.rating || '5.0'}</span>
+                    </div>
+
+                    <div className="absolute top-3 left-3 z-20">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-white/90 text-[#0B2447] text-[10px] font-mono font-bold uppercase tracking-wider shadow-xs">
+                        .STL CAD
+                      </span>
                     </div>
                   </div>
 
-                  <div className="flex flex-col flex-1 p-5 z-20 relative">
+                  {/* Body Content */}
+                  <div className="flex flex-col flex-1 p-5 z-20 relative bg-white">
                     <div className="flex justify-between items-start gap-2 mb-2">
-                      <h3 className="text-lg font-semibold text-[#0B2447] tracking-tight line-clamp-1 group-hover:text-[#687EFF] transition-colors">{model.title}</h3>
-                      <span className="text-base font-bold text-[#0B2447] shrink-0">₹{model.price}</span>
+                      <h3 className="text-base sm:text-lg font-bold text-[#0B2447] tracking-tight line-clamp-1 group-hover:text-[#687EFF] transition-colors">
+                        {model.title}
+                      </h3>
+                      <span className="text-sm sm:text-base font-extrabold text-[#0B2447] shrink-0">
+                        {Number(model.price || 0) <= 0 ? 'Free' : `₹${model.price}`}
+                      </span>
                     </div>
 
-                    <p className="text-xs text-[#0B2447]/70 line-clamp-2 mb-4 flex-1">
-                      {model.description}
+                    <p className="text-xs text-[#0B2447]/70 line-clamp-2 mb-5 flex-1 leading-relaxed">
+                      {model.description || "Production-ready 3D printable robotics component with verified dimensional tolerances."}
                     </p>
 
                     <Link
                       href="/3d-models"
-                      className="w-full mt-auto bg-[#0B2447] hover:bg-[#19376D] text-[#B6FFFA] text-xs font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 shadow-sm"
+                      className="w-full mt-auto bg-[#0B2447] hover:bg-[#19376D] text-[#B6FFFA] text-xs font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 shadow-sm group/btn active:scale-98"
                     >
-                      View 3D Models
+                      <span>Explore Model</span>
+                      <ArrowRight className="w-3.5 h-3.5 text-[#687EFF] group-hover/btn:translate-x-1 transition-transform" />
                     </Link>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 px-4 rounded-2xl bg-white border border-[#687EFF]/20 text-[#0B2447]/70">
-              <Box className="w-10 h-10 text-[#0B2447]/40 mx-auto mb-3" />
-              <p className="text-sm">Explore our collection of 3D printable robotics models.</p>
-              <Link href="/3d-models" className="inline-block mt-4 text-xs font-semibold text-[#687EFF] hover:underline">
-                Go to 3D Models Inventory &rarr;
+            <div className="text-center py-12 px-6 rounded-3xl bg-white/90 border border-[#687EFF]/25 text-[#0B2447]/70 max-w-xl mx-auto shadow-sm">
+              <div className="w-12 h-12 rounded-2xl bg-[#687EFF]/15 border border-[#687EFF]/30 flex items-center justify-center text-[#687EFF] mx-auto mb-3">
+                <Box className="w-6 h-6" />
+              </div>
+              <h4 className="text-base font-bold text-[#0B2447] mb-1">CAD & 3D Printable Models</h4>
+              <p className="text-xs text-[#0B2447]/70">Explore our collection of 3D printable robotics frames, enclosures, and sensor mounts.</p>
+              <Link href="/3d-models" className="inline-flex items-center gap-1.5 mt-4 text-xs font-bold text-[#687EFF] hover:text-[#0B2447] transition-colors underline underline-offset-4">
+                <span>Go to 3D Models Inventory</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
           )}
@@ -325,9 +362,9 @@ export default async function Home() {
           <div className="mt-8 text-center sm:hidden">
             <Link
               href="/3d-models"
-              className="inline-flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-[#0B2447] text-[#B6FFFA] font-semibold shadow-[0_4px_20px_rgba(11,36,71,0.2)] active:scale-[0.98] transition-all"
+              className="inline-flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-[#0B2447] text-[#B6FFFA] font-bold text-sm shadow-[0_4px_20px_rgba(11,36,71,0.2)] active:scale-[0.98] transition-all"
             >
-              <span>View More 3D Models</span>
+              <span>Explore All 3D Models</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>

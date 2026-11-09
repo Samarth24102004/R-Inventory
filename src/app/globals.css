@@ -10,11 +10,13 @@
   
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
 
   body {
     background-color: #B6FFFA;
     color: #0B2447;
     overscroll-behavior: none;
+    overflow-x: hidden;
   }
 }

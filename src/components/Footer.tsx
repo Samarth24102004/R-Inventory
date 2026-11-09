@@ -91,6 +91,7 @@ export default function Footer() {
             <span className="font-semibold text-[#B6FFFA]">Resources</span>
             <a href="/projects" className="hover:text-[#687EFF] transition-colors">ROS Projects</a>
             <a href="/3d-models" className="hover:text-[#687EFF] transition-colors">3D Models</a>
+            <a href="/simulation" className="hover:text-[#687EFF] transition-colors">Simulation</a>
             <a href="/manuals" className="hover:text-[#687EFF] transition-colors">ROS Manuals</a>
           </div>
           <div className="flex flex-col gap-2 text-center md:text-right">

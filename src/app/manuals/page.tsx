@@ -21,7 +21,7 @@ export default function ManualsPage() {
       const { data, error } = await supabase
         .from('manuals')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: true });
 
       if (data && data.length > 0) {
         const mappedData: ManualPost[] = data.map((item) => ({

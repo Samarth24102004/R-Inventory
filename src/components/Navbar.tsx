@@ -35,6 +35,7 @@ export default function Navbar() {
     { name: 'Home', href: '/' },
     { name: 'Projects', href: '/projects' },
     { name: '3D Models', href: '/3d-models' },
+    { name: 'Simulation', href: '/simulation' },
     { name: 'Manuals', href: '/manuals' },
     { name: 'Contact Me', href: '/?contact=true' },
   ];
@@ -45,6 +46,7 @@ export default function Navbar() {
     if (link.name === 'Home') return pathname === '/' && hash !== '#projects';
     if (link.name === 'Projects') return pathname === '/projects' || (pathname === '/' && hash === '#projects');
     if (link.name === '3D Models') return pathname === '/3d-models';
+    if (link.name === 'Simulation') return pathname === '/simulation' || pathname?.startsWith('/simulation/');
     if (link.name === 'Manuals') return pathname === '/manuals' || pathname?.startsWith('/manuals/');
     return pathname === link.href;
   };
