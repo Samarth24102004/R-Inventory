@@ -10,8 +10,8 @@ import AuthModal from './AuthModal';
 
 export default function LockedProjectCard({
   project,
-  className = "w-full h-96 shrink-0",
-  videoHeight = "h-40",
+  className = "w-full min-h-96 shrink-0",
+  videoHeight = "h-36",
   showTags = true,
 }: {
   project: Project;
@@ -218,24 +218,14 @@ export default function LockedProjectCard({
             </div>
           </div>
 
-          {/* Interactive Unlock Button */}
-          <div className="mt-auto">
-            {isUnlocked ? (
-              <button
-                type="button"
-                onClick={handleUnlockClick}
-                className="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all duration-200 flex items-center justify-center gap-2 shadow-sm cursor-pointer active:scale-98"
-              >
-                <CheckCircle className="w-4 h-4" />
-                <span>Unlocked • View Package</span>
-                <ArrowRight className="w-3.5 h-3.5 ml-auto" />
-              </button>
-            ) : (
+          {/* Interactive Unlock Button (only when locked) */}
+          {!isUnlocked && (
+            <div className="mt-auto pt-2">
               <button
                 type="button"
                 onClick={handleUnlockClick}
                 disabled={actionLoading}
-                className="w-full py-2.5 px-4 rounded-xl bg-[#0B2447] hover:bg-[#19376D] text-[#B6FFFA] text-xs font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg hover:shadow-[#687EFF]/25 cursor-pointer active:scale-98 group/btn"
+                className="w-full py-2 px-4 rounded-xl bg-[#0B2447] hover:bg-[#19376D] text-[#B6FFFA] text-xs font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg hover:shadow-[#687EFF]/25 cursor-pointer active:scale-98 group/btn"
               >
                 {actionLoading ? (
                   <>
@@ -252,8 +242,8 @@ export default function LockedProjectCard({
                   </>
                 )}
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
 

@@ -250,11 +250,7 @@ export default async function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {displayProjects.map((project, idx) => (
               <div key={project.id} className={idx >= 2 ? 'hidden sm:block' : 'block'}>
-                {idx === 1 ? (
-                  <LockedProjectCard project={project} showTags={false} />
-                ) : (
-                  <PremiumProjectCard project={project} showTags={false} />
-                )}
+                <PremiumProjectCard project={project} showTags={false} />
               </div>
             ))}
           </div>
