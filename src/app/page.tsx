@@ -38,7 +38,7 @@ export default async function Home() {
   const displayModels = dbModels || [];
 
   return (
-    <main className="relative bg-[#B6FFFA] min-h-screen text-[#0B2447] selection:bg-[#687EFF]/30 selection:text-[#0B2447] flex flex-col">
+    <main className="relative bg-[#B6FFFA] min-h-screen text-[#0B2447] selection:bg-[#687EFF]/30 selection:text-[#0B2447] flex flex-col overflow-x-clip">
       {/* Background Image Overlay */}
       <div
         className="fixed inset-0 z-0 opacity-15 pointer-events-none mix-blend-multiply"

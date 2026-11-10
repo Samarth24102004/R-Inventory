@@ -392,7 +392,7 @@ function SignUpFormContent() {
 
 export default function SignUpPage() {
   return (
-    <main className="min-h-screen bg-[#B6FFFA] text-[#0B2447] pt-28 pb-16 px-4 sm:px-6 lg:px-8 flex flex-col justify-center relative overflow-hidden">
+    <main className="min-h-screen bg-[#B6FFFA] text-[#0B2447] pt-28 pb-16 px-4 sm:px-6 lg:px-8 flex flex-col justify-center relative overflow-x-clip">
       {/* Background Drone Graphic Overlay */}
       <div
         className="fixed inset-0 z-0 opacity-15 pointer-events-none mix-blend-multiply"

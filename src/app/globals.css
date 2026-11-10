@@ -10,13 +10,29 @@
   
   html {
     scroll-behavior: smooth;
-    overflow-x: hidden;
   }
 
   body {
     background-color: #B6FFFA;
     color: #0B2447;
-    overscroll-behavior: none;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 }
+
+/* Custom scrollbar utility for inner scroll areas (code blocks, sidebar) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(11, 36, 71, 0.05);
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(104, 126, 255, 0.4);
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(104, 126, 255, 0.7);
+}
+
