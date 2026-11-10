@@ -220,6 +220,7 @@ export default async function Home() {
                     project={featuredVitaBot} 
                     className="w-full h-102.5 shrink-0" 
                     videoHeight="h-48"
+                    showTags={false}
                   />
                 </div>
               </div>
@@ -250,9 +251,9 @@ export default async function Home() {
             {displayProjects.map((project, idx) => (
               <div key={project.id} className={idx >= 2 ? 'hidden sm:block' : 'block'}>
                 {idx === 1 ? (
-                  <LockedProjectCard project={project} />
+                  <LockedProjectCard project={project} showTags={false} />
                 ) : (
-                  <PremiumProjectCard project={project} />
+                  <PremiumProjectCard project={project} showTags={false} />
                 )}
               </div>
             ))}

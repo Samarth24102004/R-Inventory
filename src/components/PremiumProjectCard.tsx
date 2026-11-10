@@ -19,11 +19,13 @@ function getYouTubeEmbedUrl(url: string | undefined): string | null {
 export default function PremiumProjectCard({ 
   project,
   className = "w-full h-96 shrink-0",
-  videoHeight = "h-40"
+  videoHeight = "h-40",
+  showTags = true,
 }: { 
   project: Project;
   className?: string;
   videoHeight?: string;
+  showTags?: boolean;
 }) {
   const videoRef = React.useRef<HTMLVideoElement>(null);
 
@@ -103,7 +105,7 @@ export default function PremiumProjectCard({
             </span>
           </div>
 
-          {project.tags && Array.isArray(project.tags) && project.tags.length > 0 && (
+          {showTags && project.tags && Array.isArray(project.tags) && project.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-3">
               {project.tags.map((tag: string, idx: number) => (
                 <span key={idx} className="bg-[#687EFF]/10 text-[#687EFF] border border-[#687EFF]/25 px-2 py-0.5 rounded text-[10px] font-sans font-semibold tracking-wide uppercase">

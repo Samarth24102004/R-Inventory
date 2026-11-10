@@ -11,11 +11,13 @@ import AuthModal from './AuthModal';
 export default function LockedProjectCard({
   project,
   className = "w-full h-96 shrink-0",
-  videoHeight = "h-40"
+  videoHeight = "h-40",
+  showTags = true,
 }: {
   project: Project;
   className?: string;
   videoHeight?: string;
+  showTags?: boolean;
 }) {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
@@ -183,7 +185,7 @@ export default function LockedProjectCard({
           </div>
 
           {/* Tags */}
-          {project.tags && Array.isArray(project.tags) && project.tags.length > 0 && (
+          {showTags && project.tags && Array.isArray(project.tags) && project.tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-2.5">
               {project.tags.slice(0, 3).map((tag: string, idx: number) => (
                 <span
