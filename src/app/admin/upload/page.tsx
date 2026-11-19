@@ -1,13 +1,49 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
-import { Upload, Plus, CircuitBoard, Lightbulb, Mail, CheckCircle2, Box, Image as ImageIcon, FileBox, Loader2, Video, Cpu, Code2, Film, BarChart3, Trash2, ExternalLink, BookOpen, Terminal } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { Upload, Plus, CircuitBoard, Lightbulb, Mail, CheckCircle2, Box, Image as ImageIcon, FileBox, Loader2, Video, Cpu, Code2, Film, BarChart3, Trash2, ExternalLink, BookOpen, Terminal, Play } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { formatProjectDescription } from '@/lib/data';
 import AdminHeaderLayout from '@/components/AdminHeaderLayout';
 import Link from 'next/link';
 
 export default function AdminUploadPage() {
-  const [uploadType, setUploadType] = useState<'project' | 'model' | 'manual'>('project');
+  const searchParams = useSearchParams();
+  const [uploadType, setUploadType] = useState<'project' | 'model' | 'manual' | 'simulation'>('project');
+
+  useEffect(() => {
+    const typeParam = searchParams.get('type');
+    if (typeParam === 'simulation') setUploadType('simulation');
+    else if (typeParam === 'model') setUploadType('model');
+    else if (typeParam === 'manual') setUploadType('manual');
+  }, [searchParams]);
+
+  // Simulation Specific States
+  const [simTitle, setSimTitle] = useState('');
+  const [simCategory, setSimCategory] = useState('Gazebo & Gz Sim');
+  const [simSimulator, setSimSimulator] = useState('Gazebo Fortress');
+  const [simRosDistro, setSimRosDistro] = useState('ROS 2 Jazzy');
+  const [simTag, setSimTag] = useState('');
+  const [simLaunchCommand, setSimLaunchCommand] = useState('');
+  const [simDescription, setSimDescription] = useState('');
+  const [simLongDescription, setSimLongDescription] = useState('');
+  const [simSensorsInput, setSimSensorsInput] = useState('');
+  const [simFeaturesInput, setSimFeaturesInput] = useState('');
+  const [simPrice, setSimPrice] = useState('0');
+  const [simVideoUrl, setSimVideoUrl] = useState('');
+  const [simVideoFile, setSimVideoFile] = useState<File | null>(null);
+  const [simPreviewImageFile, setSimPreviewImageFile] = useState<File | null>(null);
+  const [simCodeFile, setSimCodeFile] = useState<File | null>(null);
+  const [simProjectId, setSimProjectId] = useState<string>('');
+  const [availableProjects, setAvailableProjects] = useState<{ id: string; title: string; slug: string }[]>([]);
+
+  useEffect(() => {
+    const fetchAvailableProjects = async () => {
+      const { data } = await supabase.from('projects').select('id, title, slug').order('created_at', { ascending: false });
+      if (data) setAvailableProjects(data);
+    };
+    fetchAvailableProjects();
+  }, []);
 
   // Shared States
   const [title, setTitle] = useState('');
@@ -480,36 +516,143 @@ export default function AdminUploadPage() {
     }
   };
 
+  const handleSimulationSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!simTitle.trim() || !simLaunchCommand.trim()) {
+      return alert("Please provide at least a simulation title and primary ROS 2 launch command.");
+    }
+
+    setIsSubmitting(true);
+    try {
+      const slug = simTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + Math.random().toString(36).substring(2, 7);
+
+      let finalVideoUrl = simVideoUrl.trim() || null;
+      if (simVideoFile) {
+        const fileExt = simVideoFile.name.split('.').pop();
+        const fileName = `sim_video_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const { error: videoUploadErr } = await supabase.storage.from('project_videos').upload(fileName, simVideoFile);
+        if (!videoUploadErr) {
+          const { data: urlData } = supabase.storage.from('project_videos').getPublicUrl(fileName);
+          finalVideoUrl = urlData.publicUrl;
+        }
+      }
+
+      let finalPreviewImageUrl: string | null = null;
+      if (simPreviewImageFile) {
+        const fileExt = simPreviewImageFile.name.split('.').pop();
+        const fileName = `sim_preview_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const { error: imgErr } = await supabase.storage.from('project_previews').upload(fileName, simPreviewImageFile);
+        if (!imgErr) {
+          const { data: urlData } = supabase.storage.from('project_previews').getPublicUrl(fileName);
+          finalPreviewImageUrl = urlData.publicUrl;
+        }
+      }
+
+      let finalCodeUrl: string | null = null;
+      if (simCodeFile) {
+        const fileExt = simCodeFile.name.split('.').pop();
+        const fileName = `sim_code_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const { error: codeErr } = await supabase.storage.from('project_code').upload(fileName, simCodeFile);
+        if (!codeErr) {
+          const { data: urlData } = supabase.storage.from('project_code').getPublicUrl(fileName);
+          finalCodeUrl = urlData.publicUrl;
+        }
+      }
+
+      const sensorsArray = simSensorsInput
+        .split(',')
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+
+      const featuresArray = simFeaturesInput
+        .split(',')
+        .map(f => f.trim())
+        .filter(f => f.length > 0);
+
+      const { error } = await supabase.from('simulations').insert([
+        {
+          title: simTitle.trim(),
+          slug: slug,
+          category: simCategory,
+          tag: simTag.trim() || `${simSimulator} • ${simRosDistro}`,
+          simulator: simSimulator,
+          ros_distro: simRosDistro,
+          launch_command: simLaunchCommand.trim(),
+          description: simDescription.trim(),
+          long_description: simLongDescription.trim() || simDescription.trim(),
+          sensors: sensorsArray,
+          features: featuresArray,
+          video_url: finalVideoUrl,
+          preview_image_url: finalPreviewImageUrl,
+          code_file_url: finalCodeUrl,
+          price: parseFloat(simPrice) || 0,
+          project_id: simProjectId ? simProjectId : null
+        }
+      ]);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      alert("Success! Simulation project uploaded to RoS Inventory.");
+      setSimTitle('');
+      setSimLaunchCommand('');
+      setSimDescription('');
+      setSimLongDescription('');
+      setSimTag('');
+      setSimSensorsInput('');
+      setSimFeaturesInput('');
+      setSimPrice('0');
+      setSimVideoUrl('');
+      setSimVideoFile(null);
+      setSimPreviewImageFile(null);
+      setSimCodeFile(null);
+      setSimProjectId('');
+    } catch (err: any) {
+      console.error(err);
+      alert(`Upload Failed: ${err.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <AdminHeaderLayout
       title="Upload Content"
-      subtitle="Upload new ROS 2 projects, hardware architectures, code ZIPs, 3D STL models, and manual guides."
+      subtitle="Upload new ROS 2 projects, hardware architectures, code ZIPs, 3D STL models, manual guides, and digital twin simulations."
     >
       <div className="space-y-8">
         <div className="bg-[#0a0a0a] p-10 rounded-xl border border-white/10 shadow-lg">
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 border-b border-white/10 pb-6 gap-6">
             <h2 className="text-xl font-semibold text-white tracking-tight">Select Content Type</h2>
-            <div className="flex bg-white/5 rounded-md p-1 border border-white/10">
+            <div className="flex flex-wrap bg-white/5 rounded-md p-1 border border-white/10 gap-1">
               <button 
                 onClick={() => setUploadType('project')}
-                className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors flex items-center gap-2 ${uploadType === 'project' ? 'bg-white text-black font-semibold' : 'text-gray-400 hover:text-white'}`}
+                className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors flex items-center gap-2 cursor-pointer ${uploadType === 'project' ? 'bg-white text-black font-semibold' : 'text-gray-400 hover:text-white'}`}
               >
                 <CircuitBoard className="w-4 h-4" />
                 Project
               </button>
               <button 
                 onClick={() => setUploadType('model')}
-                className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors flex items-center gap-2 ${uploadType === 'model' ? 'bg-white text-black font-semibold' : 'text-gray-400 hover:text-white'}`}
+                className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors flex items-center gap-2 cursor-pointer ${uploadType === 'model' ? 'bg-white text-black font-semibold' : 'text-gray-400 hover:text-white'}`}
               >
                 <Box className="w-4 h-4" />
                 3D Model
               </button>
               <button 
                 onClick={() => setUploadType('manual')}
-                className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors flex items-center gap-2 ${uploadType === 'manual' ? 'bg-white text-black font-semibold' : 'text-gray-400 hover:text-white'}`}
+                className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors flex items-center gap-2 cursor-pointer ${uploadType === 'manual' ? 'bg-white text-black font-semibold' : 'text-gray-400 hover:text-white'}`}
               >
                 <BookOpen className="w-4 h-4" />
                 Manual / Guide
+              </button>
+              <button 
+                onClick={() => setUploadType('simulation')}
+                className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors flex items-center gap-2 cursor-pointer ${uploadType === 'simulation' ? 'bg-white text-black font-semibold' : 'text-gray-400 hover:text-white'}`}
+              >
+                <Play className="w-4 h-4" />
+                Simulation
               </button>
             </div>
           </div>
@@ -1206,6 +1349,290 @@ export default function AdminUploadPage() {
                   Publishing Manual...
                 </>
               ) : 'Publish Manual Guide'}
+            </button>
+          </form>
+        )}
+
+        {uploadType === 'simulation' && (
+          <form onSubmit={handleSimulationSubmit} className="space-y-8">
+            {/* Row 1: Title, Simulator, ROS Distro */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase">Simulation Title *</label>
+                <input 
+                  type="text" 
+                  required
+                  value={simTitle}
+                  onChange={(e) => setSimTitle(e.target.value)}
+                  className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white"
+                  placeholder="e.g. Gazebo Warehouse AMR Digital Twin"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase">Simulator Platform *</label>
+                <select
+                  value={simSimulator}
+                  onChange={(e) => setSimSimulator(e.target.value)}
+                  className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white"
+                >
+                  <option value="Gazebo Fortress">Gazebo Fortress</option>
+                  <option value="Gazebo Harmonic">Gazebo Harmonic</option>
+                  <option value="Gazebo Classic 11">Gazebo Classic 11</option>
+                  <option value="RViz2">RViz2</option>
+                  <option value="PX4 SITL">PX4 SITL</option>
+                  <option value="Webots">Webots</option>
+                  <option value="Isaac Sim">Isaac Sim</option>
+                  <option value="Custom Simulation">Custom Simulation</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase">Target ROS Distro *</label>
+                <select
+                  value={simRosDistro}
+                  onChange={(e) => setSimRosDistro(e.target.value)}
+                  className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white"
+                >
+                  <option value="ROS 2 Jazzy">ROS 2 Jazzy</option>
+                  <option value="ROS 2 Humble">ROS 2 Humble</option>
+                  <option value="ROS 2 Iron">ROS 2 Iron</option>
+                  <option value="ROS 2 Rolling">ROS 2 Rolling</option>
+                  <option value="ROS 1 Noetic">ROS 1 Noetic</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Row 2: Category, Tag Badge, Price, Link Project */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase">Category *</label>
+                <select
+                  value={simCategory}
+                  onChange={(e) => setSimCategory(e.target.value)}
+                  className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white"
+                >
+                  <option value="Gazebo & Gz Sim">Gazebo & Gz Sim</option>
+                  <option value="Nav2 & SLAM">Nav2 & SLAM</option>
+                  <option value="Robotic Arms">Robotic Arms</option>
+                  <option value="Drones & UAVs">Drones & UAVs</option>
+                  <option value="General Simulation">General Simulation</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase">Display Tag / Badge</label>
+                <input 
+                  type="text" 
+                  value={simTag}
+                  onChange={(e) => setSimTag(e.target.value)}
+                  className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white"
+                  placeholder="e.g. Gazebo • Nav2 (optional)"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase">Access Price (₹)</label>
+                <input 
+                  type="number" 
+                  min="0"
+                  value={simPrice}
+                  onChange={(e) => setSimPrice(e.target.value)}
+                  className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white font-mono"
+                  placeholder="0 for Free"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase">Link To Hardware Project</label>
+                <select
+                  value={simProjectId}
+                  onChange={(e) => setSimProjectId(e.target.value)}
+                  className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white text-xs truncate"
+                >
+                  <option value="">None (Independent Simulation)</option>
+                  {availableProjects.map((p) => (
+                    <option key={p.id} value={p.id}>{p.title}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Launch Command */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-medium text-gray-400 uppercase flex items-center gap-1.5">
+                  <Terminal className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Primary ROS 2 Launch Command *</span>
+                </label>
+                <span className="text-[11px] text-gray-400 font-mono">Visitors can copy this with 1 click</span>
+              </div>
+              <input 
+                type="text" 
+                required
+                value={simLaunchCommand}
+                onChange={(e) => setSimLaunchCommand(e.target.value)}
+                className="w-full bg-black/70 border border-emerald-500/40 focus:border-emerald-400 rounded-md px-4 py-3 text-emerald-300 font-mono text-xs sm:text-sm focus:outline-none"
+                placeholder="e.g. ros2 launch my_robot_bringup gazebo.launch.py headless:=false"
+              />
+            </div>
+
+            {/* Overview & Detailed Long Description */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase">Short Overview Description *</label>
+                <textarea 
+                  rows={4} 
+                  required
+                  value={simDescription}
+                  onChange={(e) => setSimDescription(e.target.value)}
+                  className="w-full bg-black/50 border border-white/20 rounded-md p-4 text-white focus:outline-none focus:border-white text-sm"
+                  placeholder="Summary of the simulated robot, world layout, and simulation purpose..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase">Detailed Architecture & Docs</label>
+                <textarea 
+                  rows={4} 
+                  value={simLongDescription}
+                  onChange={(e) => setSimLongDescription(e.target.value)}
+                  className="w-full bg-black/50 border border-white/20 rounded-md p-4 text-white focus:outline-none focus:border-white text-sm"
+                  placeholder="In-depth details: controller plugins, coordinate frames (TF tree), topics, parameters..."
+                />
+              </div>
+            </div>
+
+            {/* Sensors and Features (Comma-separated) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase">Simulated Sensors & Telemetry (Comma-Separated)</label>
+                <input 
+                  type="text" 
+                  value={simSensorsInput}
+                  onChange={(e) => setSimSensorsInput(e.target.value)}
+                  className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white text-xs"
+                  placeholder="e.g. 2D RPLidar, Differential Encoders, 9-DOF IMU, Depth Camera"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase">Key Capabilities & Features (Comma-Separated)</label>
+                <input 
+                  type="text" 
+                  value={simFeaturesInput}
+                  onChange={(e) => setSimFeaturesInput(e.target.value)}
+                  className="w-full bg-black/50 border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white text-xs"
+                  placeholder="e.g. Physics Collision Bounds, Keyboard Teleop, Dynamic Costmap, OMPL Trajectory"
+                />
+              </div>
+            </div>
+
+            {/* File Uploads: Video URL / File, Image Preview, Code ZIP */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-white/10">
+              {/* Preview Video */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase">Simulation Video (URL or MP4)</label>
+                <input 
+                  type="text" 
+                  value={simVideoUrl}
+                  onChange={(e) => setSimVideoUrl(e.target.value)}
+                  className="w-full bg-black/50 border border-white/20 rounded-md px-3 py-2 text-white focus:outline-none focus:border-white text-xs mb-2"
+                  placeholder="https://youtube.com/watch?v=... or direct URL"
+                />
+                <label className="border border-dashed border-white/20 rounded-md p-4 text-center hover:border-white/40 transition-colors cursor-pointer group flex flex-col items-center justify-center">
+                  <input 
+                    type="file" 
+                    className="hidden" 
+                    accept="video/*"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setSimVideoFile(e.target.files[0]);
+                      }
+                    }}
+                  />
+                  {simVideoFile ? (
+                    <div className="text-white flex flex-col items-center">
+                      <CheckCircle2 className="w-5 h-5 text-green-500 mb-1" />
+                      <p className="text-xs truncate max-w-[180px]">{simVideoFile.name}</p>
+                    </div>
+                  ) : (
+                    <>
+                      <Video className="w-5 h-5 text-gray-400 mb-1 group-hover:text-white" />
+                      <p className="text-xs text-gray-400 group-hover:text-white">Or upload MP4 simulation video</p>
+                    </>
+                  )}
+                </label>
+              </div>
+
+              {/* Preview Thumbnail Screenshot */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase">Simulation Screenshot / Thumbnail</label>
+                <label className="border border-dashed border-white/20 rounded-md p-6 text-center hover:border-white/40 transition-colors cursor-pointer group flex flex-col items-center justify-center h-[108px]">
+                  <input 
+                    type="file" 
+                    className="hidden" 
+                    accept="image/*"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setSimPreviewImageFile(e.target.files[0]);
+                      }
+                    }}
+                  />
+                  {simPreviewImageFile ? (
+                    <div className="text-white flex flex-col items-center">
+                      <CheckCircle2 className="w-5 h-5 text-green-500 mb-1" />
+                      <p className="text-xs truncate max-w-[180px]">{simPreviewImageFile.name}</p>
+                    </div>
+                  ) : (
+                    <>
+                      <ImageIcon className="w-5 h-5 text-gray-400 mb-1 group-hover:text-white" />
+                      <p className="text-xs text-gray-400 group-hover:text-white">Upload Gazebo/RViz screenshot</p>
+                    </>
+                  )}
+                </label>
+              </div>
+
+              {/* Source Code ZIP */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase">Simulation Package (.ZIP)</label>
+                <label className="border border-dashed border-white/20 rounded-md p-6 text-center hover:border-white/40 transition-colors cursor-pointer group flex flex-col items-center justify-center h-[108px]">
+                  <input 
+                    type="file" 
+                    className="hidden" 
+                    accept=".zip,.tar.gz,.gz"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setSimCodeFile(e.target.files[0]);
+                      }
+                    }}
+                  />
+                  {simCodeFile ? (
+                    <div className="text-white flex flex-col items-center">
+                      <CheckCircle2 className="w-5 h-5 text-green-500 mb-1" />
+                      <p className="text-xs truncate max-w-[180px]">{simCodeFile.name}</p>
+                    </div>
+                  ) : (
+                    <>
+                      <FileBox className="w-5 h-5 text-gray-400 mb-1 group-hover:text-white" />
+                      <p className="text-xs text-gray-400 group-hover:text-white">Upload URDF / Gazebo code .ZIP</p>
+                    </>
+                  )}
+                </label>
+              </div>
+            </div>
+
+            <button 
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full py-4 bg-white hover:bg-gray-200 disabled:opacity-50 text-black rounded-md font-semibold transition-colors flex justify-center items-center gap-2 cursor-pointer shadow-lg"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Publishing Simulation Project...
+                </>
+              ) : 'Publish Simulation Project & Commands'}
             </button>
           </form>
         )}

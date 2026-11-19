@@ -111,6 +111,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true });
     }
 
+    if (type === 'simulation') {
+      const { error: simDeleteError } = await supabaseAdmin
+        .from('simulations')
+        .delete()
+        .eq('id', id);
+
+      if (simDeleteError) {
+        console.error('Error deleting simulation:', simDeleteError);
+        return NextResponse.json({ error: `Failed to delete simulation: ${simDeleteError.message}` }, { status: 500 });
+      }
+
+      return NextResponse.json({ success: true });
+    }
+
     return NextResponse.json({ error: `Unknown type: ${type}` }, { status: 400 });
   } catch (err: any) {
     console.error('Unexpected error in admin delete route:', err);

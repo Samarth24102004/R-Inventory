@@ -1,14 +1,14 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Settings, Edit2, Trash2, Plus, X, Upload, CheckCircle2, Box, CircuitBoard, ImageIcon, FileBox, Video, Cpu, Code2, Film, BarChart3, Lightbulb, BookOpen, Terminal } from 'lucide-react';
+import { Settings, Edit2, Trash2, Plus, X, Upload, CheckCircle2, Box, CircuitBoard, ImageIcon, FileBox, Video, Cpu, Code2, Film, BarChart3, Lightbulb, BookOpen, Terminal, Play } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import AdminHeaderLayout from '@/components/AdminHeaderLayout';
 import { parseProjectDescription, formatProjectDescription } from '@/lib/data';
 
 export default function AdminProjectsPage() {
-  const [activeTab, setActiveTab] = useState<'projects' | 'models' | 'manuals'>('projects');
+  const [activeTab, setActiveTab] = useState<'projects' | 'models' | 'manuals' | 'simulations'>('projects');
   
   // Projects State
   const [projects, setProjects] = useState<any[]>([]);
@@ -21,6 +21,28 @@ export default function AdminProjectsPage() {
   // Manuals State
   const [manualsList, setManualsList] = useState<any[]>([]);
   const [loadingManuals, setLoadingManuals] = useState(true);
+
+  // Simulations State
+  const [simulationsList, setSimulationsList] = useState<any[]>([]);
+  const [loadingSimulations, setLoadingSimulations] = useState(true);
+
+  // Edit Simulation State
+  const [editingSimulation, setEditingSimulation] = useState<any>(null);
+  const [editSimForm, setEditSimForm] = useState({
+    title: '',
+    category: 'Gazebo & Gz Sim',
+    simulator: 'Gazebo Fortress',
+    ros_distro: 'ROS 2 Jazzy',
+    launch_command: '',
+    description: '',
+    long_description: '',
+    price: '0',
+    video_url: '',
+    tag: '',
+    sensors: '',
+    features: ''
+  });
+  const [isSimSubmitting, setIsSimSubmitting] = useState(false);
   
   // Edit Project Modal State
   const [editingProject, setEditingProject] = useState<any>(null);
@@ -287,13 +309,34 @@ export default function AdminProjectsPage() {
     setLoadingManuals(false);
   };
 
+  const fetchSimulations = async () => {
+    setLoadingSimulations(true);
+    try {
+      const { data, error } = await supabase
+        .from('simulations')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        setSimulationsList(data);
+      } else {
+        setSimulationsList([]);
+      }
+    } catch (e) {
+      setSimulationsList([]);
+    } finally {
+      setLoadingSimulations(false);
+    }
+  };
+
   useEffect(() => {
     fetchProjects();
     fetchModels();
     fetchManualsList();
+    fetchSimulations();
   }, []);
 
-  const deleteItemViaApi = async (id: string, type: 'project' | 'model' | 'manual') => {
+  const deleteItemViaApi = async (id: string, type: 'project' | 'model' | 'manual' | 'simulation') => {
     const { data: { session } } = await supabase.auth.getSession();
     const token = session?.access_token;
     if (!token) {
@@ -314,6 +357,81 @@ export default function AdminProjectsPage() {
       throw new Error(result.error || `Failed to delete ${type}`);
     }
     return result;
+  };
+
+  const handleDeleteSimulation = async (id: string) => {
+    if (!window.confirm("Are you sure you want to delete this simulation? This cannot be undone.")) return;
+    try {
+      await deleteItemViaApi(id, 'simulation');
+      setSimulationsList(prev => prev.filter(s => s.id !== id));
+      alert("Simulation deleted successfully.");
+    } catch (err: any) {
+      alert(`Delete failed: ${err.message}`);
+    }
+  };
+
+  const openEditSimulationModal = (sim: any) => {
+    setEditingSimulation(sim);
+    setEditSimForm({
+      title: sim.title || '',
+      category: sim.category || 'Gazebo & Gz Sim',
+      simulator: sim.simulator || 'Gazebo Fortress',
+      ros_distro: sim.ros_distro || 'ROS 2 Jazzy',
+      launch_command: sim.launch_command || '',
+      description: sim.description || '',
+      long_description: sim.long_description || '',
+      price: sim.price?.toString() || '0',
+      video_url: sim.video_url || '',
+      tag: sim.tag || '',
+      sensors: Array.isArray(sim.sensors) ? sim.sensors.join(', ') : '',
+      features: Array.isArray(sim.features) ? sim.features.join(', ') : ''
+    });
+  };
+
+  const handleEditSimulationSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingSimulation) return;
+    setIsSimSubmitting(true);
+    try {
+      const sensorsArray = editSimForm.sensors
+        .split(',')
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+
+      const featuresArray = editSimForm.features
+        .split(',')
+        .map(f => f.trim())
+        .filter(f => f.length > 0);
+
+      const { error } = await supabase
+        .from('simulations')
+        .update({
+          title: editSimForm.title,
+          category: editSimForm.category,
+          simulator: editSimForm.simulator,
+          ros_distro: editSimForm.ros_distro,
+          launch_command: editSimForm.launch_command,
+          description: editSimForm.description,
+          long_description: editSimForm.long_description,
+          price: parseFloat(editSimForm.price) || 0,
+          video_url: editSimForm.video_url || null,
+          tag: editSimForm.tag || `${editSimForm.simulator} • ${editSimForm.ros_distro}`,
+          sensors: sensorsArray,
+          features: featuresArray,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', editingSimulation.id);
+
+      if (error) throw new Error(error.message);
+
+      alert("Simulation updated successfully!");
+      setEditingSimulation(null);
+      fetchSimulations();
+    } catch (err: any) {
+      alert(`Update failed: ${err.message}`);
+    } finally {
+      setIsSimSubmitting(false);
+    }
   };
 
   const handleDeleteProject = async (id: string) => {
@@ -763,6 +881,17 @@ export default function AdminProjectsPage() {
             <BookOpen className="w-3.5 h-3.5" />
             Manuals ({manualsList.length})
           </button>
+          <button
+            onClick={() => setActiveTab('simulations')}
+            className={`px-4 py-2 text-xs font-semibold rounded-md transition-colors border flex items-center gap-2 ${
+              activeTab === 'simulations'
+                ? 'bg-white text-black border-white'
+                : 'bg-white/5 text-gray-400 border-white/10 hover:bg-white/10 hover:text-white'
+            }`}
+          >
+            <Play className="w-3.5 h-3.5" />
+            Simulations ({simulationsList.length})
+          </button>
         </div>
 
         <div className="bg-[#0a0a0a] border border-white/10 rounded-xl overflow-hidden shadow-lg">
@@ -964,6 +1093,86 @@ export default function AdminProjectsPage() {
                               onClick={() => handleDeleteManual(manual.id)}
                               className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded transition-colors"
                               title="Delete Manual"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )
+          )}
+
+          {/* Simulations Tab */}
+          {activeTab === 'simulations' && (
+            loadingSimulations ? (
+              <div className="p-12 text-center text-gray-500">Loading simulations...</div>
+            ) : simulationsList.length === 0 ? (
+              <div className="p-12 text-center text-gray-500">
+                No simulations found. <Link href="/admin/upload?type=simulation" className="text-white underline font-semibold">Upload your first simulation</Link>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead className="bg-white/5 border-b border-white/10">
+                    <tr>
+                      <th className="px-6 py-4 text-xs font-medium tracking-wider text-gray-400 uppercase">Simulation</th>
+                      <th className="px-6 py-4 text-xs font-medium tracking-wider text-gray-400 uppercase">Simulator / Distro</th>
+                      <th className="px-6 py-4 text-xs font-medium tracking-wider text-gray-400 uppercase">Launch Command</th>
+                      <th className="px-6 py-4 text-xs font-medium tracking-wider text-gray-400 uppercase">Price</th>
+                      <th className="px-6 py-4 text-xs font-medium tracking-wider text-gray-400 uppercase text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/10">
+                    {simulationsList.map((sim) => (
+                      <tr key={sim.id} className="hover:bg-white/5 transition-colors group">
+                        <td className="px-6 py-4">
+                          <div className="font-medium text-white flex items-center gap-2">
+                            {sim.title}
+                            {sim.tag && (
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                                {sim.tag}
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-500 truncate max-w-sm mt-0.5">{sim.description}</div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-xs font-semibold text-white">{sim.simulator}</div>
+                          <div className="text-[11px] text-gray-400 font-mono">{sim.ros_distro}</div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <code className="text-[11px] font-mono bg-black/60 px-2 py-1 rounded text-green-400 border border-white/10 max-w-xs block truncate">
+                            {sim.launch_command || 'ros2 launch ...'}
+                          </code>
+                        </td>
+                        <td className="px-6 py-4 text-sm font-semibold text-white">
+                          {Number(sim.price) === 0 ? 'Free' : `₹${sim.price}`}
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex items-center justify-end space-x-2">
+                            <Link
+                              href={`/simulation?id=${sim.id}`}
+                              target="_blank"
+                              className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded transition-colors"
+                              title="Preview in Simulation Workbench"
+                            >
+                              <Play className="w-4 h-4 text-blue-400" />
+                            </Link>
+                            <button 
+                              onClick={() => openEditSimulationModal(sim)}
+                              className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded transition-colors"
+                              title="Edit Simulation"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button 
+                              onClick={() => handleDeleteSimulation(sim.id)}
+                              className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded transition-colors"
+                              title="Delete Simulation"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -1774,6 +1983,191 @@ export default function AdminProjectsPage() {
                   className="px-6 py-2 bg-white text-black hover:bg-gray-200 disabled:opacity-50 rounded-md text-sm font-semibold transition-colors flex items-center gap-2"
                 >
                   {isManualSubmitting ? 'Saving Changes...' : 'Save Manual Changes'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Simulation Modal */}
+      {editingSimulation && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#0a0a0a] border border-white/20 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl relative">
+            <button 
+              onClick={() => setEditingSimulation(null)}
+              className="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            
+            <div className="p-8 border-b border-white/10">
+              <div className="flex items-center gap-2 text-blue-400 mb-1">
+                <Play className="w-4 h-4" />
+                <span className="text-xs font-mono uppercase tracking-wider">Simulation Project</span>
+              </div>
+              <h2 className="text-2xl font-semibold text-white">Edit Simulation</h2>
+              <p className="text-gray-400 text-sm mt-1">Make changes to {editingSimulation.title}</p>
+            </div>
+            
+            <form onSubmit={handleEditSimulationSubmit} className="p-8 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Simulation Title</label>
+                  <input 
+                    type="text" 
+                    value={editSimForm.title}
+                    onChange={(e) => setEditSimForm({...editSimForm, title: e.target.value})}
+                    className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Price (INR, 0 = Free)</label>
+                  <input 
+                    type="number" 
+                    value={editSimForm.price}
+                    onChange={(e) => setEditSimForm({...editSimForm, price: e.target.value})}
+                    className="w-full bg-transparent border border-white/20 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white transition-colors"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Simulator</label>
+                  <select
+                    value={editSimForm.simulator}
+                    onChange={(e) => setEditSimForm({...editSimForm, simulator: e.target.value})}
+                    className="w-full bg-[#121212] border border-white/20 rounded-md px-3 py-2.5 text-white text-xs focus:outline-none focus:border-white"
+                  >
+                    <option value="Gazebo Fortress">Gazebo Fortress (Ignition)</option>
+                    <option value="Gazebo Harmonic">Gazebo Harmonic (Gz)</option>
+                    <option value="Gazebo Classic">Gazebo Classic 11</option>
+                    <option value="RViz2">RViz2 Visualization</option>
+                    <option value="Webots">Webots</option>
+                    <option value="PX4 / ArduPilot SITL">PX4 / ArduPilot SITL</option>
+                    <option value="Isaac Sim">NVIDIA Isaac Sim</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">ROS Distro</label>
+                  <select
+                    value={editSimForm.ros_distro}
+                    onChange={(e) => setEditSimForm({...editSimForm, ros_distro: e.target.value})}
+                    className="w-full bg-[#121212] border border-white/20 rounded-md px-3 py-2.5 text-white text-xs focus:outline-none focus:border-white"
+                  >
+                    <option value="ROS 2 Jazzy">ROS 2 Jazzy Jalisco</option>
+                    <option value="ROS 2 Humble">ROS 2 Humble Hawksbill</option>
+                    <option value="ROS 2 Iron">ROS 2 Iron Irwini</option>
+                    <option value="ROS 2 Rolling">ROS 2 Rolling Ridley</option>
+                    <option value="ROS 1 Noetic">ROS 1 Noetic</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Tag Badge</label>
+                  <input
+                    type="text"
+                    value={editSimForm.tag}
+                    onChange={(e) => setEditSimForm({...editSimForm, tag: e.target.value})}
+                    placeholder="e.g. GAZEBO • ROS2"
+                    className="w-full bg-transparent border border-white/20 rounded-md px-3 py-2.5 text-white text-xs focus:outline-none focus:border-white"
+                  />
+                </div>
+              </div>
+
+              {/* ROS 2 Launch Command */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <Terminal className="w-3.5 h-3.5 text-green-400" /> Primary ROS 2 Launch Command
+                </label>
+                <div className="bg-black/60 border border-white/10 rounded-lg p-2.5">
+                  <input
+                    type="text"
+                    value={editSimForm.launch_command}
+                    onChange={(e) => setEditSimForm({...editSimForm, launch_command: e.target.value})}
+                    className="w-full bg-transparent font-mono text-xs text-green-400 focus:outline-none"
+                    placeholder="ros2 launch my_pkg simulation.launch.py"
+                  />
+                </div>
+              </div>
+
+              {/* Short Card Description */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Short Description (Card view)</label>
+                <textarea 
+                  value={editSimForm.description}
+                  onChange={(e) => setEditSimForm({...editSimForm, description: e.target.value})}
+                  rows={2}
+                  className="w-full bg-transparent border border-white/20 rounded-md px-3 py-2 text-white focus:outline-none focus:border-white transition-colors text-xs"
+                  placeholder="Summary shown on cards..."
+                />
+              </div>
+
+              {/* Long Overview Description */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Detailed Description (Workbench view)</label>
+                <textarea 
+                  value={editSimForm.long_description}
+                  onChange={(e) => setEditSimForm({...editSimForm, long_description: e.target.value})}
+                  rows={4}
+                  className="w-full bg-transparent border border-white/20 rounded-md px-3 py-2 text-white focus:outline-none focus:border-white transition-colors text-xs"
+                  placeholder="Deep technical breakdown of worlds, models, plugins..."
+                />
+              </div>
+
+              {/* Sensors & Features */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Sensors (Comma separated)</label>
+                  <input
+                    type="text"
+                    value={editSimForm.sensors}
+                    onChange={(e) => setEditSimForm({...editSimForm, sensors: e.target.value})}
+                    placeholder="2D LiDAR, RGB-D Camera, IMU, Odometry"
+                    className="w-full bg-transparent border border-white/20 rounded-md px-3 py-2.5 text-white text-xs focus:outline-none focus:border-white"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Key Features (Comma separated)</label>
+                  <input
+                    type="text"
+                    value={editSimForm.features}
+                    onChange={(e) => setEditSimForm({...editSimForm, features: e.target.value})}
+                    placeholder="Nav2 navigation, SLAM mapping, ros2_control"
+                    className="w-full bg-transparent border border-white/20 rounded-md px-3 py-2.5 text-white text-xs focus:outline-none focus:border-white"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Video URL (Optional YouTube or hosted MP4)</label>
+                <input
+                  type="text"
+                  value={editSimForm.video_url}
+                  onChange={(e) => setEditSimForm({...editSimForm, video_url: e.target.value})}
+                  placeholder="https://youtu.be/... or Supabase video URL"
+                  className="w-full bg-transparent border border-white/20 rounded-md px-3 py-2.5 text-white text-xs focus:outline-none focus:border-white"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4 border-t border-white/10">
+                <button 
+                  type="button"
+                  onClick={() => setEditingSimulation(null)}
+                  className="px-4 py-2 bg-transparent text-white hover:bg-white/5 rounded-md text-sm transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  disabled={isSimSubmitting}
+                  className="px-6 py-2 bg-white text-black hover:bg-gray-200 disabled:opacity-50 rounded-md text-sm font-semibold transition-colors flex items-center gap-2"
+                >
+                  {isSimSubmitting ? 'Saving Changes...' : 'Save Simulation Changes'}
                 </button>
               </div>
             </form>
