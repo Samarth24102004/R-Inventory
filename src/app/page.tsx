@@ -3,8 +3,8 @@ import Footer from '@/components/Footer';
 import PremiumProjectCard from '@/components/PremiumProjectCard';
 import LockedProjectCard from '@/components/LockedProjectCard';
 import { supabase } from '@/lib/supabase';
-import { demoProjects, Project } from '@/lib/data';
-import { ArrowRight, Cpu, BookOpen, Box, ArrowUpRight, Star, Layers, Play } from 'lucide-react';
+import { Project } from '@/lib/data';
+import { ArrowRight, Cpu, BookOpen, Box, ArrowUpRight, Layers, Play } from 'lucide-react';
 
 export const revalidate = 0; // Ensure data is fetched dynamically
 
@@ -15,12 +15,11 @@ export default async function Home() {
     .select('*')
     .order('created_at', { ascending: false });
 
-  // Use DB projects if available, otherwise use demo data
-  const allProjects: Project[] = (dbProjects && dbProjects.length > 0) ? dbProjects : demoProjects;
+  const allProjects: Project[] = dbProjects || [];
 
   // Find VitaBot specifically for the featured hero card, or fallback to first project
   const featuredVitaBot = allProjects.find(
-    (p) => p.slug === 'vitabot' || p.title.toLowerCase().includes('vitabot')
+    (p) => p.slug?.toLowerCase().includes('vitabot') || p.title?.toLowerCase().includes('vitabot')
   ) || allProjects[0];
 
   // Display top projects in the grid (excluding featured if we have enough)
@@ -30,7 +29,7 @@ export default async function Home() {
 
   // Fetch real 3D models from Supabase
   const { data: dbModels } = await supabase
-    .from('models_3d')
+    .from('stl_models')
     .select('*')
     .order('created_at', { ascending: false })
     .limit(4);
@@ -304,10 +303,6 @@ export default async function Home() {
                       alt={model.title}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-108"
                     />
-                    <div className="absolute top-3 right-3 z-20 flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#0B2447]/90 text-[#B6FFFA] border border-[#687EFF]/40 text-xs backdrop-blur-md shadow-sm">
-                      <Star className="w-3 h-3 text-[#687EFF] fill-[#687EFF]" />
-                      <span className="font-mono font-semibold text-[#B6FFFA]">{model.rating || '5.0'}</span>
-                    </div>
 
                     <div className="absolute top-3 left-3 z-20">
                       <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-white/90 text-[#0B2447] text-[10px] font-mono font-bold uppercase tracking-wider shadow-xs">

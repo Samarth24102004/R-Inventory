@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Box, Search, Download, ShoppingCart, Star, CheckCircle } from 'lucide-react';
+import { Box, Search, Download, ShoppingCart, CheckCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import AuthModal from '@/components/AuthModal';
 import Footer from '@/components/Footer';
@@ -252,10 +252,6 @@ export default function ThreeDModelsPage() {
                   alt={model.title}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute top-4 right-4 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#0B2447] border border-[#0B2447] shadow-sm">
-                  <Star className="w-3.5 h-3.5 text-[#687EFF] fill-[#687EFF]" />
-                  <span className="text-xs font-semibold text-[#B6FFFA]">{model.rating || '5.0'}</span>
-                </div>
               </div>
 
               {/* Content Container */}

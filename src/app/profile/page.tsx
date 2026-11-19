@@ -7,7 +7,6 @@ import { User, Mail, Box, Shield, LogOut, ArrowLeft, ExternalLink, Download } fr
 import Link from 'next/link';
 import Image from 'next/image';
 import Footer from '@/components/Footer';
-import { demoProjects } from '@/lib/data';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -184,7 +183,7 @@ export default function ProfilePage() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {purchases.map((purchase: any, index: number) => {
-                  const proj = purchase.projects || demoProjects.find(p => p.id === purchase.project_id);
+                  const proj = purchase.projects;
                   const stl = purchase.stl_models;
 
                   const itemTitle = proj?.title || stl?.title || (purchase.project_id ? 'Premium Project' : '3D Model');
